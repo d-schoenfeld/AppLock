@@ -33,8 +33,8 @@ public class GestureCreatePresenter implements GestureCreateContract.Presenter {
 
     @Override
     public void updateStage(LockStage stage) {
-        mView.updateUiStage(stage); //更新UiStage
-        if (stage == ChoiceTooShort) { //如果少于4个点
+        mView.updateUiStage(stage); //UiStage aktualisieren
+        if (stage == ChoiceTooShort) { //wenn weniger als 4 Punkte
             mView.updateLockTip(mContext.getResources().getString(stage.headerMessage, LockPatternUtils.MIN_LOCK_PATTERN_SIZE), true);
         } else {
             if (stage.headerMessage == R.string.lock_need_to_unlock_wrong) {
@@ -48,28 +48,28 @@ public class GestureCreatePresenter implements GestureCreateContract.Presenter {
         mView.lockPatternViewConfiguration(stage.patternEnabled, LockPatternView.DisplayMode.Correct);
 
         switch (stage) {
-            case Introduction:  //介绍
-                mView.Introduction(); //第一步
+            case Introduction:  //Einführung
+                mView.Introduction(); //Schritt 1
                 break;
-            case HelpScreen: //帮助（错误多少次后可以启动帮助动画）
+            case HelpScreen: //Hilfe (nach wie vielen Fehlern die Hilfsanimation startet)
                 mView.HelpScreen();
                 break;
-            case ChoiceTooShort: //锁屏路径太短
+            case ChoiceTooShort: //Entsperrmuster zu kurz
                 mView.ChoiceTooShort();
                 break;
-            case FirstChoiceValid: //第一步提交成功
-                updateStage(NeedToConfirm); //转跳到第二步
+            case FirstChoiceValid: //Schritt 1 erfolgreich abgeschlossen
+                updateStage(NeedToConfirm); //weiter zu Schritt 2
                 mView.moveToStatusTwo();
                 break;
             case NeedToConfirm:
-                mView.clearPattern();  //第二步
+                mView.clearPattern();  //Schritt 2
                 break;
             case ConfirmWrong:
-                //第二步跟第一步不一样
+                //Schritt 2 unterscheidet sich von Schritt 1
                 mView.ConfirmWrong();
                 break;
             case ChoiceConfirmed:
-                //第三步
+                //Schritt 3
                 mView.ChoiceConfirmed();
                 break;
         }
@@ -77,7 +77,7 @@ public class GestureCreatePresenter implements GestureCreateContract.Presenter {
 
     @Override
     public void onPatternDetected(List<LockPatternView.Cell> pattern, List<LockPatternView.Cell> mChosenPattern, LockStage mUiStage) {
-        if (mUiStage == NeedToConfirm) { //如果下一步
+        if (mUiStage == NeedToConfirm) { //wenn nächster Schritt
             if (mChosenPattern == null)
                 throw new IllegalStateException("null chosen pattern in stage 'need to confirm");
             if (mChosenPattern.equals(pattern)) {

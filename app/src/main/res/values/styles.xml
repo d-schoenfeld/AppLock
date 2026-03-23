@@ -21,7 +21,7 @@
 
     </style>
 
-    <!--普通按钮样式-->
+    <!--Normaler Button-Stil-->
     <style name="comm_btn_style">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">50dp</item>
@@ -55,17 +55,17 @@
     </style>
 
     <style name="DialogTransparent" parent="@android:style/Theme.Dialog">
-        <!-- 背景颜色及透明程度  -->
+        <!-- Hintergrundfarbe und Transparenz  -->
         <item name="android:windowBackground">@android:color/transparent</item>
-        <!--  是否有标题  -->
+        <!--  Ob Titel vorhanden  -->
         <item name="android:windowNoTitle">true</item>
-        <!--  是否浮现在activity之上  -->
+        <!--  Ob über Activity angezeigt  -->
         <item name="android:windowIsFloating">true</item>
-        <!-- 是否模糊  -->
+        <!-- Ob unscharf  -->
         <item name="android:backgroundDimEnabled">true</item>
-        <!--全屏-->
+        <!--Vollbild-->
         <item name="android:windowFullscreen">true</item>
-        <!--activity切换动画-->
+        <!--Activity-Übergangsanimation-->
         <!--<item name="android:windowAnimationStyle">@style/AnimationDialogActivity</item>-->
         <item name="android:backgroundDimAmount">0.4</item>
         <item name="android:windowCloseOnTouchOutside">false</item>

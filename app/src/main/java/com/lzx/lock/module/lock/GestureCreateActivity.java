@@ -28,7 +28,7 @@ public class GestureCreateActivity extends BaseActivity implements View.OnClickL
     private TextView mLockTip;
 
     private LockStage mUiStage = LockStage.Introduction;
-    protected List<LockPatternView.Cell> mChosenPattern = null; //密码
+    protected List<LockPatternView.Cell> mChosenPattern = null; //Passwort
     private static final String KEY_PATTERN_CHOICE = "chosenPattern";
     private static final String KEY_UI_STAGE = "uiStage";
     private LockPatternUtils mLockPatternUtils;
@@ -62,7 +62,7 @@ public class GestureCreateActivity extends BaseActivity implements View.OnClickL
     }
 
     /**
-     * 初始化锁屏控件
+     * Entsperr-Widget initialisieren
      */
     private void initLockPatternView() {
         mLockPatternUtils = new LockPatternUtils(this);
@@ -139,7 +139,7 @@ public class GestureCreateActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void ChoiceTooShort() {
-        mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Wrong);  //路径太短
+        mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Wrong);  //Muster zu kurz
         mLockPatternView.removeCallbacks(mClearPatternRunnable);
         mLockPatternView.postDelayed(mClearPatternRunnable, 1000);
     }
@@ -168,7 +168,7 @@ public class GestureCreateActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void ChoiceConfirmed() {
-        mLockPatternUtils.saveLockPattern(mChosenPattern); //保存密码
+        mLockPatternUtils.saveLockPattern(mChosenPattern); //Passwort speichern
         clearPattern();
         setResult(RESULT_OK);
         finish();

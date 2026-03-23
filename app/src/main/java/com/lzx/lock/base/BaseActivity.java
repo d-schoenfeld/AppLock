@@ -25,11 +25,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LockApplication.getInstance().doForCreate(this);
-        //设置布局内容
+        //Layout-Inhalt setzen
         setContentView(getLayoutId());
-        //初始化控件
+        //Widgets initialisieren
         initViews(savedInstanceState);
-        //初始化ToolBar
+        //Toolbar initialisieren
         initToolBar();
         initData();
         initAction();

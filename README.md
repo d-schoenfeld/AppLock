@@ -1,45 +1,77 @@
-#### AppLock应用锁
+# AppLock – App-Sperre
 
-保护你的隐私
-
-
+Schütze deine Privatsphäre mit einer Mustersperre oder PIN für einzelne Apps.
 
 ![](art/ic_launcher.png)
 
+---
 
+## Übersicht
 
-由于个人精力有限和因为比较懒，本来重构着的项目突然不想动了，所以写了一点优化建议来代替，如下：
+**AppLock** ist eine Android-App, mit der du einzelne Anwendungen auf deinem Gerät mit einem Entsperrmuster oder einer numerischen PIN sichern kannst. Beim Öffnen einer gesperrten App wird der Nutzer zunächst zur Eingabe des Passworts aufgefordert.
 
-[项目优化建议](https://github.com/lizixian18/AppLock/blob/master/项目优化建议.md)
+### Funktionen
 
-内容主要是应用锁服务还有解锁界面，数据操作，进程保活等六点小建议。  
+- Einzelne Apps mit Mustersperre oder PIN absichern
+- Automatische Sperre nach einer konfigurierbaren Zeitspanne
+- Sofortige Sperre nach Bildschirmabschaltung
+- Automatische Fotoaufnahme bei fehlgeschlagenen Entsperrversuchen
+- Suche nach Apps in der App-Liste
 
-<br><br><br><br>
+### Voraussetzungen
 
+- Android 4.0 (API 14) oder höher
+- Auf Android 5.0 (Lollipop) und höher: Berechtigung **„App-Nutzungsdaten abrufen"** erforderlich
 
-#### 简介  
-AppLock应用锁，保护你的隐私。       
-欢迎Start,Fork和Issues。
-项目用到的第三方库：litepal     
-在5.0以上的系统需要获取 查看应用使用情况 的权限，否则应用锁会失效   
-若有好的建议例如实现方案，界面，功能等欢迎提出。
+---
 
- 
+## Installation & Einrichtung
 
-目前问题：
--  进程的保活还没实现好
--  项目中的代码结构逻辑没完善好，还存在一些bug。
+### Entwicklungsvoraussetzungen
 
-附：
-在github上看到一个判断应用在前后台的方法，非常牛逼，可以替换项目中原来的方法来实现，推荐一波。
-地址：
-https://github.com/wenmingvs/AndroidProcess
+- [Android Studio](https://developer.android.com/studio) (aktuelle Version empfohlen)
+- Android SDK (mindestens API 14)
+- Java Development Kit (JDK) 8 oder höher
 
+### Projekt klonen
 
-#### Apk下载
-![](art/qc_download.png)
+```bash
+git clone https://github.com/d-schoenfeld/AppLock.git
+cd AppLock
+```
 
-#### 截图
+### Projekt öffnen
+
+1. Android Studio starten
+2. **„Open an existing Android Studio project"** auswählen
+3. Den geklonten Projektordner `AppLock` öffnen
+4. Gradle-Synchronisation abwarten
+
+### App bauen und starten
+
+1. Gerät oder Emulator verbinden (Android 4.0+)
+2. In Android Studio auf **Run ▶** klicken oder folgenden Befehl im Terminal ausführen:
+
+```bash
+./gradlew assembleDebug
+```
+
+Die APK-Datei wird anschließend unter `app/build/outputs/apk/debug/` abgelegt.
+
+### Benötigte Berechtigungen
+
+Beim ersten Start der App wird (auf Android 5.0+) ein Dialog zur Vergabe der Berechtigung **„App-Nutzungsdaten abrufen"** angezeigt. Diese Berechtigung ist notwendig, damit AppLock erkennen kann, welche App gerade im Vordergrund läuft.
+
+---
+
+## Verwendete Bibliotheken
+
+- [LitePal](https://github.com/LitePalFramework/LitePal) – SQLite-Datenbankverwaltung
+
+---
+
+## Screenshots
+
 <a href="art/1.png"><img src="art/1.png" width="30%"/></a>
 <a href="art/2.png"><img src="art/2.png" width="30%"/></a>
 <a href="art/3.png"><img src="art/3.png" width="30%"/></a>
@@ -55,26 +87,22 @@ https://github.com/wenmingvs/AndroidProcess
 <a href="art/10.png"><img src="art/10.png" width="30%"/></a>
 <a href="art/11.png"><img src="art/11.png" width="30%"/></a>
 
-#### About me
-An android developer in GuangZhou  
-简书：[http://www.jianshu.com/users/286f9ad9c417/latest_articles](http://www.jianshu.com/users/286f9ad9c417/latest_articles)   
-Email:386707112@qq.com  
-If you want to make friends with me, You can give me a Email and follow me。
+---
 
-#### License
+## Lizenz
+
 ```
-Copyright 2017 L_Xian   
- 
-Licensed under the Apache License, Version 2.0 (the "License");  
-you may not use this file except in compliance with the License.  
-You may obtain a copy of the License at  
+Copyright 2017 L_Xian
 
-http://www.apache.org/licenses/LICENSE-2.0  
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-Unless required by applicable law or agreed to in writing, software  
-distributed under the License is distributed on an "AS IS" BASIS,  
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  
-See the License for the specific language governing permissions and  
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
 limitations under the License.
-```
 ```

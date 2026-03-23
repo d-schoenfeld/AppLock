@@ -34,7 +34,7 @@ public class LockMainPresenter implements LockMainContract.Presenter {
     }
 
     /**
-     * 加载所有app
+     * Alle Apps laden
      */
     @Override
     public void loadAppInfo(Context context) {
@@ -68,19 +68,19 @@ public class LockMainPresenter implements LockMainContract.Presenter {
                 try {
                     ApplicationInfo appInfo = mPackageManager.getApplicationInfo(info.getPackageName(), PackageManager.GET_UNINSTALLED_PACKAGES);
                     if (appInfo == null || mPackageManager.getApplicationIcon(appInfo) == null) {
-                        infoIterator.remove(); //将有错的app移除
+                        infoIterator.remove(); //fehlerhafte Apps entfernen
                         continue;
                     } else {
-                        info.setAppInfo(appInfo); //给列表ApplicationInfo赋值
-                        if ((appInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) { //判断是否是系统应用 ApplicationInfo#isSystemApp()
+                        info.setAppInfo(appInfo); //ApplicationInfo der Liste zuweisen
+                        if ((appInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) { //prüfen ob System-App ApplicationInfo#isSystemApp()
                             info.setSysApp(true);
-                            info.setTopTitle("系统应用");
+                            info.setTopTitle("System-Apps");
                         } else {
                             info.setSysApp(false);
-                            info.setTopTitle("用户应用");
+                            info.setTopTitle("Benutzer-Apps");
                         }
                     }
-                    //获取推荐应用总数
+                    //Gesamtzahl der gesperrten Apps ermitteln
                     if (info.isLocked()) {
                         favoriteNum++;
                     }
@@ -116,16 +116,16 @@ public class LockMainPresenter implements LockMainContract.Presenter {
                 try {
                     ApplicationInfo appInfo = mPackageManager.getApplicationInfo(info.getPackageName(), PackageManager.GET_UNINSTALLED_PACKAGES);
                     if (appInfo == null || mPackageManager.getApplicationIcon(appInfo) == null) {
-                        infoIterator.remove(); //将有错的app移除
+                        infoIterator.remove(); //fehlerhafte Apps entfernen
                         continue;
                     } else {
-                        info.setAppInfo(appInfo); //给列表ApplicationInfo赋值
-                        if ((appInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) { //判断是否是系统应用 ApplicationInfo#isSystemApp()
+                        info.setAppInfo(appInfo); //ApplicationInfo der Liste zuweisen
+                        if ((appInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) { //prüfen ob System-App ApplicationInfo#isSystemApp()
                             info.setSysApp(true);
-                            info.setTopTitle("系统应用");
+                            info.setTopTitle("System-Apps");
                         } else {
                             info.setSysApp(false);
-                            info.setTopTitle("用户应用");
+                            info.setTopTitle("Benutzer-Apps");
                         }
                     }
 

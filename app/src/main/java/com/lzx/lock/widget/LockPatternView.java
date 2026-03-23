@@ -54,14 +54,14 @@ import java.util.List;
  */
 public class LockPatternView extends View {
 
-    public int line_color_right = 0xff97C7F2; //正常时候路径颜色
-    public int line_color_wrong = 0x66fe5479; //错误时候路径颜色
+    public int line_color_right = 0xff97C7F2; //Linienfarbe im Normalzustand
+    public int line_color_wrong = 0x66fe5479; //Linienfarbe bei Fehler
 
-    private int res_gesture_pattern_item_bg = R.drawable.gesture_pattern_item_bg; //正常情况下的图片
-    private int res_gesture_pattern_selected = R.drawable.gesture_pattern_selected; //选中时候的图片
-    private int res_gesture_pattern_selected_wrong = R.drawable.gesture_pattern_selected_wrong; //错误的时候的图片
+    private int res_gesture_pattern_item_bg = R.drawable.gesture_pattern_item_bg; //Bild im Normalzustand
+    private int res_gesture_pattern_selected = R.drawable.gesture_pattern_selected; //Bild bei Auswahl
+    private int res_gesture_pattern_selected_wrong = R.drawable.gesture_pattern_selected_wrong; //Bild bei Fehler
 
-    // private boolean ishideline = false; //是否隐藏路径
+    // private boolean ishideline = false; //ob Linie verborgen
 
     private static final String TAG = "LockPatternView";
     // Aspect to use when rendering this view
@@ -137,7 +137,7 @@ public class LockPatternView extends View {
     private boolean defaultIsHideLine;
 
     /**
-     * 设置线的颜色
+     * Linienfarbe setzen
      *
      * @param color
      */
@@ -146,7 +146,7 @@ public class LockPatternView extends View {
     }
 
     /**
-     * 设置正常情况下的图片
+     * Bild für Normalzustand setzen
      *
      * @param resId
      */
@@ -155,7 +155,7 @@ public class LockPatternView extends View {
     }
 
     /**
-     * 设置选中时候的图片
+     * Bild für Auswahlzustand setzen
      *
      * @param resId
      */
@@ -164,7 +164,7 @@ public class LockPatternView extends View {
     }
 
     /**
-     * 设置错误的时候的图片
+     * Bild für Fehlerzustand setzen
      *
      * @param resId
      */
@@ -173,7 +173,7 @@ public class LockPatternView extends View {
     }
 
 //    /**
-//     * 设置是否隐藏路径
+//     * Ob Linie verborgen werden soll setzen
 //     *
 //     * @param ishideline
 //     */
@@ -503,7 +503,7 @@ public class LockPatternView extends View {
     }
 
     /**
-     * 初始化资源
+     * Ressourcen initialisieren
      */
     public void initRes(){
         defaultIsHideLine = SpUtil.getInstance().getBoolean(AppConstants.LOCK_IS_HIDE_LINE, false);

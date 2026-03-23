@@ -35,7 +35,7 @@ public class CommLockInfoManager {
     }
 
     /**
-     * 查找所有
+     * Alle suchen
      */
     public synchronized List<CommLockInfo> getAllCommLockInfos() {
         List<CommLockInfo> commLockInfos = DataSupport.findAll(CommLockInfo.class);
@@ -44,7 +44,7 @@ public class CommLockInfoManager {
     }
 
     /**
-     * 删除数据
+     * Daten löschen
      */
     public synchronized void deleteCommLockInfoTable(List<CommLockInfo> commLockInfos) {
         for (CommLockInfo info : commLockInfos) {
@@ -53,20 +53,20 @@ public class CommLockInfoManager {
     }
 
     /**
-     * 将手机应用信息插入数据库
+     * App-Informationen in Datenbank einfügen
      */
     public synchronized void instanceCommLockInfoTable(List<ResolveInfo> resolveInfos) throws PackageManager.NameNotFoundException {
         List<CommLockInfo> list = new ArrayList<>();
 
         for (ResolveInfo resolveInfo : resolveInfos) {
-            boolean isfaviterApp = isHasFaviterAppInfo(resolveInfo.activityInfo.packageName); //是否为推荐加锁的app
-            CommLockInfo commLockInfo = new CommLockInfo(resolveInfo.activityInfo.packageName, false, isfaviterApp); // 后续需添加默认的开启保护
+            boolean isfaviterApp = isHasFaviterAppInfo(resolveInfo.activityInfo.packageName); //ob empfohlene zu sperrende App
+            CommLockInfo commLockInfo = new CommLockInfo(resolveInfo.activityInfo.packageName, false, isfaviterApp); // Standardmäßige Schutzaktivierung muss noch hinzugefügt werden
             ApplicationInfo appInfo = mPackageManager.getApplicationInfo(commLockInfo.getPackageName(), PackageManager.GET_UNINSTALLED_PACKAGES);
             String appName = mPackageManager.getApplicationLabel(appInfo).toString();
-            //过滤掉一些应用
+            //einige Apps herausfiltern
             if (!commLockInfo.getPackageName().equals(AppConstants.APP_PACKAGE_NAME) && !commLockInfo.getPackageName().equals("com.android.settings")
                     && !commLockInfo.getPackageName().equals("com.google.android.googlequicksearchbox")) {
-                if (isfaviterApp) { //如果是推荐的
+                if (isfaviterApp) { //wenn empfohlen
                     commLockInfo.setLocked(true);
                 } else {
                     commLockInfo.setLocked(false);
@@ -77,13 +77,13 @@ public class CommLockInfoManager {
                 list.add(commLockInfo);
             }
         }
-        list = DataUtil.clearRepeatCommLockInfo(list);  //去除重复数据
+        list = DataUtil.clearRepeatCommLockInfo(list);  //doppelte Einträge entfernen
 
         DataSupport.saveAll(list);
     }
 
     /**
-     * 判断是否是推荐加锁的应用
+     * Prüfen ob empfohlene zu sperrende App
      */
     public boolean isHasFaviterAppInfo(String packageName) {
         List<FaviterInfo> infos = DataSupport.where("packageName = ?", packageName).find(FaviterInfo.class);
@@ -91,14 +91,14 @@ public class CommLockInfoManager {
     }
 
     /**
-     * 更改数据库app状态为锁定
+     * App-Status in Datenbank auf gesperrt setzen
      */
     public void lockCommApplication(String packageName) {
         updateLockStatus(packageName, true);
     }
 
     /**
-     * 更改数据库app状态为已解锁
+     * App-Status in Datenbank auf entsperrt setzen
      */
     public void unlockCommApplication(String packageName) {
         updateLockStatus(packageName, false);
@@ -112,7 +112,7 @@ public class CommLockInfoManager {
 
 
     /**
-     * 是否设置了不锁
+     * Prüfen ob App explizit nicht gesperrt werden soll
      */
     public boolean isSetUnLock(String packageName) {
         List<CommLockInfo> lockInfos = where("packageName = ?", packageName).find(CommLockInfo.class);
@@ -125,7 +125,7 @@ public class CommLockInfoManager {
     }
 
     /**
-     * 检查状态是否为锁定
+     * Prüfen ob Status gesperrt ist
      *
      * @param packageName
      * @return
@@ -141,7 +141,7 @@ public class CommLockInfoManager {
     }
 
     /**
-     * 模糊匹配
+     * Unscharfe Suche
      */
     public List<CommLockInfo> queryBlurryList(String appName) {
         List<CommLockInfo> infos = DataSupport.where("appName like ?", "%" + appName + "%").find(CommLockInfo.class);

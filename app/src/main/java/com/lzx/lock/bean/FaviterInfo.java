@@ -4,7 +4,7 @@ import org.litepal.crud.DataSupport;
 
 /**
  * Created by xian on 2017/2/17.
- *推荐加锁的应用信息
+ * Informationen zu empfohlenen zu sperrenden Apps
  */
 
 public class FaviterInfo extends DataSupport {

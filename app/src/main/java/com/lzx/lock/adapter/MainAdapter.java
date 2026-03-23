@@ -60,7 +60,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     }
 
     /**
-     * 初始化数据
+     * Daten initialisieren
      */
     private void initData(TextView tvAppName, CheckBox switchCompat, ImageView mAppIcon, CommLockInfo lockInfo) {
         tvAppName.setText(packageManager.getApplicationLabel(lockInfo.getAppInfo()));

@@ -74,12 +74,12 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
         mLockSwitch.setChecked(isLockOpen);
 
         boolean isLockAutoScreen = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_SCREEN, false);
-        mLockScreenSwitch.setText(isLockAutoScreen ? "开" : "关");
+        mLockScreenSwitch.setText(isLockAutoScreen ? "Ein" : "Aus");
 
         boolean isTakePic = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_RECORD_PIC,false);
-        mLockTakePicSwitch.setText(isTakePic ? "开" : "关");
+        mLockTakePicSwitch.setText(isTakePic ? "Ein" : "Aus");
 
-        mLockTime.setText(SpUtil.getInstance().getString(AppConstants.LOCK_APART_TITLE,"立即"));
+        mLockTime.setText(SpUtil.getInstance().getString(AppConstants.LOCK_APART_TITLE,"Sofort"));
     }
 
     @Override
@@ -97,10 +97,10 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
                 SpUtil.getInstance().putBoolean(AppConstants.LOCK_STATE, b);
                 Intent intent = new Intent(LockSettingActivity.this, LockService.class);
                 if (b) {
-                    mLockTip.setText("已开启，加锁应用打开时需要密码");
+                    mLockTip.setText("Aktiviert – gesperrte Apps erfordern ein Passwort");
                     startService(intent);
                 } else {
-                    mLockTip.setText("已关闭，加锁应用打开时不需要密码");
+                    mLockTip.setText("Deaktiviert – gesperrte Apps erfordern kein Passwort");
                     stopService(intent);
                 }
             }
@@ -128,30 +128,30 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
                 boolean ishideline = SpUtil.getInstance().getBoolean(AppConstants.LOCK_IS_HIDE_LINE, false);
                 if (ishideline) {
                     SpUtil.getInstance().putBoolean(AppConstants.LOCK_IS_HIDE_LINE, false);
-                    ToastUtil.showToast("路径已显示");
+                    ToastUtil.showToast("Muster wird angezeigt");
                 } else {
                     SpUtil.getInstance().putBoolean(AppConstants.LOCK_IS_HIDE_LINE, true);
-                    ToastUtil.showToast("路径已隐藏");
+                    ToastUtil.showToast("Muster wird ausgeblendet");
                 }
                 break;
             case R.id.lock_screen:
                 boolean isLockAutoScreen = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_SCREEN, false);
                 if (isLockAutoScreen) {
                     SpUtil.getInstance().putBoolean(AppConstants.LOCK_AUTO_SCREEN, false);
-                    mLockScreenSwitch.setText("关");
+                    mLockScreenSwitch.setText("Aus");
                 } else {
                     SpUtil.getInstance().putBoolean(AppConstants.LOCK_AUTO_SCREEN, true);
-                    mLockScreenSwitch.setText("开");
+                    mLockScreenSwitch.setText("Ein");
                 }
                 break;
             case R.id.lock_take_pic:
                 boolean isTakePic = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_RECORD_PIC,false);
                 if (isTakePic) {
                     SpUtil.getInstance().putBoolean(AppConstants.LOCK_AUTO_RECORD_PIC, false);
-                    mLockTakePicSwitch.setText("关");
+                    mLockTakePicSwitch.setText("Aus");
                 } else {
                     SpUtil.getInstance().putBoolean(AppConstants.LOCK_AUTO_RECORD_PIC, true);
-                    mLockTakePicSwitch.setText("开");
+                    mLockTakePicSwitch.setText("Ein");
                 }
                 break;
         }
@@ -163,7 +163,7 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_CHANGE_PWD:
-                    ToastUtil.showToast("密码重置成功");
+                    ToastUtil.showToast("Passwort erfolgreich zurückgesetzt");
                     break;
             }
         }

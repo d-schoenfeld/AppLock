@@ -19,7 +19,7 @@ package com.lzx.lock.utils;
 import android.graphics.Bitmap;
 
 /**
- * 高斯模糊类
+ * Klasse für Gaußschen Weichzeichner
  * Created by paveld on 3/6/14.
  */
 public class FastBlur {

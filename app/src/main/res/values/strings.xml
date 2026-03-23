@@ -1,30 +1,30 @@
 <resources>
-    <string name="app_name">应用锁</string>
+    <string name="app_name">App-Sperre</string>
 
-    <string name="lock_first_btn" formatted="false">保护(%s)</string>
+    <string name="lock_first_btn" formatted="false">Sperren (%s)</string>
 
-    <!--图形解锁控件相关-->
-    <string name="lockscreen_access_pattern_cell_added">已添加单元格</string>
-    <string name="lockscreen_access_pattern_start">绘制解锁图案</string>
-    <string name="lockscreen_access_pattern_detected">密码已保存</string>
-    <string name="lockscreen_access_pattern_cleared">密码已删除</string>
+    <!--Entsperrmuster-Widget-->
+    <string name="lockscreen_access_pattern_cell_added">Punkt hinzugefügt</string>
+    <string name="lockscreen_access_pattern_start">Muster zeichnen</string>
+    <string name="lockscreen_access_pattern_detected">Passwort gespeichert</string>
+    <string name="lockscreen_access_pattern_cleared">Passwort gelöscht</string>
 
-    <string name="lock_recording_intro_header">设置应用程序的解锁密码</string>
-    <string name="lock_settings_help_how_to_record">如何绘制解锁图案</string>
-    <string name="lock_recording_incorrect_too_short">应连接至少4个点。</string>
-    <string name="lock_pattern_entered_header">记录密码</string>
-    <string name="lock_need_to_confirm">再次绘制图案以确认</string>
-    <string name="lock_need_to_unlock_wrong">密码不匹配，请重试。</string>
-    <string name="password_gestrue_tips">绘制密码解锁</string>
-    <string name="password_error_count">密码不匹配。请重试。</string>
-    <string name="lock_draw_unlock_pattern">画出解锁路径</string>
-    <string name="lock_enter_pin_code">输入数字密码</string>
+    <string name="lock_recording_intro_header">Entsperrmuster festlegen</string>
+    <string name="lock_settings_help_how_to_record">Wie zeichne ich ein Muster?</string>
+    <string name="lock_recording_incorrect_too_short">Mindestens 4 Punkte verbinden.</string>
+    <string name="lock_pattern_entered_header">Muster aufzeichnen</string>
+    <string name="lock_need_to_confirm">Muster zur Bestätigung erneut zeichnen</string>
+    <string name="lock_need_to_unlock_wrong">Muster stimmt nicht überein. Erneut versuchen.</string>
+    <string name="password_gestrue_tips">Muster zum Entsperren zeichnen</string>
+    <string name="password_error_count">Muster stimmt nicht überein. Erneut versuchen.</string>
+    <string name="lock_draw_unlock_pattern">Entsperrmuster zeichnen</string>
+    <string name="lock_enter_pin_code">PIN eingeben</string>
     <string name="lock_pattern_confirmed_header"></string>
 
-    <!--数字解锁相关-->
-    <string name="num_create_text_01">输入4位数密码即可解锁</string>
-    <string name="num_create_text_02">再次输入以确认</string>
-    <string name="num_create_text_03">密码不匹配，请重试</string>
+    <!--PIN-Entsperrung-->
+    <string name="num_create_text_01">4-stellige PIN eingeben</string>
+    <string name="num_create_text_02">Zur Bestätigung erneut eingeben</string>
+    <string name="num_create_text_03">PINs stimmen nicht überein. Erneut versuchen.</string>
     <string name="number_1">1</string>
     <string name="number_2">2</string>
     <string name="number_3">3</string>
@@ -35,19 +35,19 @@
     <string name="number_8">8</string>
     <string name="number_9">9</string>
     <string name="number_0">0</string>
-    <string name="password_short">请输入至少4个字符。</string>
+    <string name="password_short">Bitte mindestens 4 Zeichen eingeben.</string>
 
     <string-array name="lock_time_array">
-        <item>15 秒</item>
-        <item>30 秒</item>
-        <item>1 分钟</item>
-        <item>3 分钟</item>
-        <item>5 分钟</item>
-        <item>10 分钟</item>
-        <item>30 分钟</item>
-        <item>立即</item>
+        <item>15 Sekunden</item>
+        <item>30 Sekunden</item>
+        <item>1 Minute</item>
+        <item>3 Minuten</item>
+        <item>5 Minuten</item>
+        <item>10 Minuten</item>
+        <item>30 Minuten</item>
+        <item>Sofort</item>
     </string-array>
 
-    <string name="dialog_tip">你的系统大于等于5.0，我们需要获取 “查看应用使用情况” 权限
+    <string name="dialog_tip">Dein System ist Android 5.0 oder höher. Die Berechtigung „App-Nutzungsdaten abrufen" wird benötigt.
     </string>
 </resources>

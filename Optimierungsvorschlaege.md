@@ -1,12 +1,12 @@
-### 项目优化建议
+### Optimierungsvorschläge für das Projekt
 
-一共有 6 点小建议：
+Insgesamt gibt es 6 Verbesserungsvorschläge:
 
-#### 第一点：
+#### Vorschlag 1:
 
-LockService 应用锁服务优化建议，服务不再继承 IntentService 了，继承 Service，在里面自己开线程。
-  
-循环的判断条件不用简单的布尔型，而用具有原子操作性的 AtomicBoolean 代替：
+Optimierungsvorschlag für den LockService (App-Sperrdienst): Der Dienst soll nicht mehr von `IntentService` erben, sondern von `Service`, und intern einen eigenen Thread verwalten.
+
+Die Abbruchbedingung der Schleife sollte nicht mit einem einfachen `boolean` realisiert werden, sondern mit dem thread-sicheren `AtomicBoolean`:
 ```java
 public class AppLockService extends Service {
     private AtomicBoolean mIsServiceDestoryed = new AtomicBoolean(false);
@@ -36,13 +36,13 @@ public class AppLockService extends Service {
 }
 ```
 
-#### 第二点：
-目前循环里面的获取 Sp 文件的操作太多太频繁了，因为读写 Sp 文件有缓冲时间，而且又是属于读写文件，在循环这么频繁的情况下性能感觉不好而已有点慢。
-而加锁时间这些变量又需要实时改变的，所以不能写成全局变量，所以优化建议是可以用全局的静态变量来存储代替 sp 文件。而 sp 文件只保存最后一次
-改变的时间，如果app被杀掉，下次打开的时候，sp 文件的值付给静态变量就可以。
+#### Vorschlag 2:
+Aktuell werden in der Schleife zu häufig SharedPreferences-Dateien (SP) gelesen und geschrieben. Da das Lesen und Schreiben von SP-Dateien gepuffert und zudem ein Datei-I/O-Vorgang ist, kann dies bei einer so häufigen Schleife die Performance beeinträchtigen und zu Verlangsamungen führen.
 
-#### 第三点：
-解锁界面，现在项目里面的解锁界面是一个 Activity，建议换成 Window 悬浮窗来实现，下面给个代码示例参考，可以直接使用或者自己实现：
+Da sich Variablen wie die Sperrzeit in Echtzeit ändern müssen, können sie nicht als globale Variablen angelegt werden. Der Optimierungsvorschlag ist daher, globale statische Variablen statt der SP-Datei zu verwenden. Die SP-Datei speichert nur die zuletzt geänderte Zeit. Wenn die App beendet wird, werden die SP-Werte beim nächsten Start den statischen Variablen zugewiesen.
+
+#### Vorschlag 3:
+Die Entsperrungsanzeige ist aktuell als `Activity` implementiert. Es wird empfohlen, sie stattdessen als schwebende `Window`-Ansicht umzusetzen. Unten folgt ein Codebeispiel zur Referenz, das direkt verwendet oder als Grundlage eigener Implementierungen dienen kann:
 ```java
 public class UnlockView extends FrameLayout {
 
@@ -83,7 +83,7 @@ public class UnlockView extends FrameLayout {
         mPatternView = mUnLockView.findViewById(R.id.unlock_lock_view);
         mUnlockFailTip = mUnLockView.findViewById(R.id.unlock_fail_tip);
 
-        //创建悬浮窗
+        //Schwebendes Fenster erstellen
         mWindowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         mLayoutParams = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
@@ -120,7 +120,7 @@ public class UnlockView extends FrameLayout {
     };
 
     /**
-     * 打开解锁界面
+     * Entsperrungsansicht öffnen
      */
     public void showUnLockView() {
         if (mLockAppInfo == null) {
@@ -131,7 +131,7 @@ public class UnlockView extends FrameLayout {
     }
 
     /**
-     * 关闭解锁界面
+     * Entsperrungsansicht schließen
      */
     private boolean closeUnLockView() {
         if (mWindowManager != null) {
@@ -158,7 +158,7 @@ public class UnlockView extends FrameLayout {
     }
 
     /**
-     * 按Home键
+     * Home-Taste
      */
     public void closeUnLockViewFormHomeAction() {
         if (getParent() != null && mHandler != null) {
@@ -167,7 +167,7 @@ public class UnlockView extends FrameLayout {
     }
 
     /**
-     * 背景图片
+     * Hintergrundbild
      */
     private void initBgView() {
         mApplicationInfo = mLockAppInfo.getAppInfo();
@@ -186,7 +186,7 @@ public class UnlockView extends FrameLayout {
                                 mBgView.getViewTreeObserver().removeOnPreDrawListener(this);
                                 mBgView.buildDrawingCache();
                                 Bitmap bmp = BlurUtil.drawableToBitmap(iconDrawable, mBgView);
-                                BlurUtil.blur(mContext, BlurUtil.big(bmp), mBgView);  //高斯模糊
+                                BlurUtil.blur(mContext, BlurUtil.big(bmp), mBgView);  //Gaußscher Weichzeichner
                                 return true;
                             }
                         });
@@ -197,7 +197,7 @@ public class UnlockView extends FrameLayout {
     }
 
     /**
-     * 初始化解锁控件
+     * Entsperr-Widget initialisieren
      */
     private void initLockPatternView() {
         mPatternView.setLineColorRight(0x80ffffff);
@@ -206,7 +206,7 @@ public class UnlockView extends FrameLayout {
         mPatternViewPattern.setPatternListener(new LockPatternViewPattern.onPatternListener() {
             @Override
             public void onPatternDetected(List<LockPatternView.Cell> pattern) {
-                if (mPatternUtils.checkPattern(pattern)) { //解锁成功,更改数据库状态
+                if (mPatternUtils.checkPattern(pattern)) { //Entsperrung erfolgreich, Datenbankstatus aktualisieren
                     mPatternView.setDisplayMode(LockPatternView.DisplayMode.Correct);
                     //TODO
                     closeUnLockView();
@@ -222,10 +222,10 @@ public class UnlockView extends FrameLayout {
                     } else {
                         mUnlockFailTip.setText(mContext.getResources().getString(R.string.password_short));
                     }
-                    if (mFailedPatternAttemptsSinceLastTimeout >= 3) { //失败次数大于3次
+                    if (mFailedPatternAttemptsSinceLastTimeout >= 3) { //Fehlversuche > 3
                         mPatternView.postDelayed(mClearPatternRunnable, 500);
                     }
-                    if (mFailedPatternAttemptsSinceLastTimeout >= LockPatternUtils.FAILED_ATTEMPTS_BEFORE_TIMEOUT) { //失败次数大于阻止用户前的最大错误尝试次数
+                    if (mFailedPatternAttemptsSinceLastTimeout >= LockPatternUtils.FAILED_ATTEMPTS_BEFORE_TIMEOUT) { //Fehlversuche >= Maximum
                         mPatternView.postDelayed(mClearPatternRunnable, 500);
                     } else {
                         mPatternView.postDelayed(mClearPatternRunnable, 500);
@@ -257,13 +257,12 @@ public class UnlockView extends FrameLayout {
 }
 ```
 
-#### 第四点：
-如果你有使用 RxJava，那就结合 RxJava 去修改吧，效果很棒。  
-比如，目前项目里面获取应用列表的操作是放到一个服务里面做的，当时这么做的原因是，把这样一个复杂的操作放到后台做，就不会因为
-耗时而导致卡顿甚至ANR的情况。如果你用了 RxJava ，线程切换变得非常简单，可以用 RxJava 实现就行，下面给出代码示例，LoadAppHelper 是获取应用列表的帮助类，
-DbManager 是数据库操作管理类，非常简单，可以自己实现，就不贴代码了：
+#### Vorschlag 4:
+Wenn RxJava im Projekt verwendet wird, lässt sich die App damit erheblich verbessern.
+
+Zum Beispiel wird das Laden der App-Liste aktuell in einem Dienst ausgeführt – damals wurde dieser Ansatz gewählt, um die zeitaufwändige Operation in den Hintergrund zu verlagern und ANR/Ruckler zu vermeiden. Mit RxJava wird der Thread-Wechsel sehr einfach. Unten folgt ein Codebeispiel. `LoadAppHelper` ist eine Hilfsklasse zum Laden der App-Liste, `DbManager` eine Datenbankmanager-Klasse – beide sind einfach zu implementieren:
 ```Java
-//初始化数据
+//Daten initialisieren
 LoadAppHelper.loadAllLockAppInfoAsync(this)
    .subscribeOn(Schedulers.newThread())
    .observeOn(AndroidSchedulers.mainThread())
@@ -291,9 +290,9 @@ LoadAppHelper.loadAllLockAppInfoAsync(this)
    .map(new Function<List<LockAppInfo>, List<LockAppInfo>>() {
        @Override
        public List<LockAppInfo> apply(List<LockAppInfo> appList) throws Exception {
-           //数据库数据与最新获取的app数据作对比
+           //Datenbankeinträge mit aktuellen App-Daten vergleichen
            List<LockAppInfo> dbList = DbManager.get().queryInfoList();
-           if (appList.size() > dbList.size()) { //如果有安装新应用
+           if (appList.size() > dbList.size()) { //wenn neue App installiert wurde
                List<LockAppInfo> resultList = new ArrayList<>();
                HashMap<String, LockAppInfo> hashMap = new HashMap<>();
                for (LockAppInfo info : dbList) {
@@ -304,11 +303,11 @@ LoadAppHelper.loadAllLockAppInfoAsync(this)
                        resultList.add(info);
                    }
                }
-               //将新应用数据插入数据库
+               //neue Apps in Datenbank einfügen
                if (resultList.size() != 0) {
                    DbManager.get().saveInfoList(resultList);
                }
-           } else if (appList.size() < dbList.size()) { //如果有卸载应用
+           } else if (appList.size() < dbList.size()) { //wenn App deinstalliert wurde
                List<LockAppInfo> resultList = new ArrayList<>();
                HashMap<String, LockAppInfo> hashMap = new HashMap<>();
                for (LockAppInfo info : appList) {
@@ -319,7 +318,7 @@ LoadAppHelper.loadAllLockAppInfoAsync(this)
                        resultList.add(info);
                    }
                }
-               //将卸载的应用从数据库删除
+               //deinstallierte Apps aus Datenbank löschen
                if (resultList.size() != 0) {
                    DbManager.get().deleteInfoByList(resultList);
                }
@@ -334,27 +333,27 @@ LoadAppHelper.loadAllLockAppInfoAsync(this)
            if (lockAppInfos.size() != 0) {
                animator.start();
            } else {
-               Toast.makeText(mContext, "数据处理错误", Toast.LENGTH_SHORT).show();
+               Toast.makeText(mContext, "Fehler bei der Datenverarbeitung", Toast.LENGTH_SHORT).show();
            }
        }
    }, new Consumer<Throwable>() {
        @Override
        public void accept(Throwable throwable) throws Exception {
-           Toast.makeText(mContext, "数据处理错误", Toast.LENGTH_SHORT).show();
+           Toast.makeText(mContext, "Fehler bei der Datenverarbeitung", Toast.LENGTH_SHORT).show();
        }
    });
 ```
 
-LoadAppHelper：
+LoadAppHelper:
 
 ```Java
 /**
- * 加载app列表帮助类
+ * Hilfsklasse zum Laden der App-Liste
  */
 public class LoadAppHelper {
 
     /**
-     * 获取手机上的所有应用
+     * Alle installierten Apps abrufen
      */
     private static List<ResolveInfo> loadPhoneAppList(PackageManager packageManager) {
         Intent intent = new Intent(Intent.ACTION_MAIN, null);
@@ -363,31 +362,31 @@ public class LoadAppHelper {
     }
 
     /**
-     * 初始化推荐加锁的应用
+     * Empfohlene zu sperrende Apps initialisieren
      */
     private static List<String> loadRecommendApps() {
         List<String> packages = new ArrayList<>();
-        packages.add("com.android.gallery3d");       //相册
-        packages.add("com.android.mms");             //短信
-        packages.add("com.tencent.mm");              //微信
-        packages.add("com.android.contacts");        //联系人和电话
-        packages.add("com.facebook.katana");         //facebook
-        packages.add("com.facebook.orca");           //facebook Messenger
-        packages.add("com.mediatek.filemanager");    //文件管理器
-        packages.add("com.sec.android.gallery3d");   //也是个相册
-        packages.add("com.android.email");           //邮箱
-        packages.add("com.sec.android.app.myfiles"); //三星的文件
-        packages.add("com.android.vending");         //应用商店
-        packages.add("com.google.android.youtube");  //youtube
-        packages.add("com.tencent.mobileqq");        //qq
-        packages.add("com.tencent.qq");              //qq
-        packages.add("com.android.dialer");          //拨号
-        packages.add("com.twitter.android");         //twitter
+        packages.add("com.android.gallery3d");       //Galerie
+        packages.add("com.android.mms");             //SMS
+        packages.add("com.tencent.mm");              //WeChat
+        packages.add("com.android.contacts");        //Kontakte und Telefon
+        packages.add("com.facebook.katana");         //Facebook
+        packages.add("com.facebook.orca");           //Facebook Messenger
+        packages.add("com.mediatek.filemanager");    //Dateimanager
+        packages.add("com.sec.android.gallery3d");   //weitere Galerie-App
+        packages.add("com.android.email");           //E-Mail
+        packages.add("com.sec.android.app.myfiles"); //Samsung Dateien
+        packages.add("com.android.vending");         //App-Store
+        packages.add("com.google.android.youtube");  //YouTube
+        packages.add("com.tencent.mobileqq");        //QQ
+        packages.add("com.tencent.qq");              //QQ
+        packages.add("com.android.dialer");          //Telefon
+        packages.add("com.twitter.android");         //Twitter
         return packages;
     }
 
     /**
-     * 将app信息封装成需要的数据
+     * App-Informationen in benötigte Datenstruktur umwandeln
      */
     private static List<LockAppInfo> loadLockAppInfo(Activity activity) {
         List<LockAppInfo> list = new ArrayList<>();
@@ -418,7 +417,7 @@ public class LoadAppHelper {
     }
 
     /**
-     * 异步获取
+     * Asynchron laden
      */
     public static Observable<List<LockAppInfo>> loadAllLockAppInfoAsync(final Activity activity) {
         return Observable.create(new ObservableOnSubscribe<List<LockAppInfo>>() {
@@ -494,7 +493,7 @@ public class LoadAppHelper {
     }
 
     /**
-     * 是否是推荐加锁app
+     * Prüfen ob empfohlene zu sperrende App
      */
     private static boolean isRecommendApp(String packageName) {
         List<String> packages = loadRecommendApps();
@@ -502,7 +501,7 @@ public class LoadAppHelper {
     }
 
     /**
-     * 过滤的应用白名单
+     * Whitelist für auszuschließende Apps
      */
     private static boolean isFilterOutApps(String packageName) {
         return packageName.equals(Constants.APP_PACKAGE_NAME) ||
@@ -512,17 +511,15 @@ public class LoadAppHelper {
 }
 ```
 
-#### 第五点：
-如果你愿意，可以把服务做成远程服务，因为基于IPC实现服务，可以减少应用内存峰值，避免OOM。
+#### Vorschlag 5:
+Falls gewünscht, kann der Dienst als Remote-Dienst implementiert werden. Da ein IPC-basierter Dienst den Speicherbedarf der App reduziert, lassen sich damit OOM-Fehler vermeiden.
 
-#### 第六点
-关于进程保活，其实不能绝对的保证一定能成功，下面给出一些我在某星球里面收集到相关的资料，可以参考一下：
+#### Vorschlag 6:
+Was die Prozesserhaltung (Process Keep-Alive) betrifft: Es ist nicht möglich, deren Erfolg absolut zu garantieren. Nachfolgend einige gesammelte Ressourcen zur Referenz:
 
-- [进程保活方案](https://www.jianshu.com/p/845373586ac1)  
-- [Android进程保活](http://geek.csdn.net/news/detail/95035)  
-- [Android进程保活招数概览](https://www.jianshu.com/p/c1a9e3e86666)  
-- [Android通过JobScheduler与设置前台服务实现进程保活](https://www.jianshu.com/p/f9322c15579a)  
-- [进程保活方案学习](https://www.jianshu.com/p/da6efef407e9)  
-- [Android 进程保活方案](https://www.jianshu.com/p/a407a9b1a3e6)  
-
-
+- [Prozesserhaltungslösungen](https://www.jianshu.com/p/845373586ac1)  
+- [Android-Prozesserhaltung](http://geek.csdn.net/news/detail/95035)  
+- [Überblick über Android-Prozesserhaltungsansätze](https://www.jianshu.com/p/c1a9e3e86666)  
+- [Android-Prozesserhaltung mit JobScheduler und Vordergrunddienstll](https://www.jianshu.com/p/f9322c15579a)  
+- [Lernmaterial: Prozesserhaltungslösungen](https://www.jianshu.com/p/da6efef407e9)  
+- [Android-Prozesserhaltungslösung](https://www.jianshu.com/p/a407a9b1a3e6)

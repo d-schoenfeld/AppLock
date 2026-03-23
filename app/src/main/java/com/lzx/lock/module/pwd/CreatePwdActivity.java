@@ -32,9 +32,9 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
     private TextView mLockTip;
     private LockPatternView mLockPatternView;
     private TextView mBtnReset;
-    //图案锁相关
+    //Mustersperre-bezogen
     private LockStage mUiStage = LockStage.Introduction;
-    protected List<LockPatternView.Cell> mChosenPattern = null; //密码
+    protected List<LockPatternView.Cell> mChosenPattern = null; //Passwort
     private LockPatternUtils mLockPatternUtils;
     private LockPatternViewPattern mPatternViewPattern;
     private GestureCreatePresenter mGestureCreatePresenter;
@@ -61,7 +61,7 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
-     * 初始化锁屏控件
+     * Entsperr-Widget initialisieren
      */
     private void initLockPatternView() {
         mLockPatternUtils = new LockPatternUtils(this);
@@ -91,7 +91,7 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
-     * 恢复到第一步
+     * Zum ersten Schritt zurückgehen
      */
     private void setStepOne() {
         mGestureCreatePresenter.updateStage(LockStage.Introduction);
@@ -99,7 +99,7 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void gotoLockMainActivity() {
-        SpUtil.getInstance().putBoolean(AppConstants.LOCK_STATE, true); //开启应用锁开关
+        SpUtil.getInstance().putBoolean(AppConstants.LOCK_STATE, true); //App-Sperre aktivieren
         startService(new Intent(this, LockService.class));
         SpUtil.getInstance().putBoolean(AppConstants.LOCK_IS_FIRST_LOCK, false);
         startActivity(new Intent(this, MainActivity.class));
@@ -107,7 +107,7 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
-     * 更新当前锁的状态
+     * Aktuellen Sperrstatus aktualisieren
      */
     @Override
     public void updateUiStage(LockStage stage) {
@@ -115,7 +115,7 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
-     * 更新当前密码
+     * Aktuelles Passwort aktualisieren
      */
     @Override
     public void updateChosenPattern(List<LockPatternView.Cell> mChosenPattern) {
@@ -123,7 +123,7 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
-     * 更新提示信息
+     * Hinweistext aktualisieren
      */
     @Override
     public void updateLockTip(String text, boolean isToast) {
@@ -131,7 +131,7 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
-     * 更新提示信息
+     * Hinweistext aktualisieren
      */
     @Override
     public void setHeaderMessage(int headerMessage) {
@@ -139,7 +139,7 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
-     * LockPatternView的一些配置
+     * Konfiguration für LockPatternView
      */
     @Override
     public void lockPatternViewConfiguration(boolean patternEnabled, LockPatternView.DisplayMode displayMode) {
@@ -152,7 +152,7 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
-     * 初始化
+     * Initialisieren
      */
     @Override
     public void Introduction() {
@@ -165,11 +165,11 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
-     * 路径太短
+     * Muster zu kurz
      */
     @Override
     public void ChoiceTooShort() {
-        mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Wrong);  //路径太短
+        mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Wrong);  //Muster zu kurz
         mLockPatternView.removeCallbacks(mClearPatternRunnable);
         mLockPatternView.postDelayed(mClearPatternRunnable, 500);
     }
@@ -181,7 +181,7 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
     };
 
     /**
-     * 画完第一步转到第二步
+     * Nach Abschluss von Schritt 1 zu Schritt 2 wechseln
      */
     @Override
     public void moveToStatusTwo() {
@@ -189,7 +189,7 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
-     * 清空控件路径
+     * Widget-Muster zurücksetzen
      */
     @Override
     public void clearPattern() {
@@ -197,21 +197,21 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
-     * 第一次和第二次画得不一样
+     * Erstes und zweites Muster stimmen nicht überein
      */
     @Override
     public void ConfirmWrong() {
-        mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Wrong);  //路径太短
+        mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Wrong);  //Muster zu kurz
         mLockPatternView.removeCallbacks(mClearPatternRunnable);
         mLockPatternView.postDelayed(mClearPatternRunnable, 500);
     }
 
     /**
-     * 画成功了
+     * Erfolgreich gezeichnet
      */
     @Override
     public void ChoiceConfirmed() {
-        mLockPatternUtils.saveLockPattern(mChosenPattern); //保存密码
+        mLockPatternUtils.saveLockPattern(mChosenPattern); //Passwort speichern
         clearPattern();
         gotoLockMainActivity();
     }

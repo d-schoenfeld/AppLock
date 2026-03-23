@@ -30,7 +30,7 @@
             android:layout_height="50dp"
             android:layout_toRightOf="@+id/btn_back"
             android:gravity="center"
-            android:text="设置"
+            android:text="Einstellungen"
             android:textColor="#2c2c2c"
             android:textSize="14sp"/>
     </RelativeLayout>
@@ -53,7 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="25dp"
             android:gravity="center_vertical"
-            android:text="应用锁"
+            android:text="App-Sperre"
             android:textColor="#2c2c2c"
             android:textSize="14sp"/>
 
@@ -63,7 +63,7 @@
             android:layout_height="25dp"
             android:layout_below="@+id/lock_title"
             android:gravity="center_vertical"
-            tool:text="已开启，加锁应用打开时需要密码"/>
+            tool:text="Aktiviert – gesperrte Apps erfordern ein Passwort"/>
 
         <CheckBox
             android:id="@+id/switch_compat"
@@ -93,7 +93,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="锁定时机"
+            android:text="Sperrzeitpunkt"
             android:textColor="#2c2c2c"
             android:textSize="14sp"/>
 
@@ -105,7 +105,7 @@
             android:layout_centerVertical="true"
             android:drawablePadding="15dp"
             android:drawableRight="@drawable/arrow_more"
-            tool:text="锁屏后"/>
+            tool:text="Nach Bildschirmsperre"/>
 
         <View
             android:layout_width="match_parent"
@@ -127,7 +127,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="锁屏后立即加锁"
+            android:text="Nach Bildschirmsperre sofort sperren"
             android:textColor="#2c2c2c"
             android:textSize="14sp"/>
 
@@ -139,7 +139,7 @@
             android:layout_centerVertical="true"
             android:drawablePadding="15dp"
             android:drawableRight="@drawable/arrow_more"
-            android:text="开"/>
+            android:text="Ein"/>
 
         <View
             android:layout_width="match_parent"
@@ -160,7 +160,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="解锁错误自动拍照"
+            android:text="Bei Fehleingabe automatisch fotografieren"
             android:textColor="#2c2c2c"
             android:textSize="14sp"/>
 
@@ -172,7 +172,7 @@
             android:layout_centerVertical="true"
             android:drawablePadding="15dp"
             android:drawableRight="@drawable/arrow_more"
-            android:text="开"/>
+            android:text="Ein"/>
 
         <View
             android:layout_width="match_parent"
@@ -191,7 +191,7 @@
         android:gravity="center_vertical"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:text="更改密码"
+        android:text="Passwort ändern"
         android:textColor="#2c2c2c"
         android:textSize="14sp"/>
 
@@ -211,7 +211,7 @@
         android:gravity="center_vertical"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:text="显示路径"
+        android:text="Muster anzeigen"
         android:textColor="#2c2c2c"
         android:textSize="14sp"/>
 
@@ -231,7 +231,7 @@
         android:gravity="center_vertical"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:text="关于我"
+        android:text="Über mich"
         android:textColor="#2c2c2c"
         android:textSize="14sp"/>
 
