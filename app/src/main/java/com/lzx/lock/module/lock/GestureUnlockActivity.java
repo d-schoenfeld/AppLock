@@ -150,8 +150,11 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
                         startActivity(new Intent(GestureUnlockActivity.this, MainActivity.class));
                         finish();
                     } else {
-                        SpUtil.getInstance().putLong(AppConstants.LOCK_CURR_MILLISENCONS, System.currentTimeMillis()); //Entsperrzeit speichern
+                        long unlockTime = System.currentTimeMillis();
+                        SpUtil.getInstance().putLong(AppConstants.LOCK_CURR_MILLISENCONS, unlockTime); //Entsperrzeit speichern
                         SpUtil.getInstance().putString(AppConstants.LOCK_LAST_LOAD_PKG_NAME, pkgName);//Entsperr-Paketnamen speichern
+                        LockService.sLockCurrMilliseconds = unlockTime; //Statische Variable aktualisieren
+                        LockService.sLastLoadPkgName = pkgName; //Statische Variable aktualisieren
 
                         //Zeitpunkt der letzten Entsperrung an den App-Sperrdienst senden
                         Intent intent = new Intent(LockService.UNLOCK_ACTION);
