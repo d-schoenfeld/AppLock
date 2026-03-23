@@ -38,7 +38,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 /**
- * 参考：https://github.com/miqt/camera2
+ * Referenz: https://github.com/miqt/camera2
  * Created by lzx on 2017/3/9.
  * 386707112@qq.com
  */
@@ -60,7 +60,7 @@ public class Camera2Manager {
     private Size mPreViewSize;
     private Rect maxZoomrect;
     private int maxRealRadio;
-    //相机缩放相关
+    //Kamerazoom-Einstellungen
     private Rect picRect;
 
     public Camera2Manager(TextureView textureView, Context context) {
@@ -140,9 +140,9 @@ public class Camera2Manager {
             try {
                 mCameraCharacteristics = manager.getCameraCharacteristics(cameraid);
 
-                //画面传感器的面积，单位是像素。
+                //Sensorfläche des Bildes in Pixeln.
                 maxZoomrect = mCameraCharacteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
-                //最大的数字缩放
+                //Maximaler digitaler Zoom
                 maxRealRadio = mCameraCharacteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM).intValue();
                 picRect = new Rect(maxZoomrect);
                 StreamConfigurationMap map = mCameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
@@ -162,7 +162,7 @@ public class Camera2Manager {
                     return;
                 }
                 manager.openCamera(cameraid, cameraOpenCallBack, mHandler);
-                //设置点击拍照的监听
+                //Klick-Listener für Fotoaufnahme setzen
                 takePhoto();
             } catch (CameraAccessException e) {
                 ToastUtil.showToast(e.getMessage());
@@ -209,11 +209,11 @@ public class Camera2Manager {
             captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
             captureBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, (long) ((214735991 - 13231) / 2));
             captureBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, 0);
-            captureBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, (10000 - 100) / 2);//设置 ISO，感光度
+            captureBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, (10000 - 100) / 2);//ISO und Empfindlichkeit setzen
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 90);
-            //设置每秒30帧
+            //30 Bilder pro Sekunde setzen
             CaptureRequest mCaptureRequest = captureBuilder.build();
-            mCameraSession.capture(mCaptureRequest, null, mHandler); //拍照
+            mCameraSession.capture(mCaptureRequest, null, mHandler); //Foto aufnehmen
 //            CameraManager cameraManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
 //            String cameraid = CameraCharacteristics.LENS_FACING_FRONT + "";
 //            CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraid);
@@ -279,7 +279,7 @@ public class Camera2Manager {
             switch (message.what) {
                 case SETIMAGE:
                     Bitmap bm = (Bitmap) message.obj;
-                    //预览头像
+                    //Vorschau-Avatar
                     break;
                 case MOVE_FOCK:
                     mPreViewBuidler.set(CaptureRequest.SCALER_CROP_REGION, picRect);

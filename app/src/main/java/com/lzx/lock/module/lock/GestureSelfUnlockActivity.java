@@ -29,8 +29,8 @@ public class GestureSelfUnlockActivity extends BaseActivity {
     private LockPatternUtils mLockPatternUtils;
     private LockPatternViewPattern mPatternViewPattern;
     private int mFailedPatternAttemptsSinceLastTimeout = 0;
-    private String actionFrom;//按返回键的操作
-    private String pkgName; //解锁应用的包名
+    private String actionFrom;//Aktion bei Zurück-Taste
+    private String pkgName; //Paketname der zu entsperrenden App
     private CommLockInfoManager mManager;
     private RelativeLayout mTopLayout;
 
@@ -52,9 +52,9 @@ public class GestureSelfUnlockActivity extends BaseActivity {
     @Override
     protected void initData() {
         mManager = new CommLockInfoManager(this);
-        //获取解锁应用的包名
+        //Paketname der zu entsperrenden App abrufen
         pkgName = getIntent().getStringExtra(AppConstants.LOCK_PACKAGE_NAME);
-        //获取按返回键的操作
+        //Aktion bei Zurück-Taste abrufen
         actionFrom = getIntent().getStringExtra(AppConstants.LOCK_FROM);
 
         initLockPatternView();
@@ -63,7 +63,7 @@ public class GestureSelfUnlockActivity extends BaseActivity {
     }
 
     /**
-     * 初始化解锁控件
+     * Entsperr-Widget initialisieren
      */
     private void initLockPatternView() {
         mLockPatternUtils = new LockPatternUtils(this);
@@ -71,7 +71,7 @@ public class GestureSelfUnlockActivity extends BaseActivity {
         mPatternViewPattern.setPatternListener(new LockPatternViewPattern.onPatternListener() {
             @Override
             public void onPatternDetected(List<LockPatternView.Cell> pattern) {
-                if (mLockPatternUtils.checkPattern(pattern)) { //解锁成功,更改数据库状态
+                if (mLockPatternUtils.checkPattern(pattern)) { //Entsperrung erfolgreich, Datenbankstatus aktualisieren
                     mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Correct);
                     if (actionFrom.equals(AppConstants.LOCK_FROM_LOCK_MAIN_ACITVITY)) {
                         Intent intent = new Intent(GestureSelfUnlockActivity.this, MainActivity.class);
@@ -100,12 +100,12 @@ public class GestureSelfUnlockActivity extends BaseActivity {
                         }
                     } else {
                     }
-                    if (mFailedPatternAttemptsSinceLastTimeout >= 3) { //失败次数大于3次
+                    if (mFailedPatternAttemptsSinceLastTimeout >= 3) { //Fehlversuche > 3
                         if (SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_RECORD_PIC, false)) {
 
                         }
                     }
-                    if (mFailedPatternAttemptsSinceLastTimeout >= LockPatternUtils.FAILED_ATTEMPTS_BEFORE_TIMEOUT) { //失败次数大于阻止用户前的最大错误尝试次数
+                    if (mFailedPatternAttemptsSinceLastTimeout >= LockPatternUtils.FAILED_ATTEMPTS_BEFORE_TIMEOUT) { //Fehlversuche >= Maximum (Benutzer wird blockiert)
 
                     } else {
                         mLockPatternView.postDelayed(mClearPatternRunnable, 500);

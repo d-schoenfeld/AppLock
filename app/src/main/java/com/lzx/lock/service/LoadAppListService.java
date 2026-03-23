@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * 后台加载应用列表
+ * App-Liste im Hintergrund laden
  * Created by xian on 2017/2/17.
  */
 
@@ -52,22 +52,22 @@ public class LoadAppListService extends IntentService {
             initFavoriteApps();
         }
 
-        //每次都获取手机上的所有应用
+        //Alle installierten Apps bei jedem Start abrufen
         Intent intent = new Intent(Intent.ACTION_MAIN, null);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         List<ResolveInfo> resolveInfos = mPackageManager.queryIntentActivities(intent, 0);
-        //非第一次，对比数据
+        //Nicht der erste Start, Daten vergleichen
         if (isInitDb) {
             List<ResolveInfo> appList = new ArrayList<>();
-            List<CommLockInfo> dbList = mLockInfoManager.getAllCommLockInfos(); //获取数据库列表
-            //处理应用列表
+            List<CommLockInfo> dbList = mLockInfoManager.getAllCommLockInfos(); //Datenbankliste abrufen
+            //App-Liste verarbeiten
             for (ResolveInfo resolveInfo : resolveInfos) {
                 if (!resolveInfo.activityInfo.packageName.equals(AppConstants.APP_PACKAGE_NAME) &&
                         !resolveInfo.activityInfo.packageName.equals("com.android.settings")) {
                     appList.add(resolveInfo);
                 }
             }
-            if (appList.size() > dbList.size()) { //如果有安装新应用
+            if (appList.size() > dbList.size()) { //wenn neue App installiert wurde
                 List<ResolveInfo> reslist = new ArrayList<>();
                 HashMap<String, CommLockInfo> hashMap = new HashMap<>();
                 for (CommLockInfo info : dbList) {
@@ -80,11 +80,11 @@ public class LoadAppListService extends IntentService {
                 }
                 try {
                     if (reslist.size() != 0)
-                        mLockInfoManager.instanceCommLockInfoTable(reslist); //将剩下不同的插入数据库
+                        mLockInfoManager.instanceCommLockInfoTable(reslist); //verbleibende neue Einträge in Datenbank einfügen
                 } catch (PackageManager.NameNotFoundException e) {
                     e.printStackTrace();
                 }
-            } else if (appList.size() < dbList.size()) { //如果有卸载应用
+            } else if (appList.size() < dbList.size()) { //wenn App deinstalliert wurde
                 List<CommLockInfo> commlist = new ArrayList<>();
                 HashMap<String, ResolveInfo> hashMap = new HashMap<>();
                 for (ResolveInfo info : appList) {
@@ -95,22 +95,22 @@ public class LoadAppListService extends IntentService {
                         commlist.add(info);
                     }
                 }
-                //Logger.d("有应用卸载，个数是 = " + dbList.size());
+                //Logger.d("App deinstalliert, Anzahl = " + dbList.size());
                 if (commlist.size() != 0)
-                    mLockInfoManager.deleteCommLockInfoTable(commlist);//将多的从数据库删除
+                    mLockInfoManager.deleteCommLockInfoTable(commlist);//überschüssige Einträge aus Datenbank löschen
             } else {
-                //Logger.d("应用没多没少，正常");
+                //Logger.d("Keine Änderung bei den Apps, normal");
             }
         } else {
-            //数据库只插入一次
+            //Datenbank nur einmal befüllen
             SpUtil.getInstance().putBoolean(AppConstants.LOCK_IS_INIT_DB, true);
             try {
-                mLockInfoManager.instanceCommLockInfoTable(resolveInfos);    //插入数据库
+                mLockInfoManager.instanceCommLockInfoTable(resolveInfos);    //in Datenbank einfügen
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
             }
         }
-        // Log.i("onHandleIntent", "耗时 = " + (System.currentTimeMillis() - time));
+        // Log.i("onHandleIntent", "Dauer = " + (System.currentTimeMillis() - time));
     }
 
     @Override
@@ -120,26 +120,26 @@ public class LoadAppListService extends IntentService {
     }
 
     /**
-     * 初始化推荐加锁的应用
+     * Standardmäßig zu sperrende Apps initialisieren
      */
     public void initFavoriteApps() {
         List<String> packageList = new ArrayList<>();
         List<FaviterInfo> faviterInfos = new ArrayList<>();
-        packageList.add("com.android.gallery3d");       //相册
-        packageList.add("com.android.mms");             //短信
-        packageList.add("com.tencent.mm");              //微信
-        packageList.add("com.android.contacts");        //联系人和电话
+        packageList.add("com.android.gallery3d");       //Galerie
+        packageList.add("com.android.mms");             //SMS
+        packageList.add("com.tencent.mm");              //WeChat
+        packageList.add("com.android.contacts");        //Kontakte und Telefon
         packageList.add("com.facebook.katana");         //facebook
         packageList.add("com.facebook.orca");           //facebook Messenger
-        packageList.add("com.mediatek.filemanager");    //文件管理器
-        packageList.add("com.sec.android.gallery3d");   //也是个相册
-        packageList.add("com.android.email");           //邮箱
-        packageList.add("com.sec.android.app.myfiles"); //三星的文件
-        packageList.add("com.android.vending");         //应用商店
+        packageList.add("com.mediatek.filemanager");    //Dateimanager
+        packageList.add("com.sec.android.gallery3d");   //weitere Galerie-App
+        packageList.add("com.android.email");           //E-Mail
+        packageList.add("com.sec.android.app.myfiles"); //Samsung Dateien
+        packageList.add("com.android.vending");         //App-Store
         packageList.add("com.google.android.youtube");  //youtube
         packageList.add("com.tencent.mobileqq");        //qq
         packageList.add("com.tencent.qq");              //qq
-        packageList.add("com.android.dialer");          //拨号
+        packageList.add("com.android.dialer");          //Telefon
         packageList.add("com.twitter.android");         //twitter
         for (String packageName : packageList) {
             FaviterInfo info = new FaviterInfo();

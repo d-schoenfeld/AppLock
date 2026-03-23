@@ -26,7 +26,7 @@ public class SpUtil {
         return mInstance;
     }
 
-    //在AppBase里面初始化
+    //In AppBase initialisieren
     public void init(Context context) {
         if (mContext == null) {
             mContext = context;

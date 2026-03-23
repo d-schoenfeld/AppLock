@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 /**
- * 图案解锁加密、解密工具类
+ * Hilfklasse zum Verschlüsseln und Entschlüsseln des Entsperrmusters
  * 
  * @author way
  * 
@@ -110,7 +110,7 @@ public class LockPatternUtils {
 	}
 
 	/**
-	 * Deserialize a pattern. 解密,用于保存状态
+	 * Deserialize a pattern. Entschlüsseln, für Zustandsspeicherung
 	 * 
 	 * @param string
 	 *            The pattern serialized with {@link #patternToString}
@@ -128,7 +128,7 @@ public class LockPatternUtils {
 	}
 
 	/**
-	 * Serialize a pattern. 加密
+	 * Serialize a pattern. Verschlüsseln
 	 * 
 	 * @param pattern
 	 *            The pattern.

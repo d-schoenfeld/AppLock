@@ -41,15 +41,15 @@ public class LockService extends IntentService {
 
 
 
-    public boolean threadIsTerminate = false; //是否开启循环
+    public boolean threadIsTerminate = false; //ob Schleife aktiv
 
     public static final String UNLOCK_ACTION = "UNLOCK_ACTION";
     public static final String LOCK_SERVICE_LASTTIME = "LOCK_SERVICE_LASTTIME";
     public static final String LOCK_SERVICE_LASTAPP = "LOCK_SERVICE_LASTAPP";
 
 
-    private long lastUnlockTimeSeconds = 0; //最后解锁的时间
-    private String lastUnlockPackageName = ""; //最后解锁的程序包名
+    private long lastUnlockTimeSeconds = 0; //Zeitpunkt der letzten Entsperrung
+    private String lastUnlockPackageName = ""; //Paketname der zuletzt entsperrten App
 
     private boolean lockState;
 
@@ -67,7 +67,7 @@ public class LockService extends IntentService {
         mLockInfoManager = new CommLockInfoManager(this);
         activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
 
-        //注册广播
+        //Broadcast registrieren
         mServiceReceiver = new ServiceReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_ON);
@@ -75,7 +75,7 @@ public class LockService extends IntentService {
         filter.addAction(UNLOCK_ACTION);
         registerReceiver(mServiceReceiver, filter);
 
-        //开启一个检查锁屏的线程
+        //Thread zum Prüfen der Bildschirmsperre starten
         threadIsTerminate = true;
 
     }
@@ -87,19 +87,19 @@ public class LockService extends IntentService {
 
     private void checkData() {
         while (threadIsTerminate) {
-            //获取栈顶app的包名
+            //Paketname der vordersten App ermitteln
             String packageName = getLauncherTopApp(LockService.this, activityManager);
 
-            //判断包名打开解锁页面
+            //Entsperrseite anhand des Paketnamens öffnen
             if (lockState && !inWhiteList(packageName) && !TextUtils.isEmpty(packageName)) {
-                boolean isLockOffScreenTime = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_SCREEN_TIME, false); //是否开启暂时离开
-                boolean isLockOffScreen = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_SCREEN, false); //是否在手机屏幕关闭后再次锁定
+                boolean isLockOffScreenTime = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_SCREEN_TIME, false); //ob temporäres Verlassen aktiv
+                boolean isLockOffScreen = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_SCREEN, false); //ob nach Bildschirmabschaltung erneut sperren
                 savePkgName = SpUtil.getInstance().getString(AppConstants.LOCK_LAST_LOAD_PKG_NAME, "");
                 //Log.i("Server", "packageName = " + packageName + "  savePkgName = " + savePkgName);
-                //情况一  解锁后一段时间才再锁
+                //Fall 1: Erst nach einer Zeitspanne nach der Entsperrung wieder sperren
                 if (isLockOffScreenTime && !isLockOffScreen) {
-                    long time = SpUtil.getInstance().getLong(AppConstants.LOCK_CURR_MILLISENCONS, 0); //获取记录的时间
-                    long leaverTime = SpUtil.getInstance().getLong(AppConstants.LOCK_APART_MILLISENCONS, 0); //获取离开时间
+                    long time = SpUtil.getInstance().getLong(AppConstants.LOCK_CURR_MILLISENCONS, 0); //gespeicherte Zeit abrufen
+                    long leaverTime = SpUtil.getInstance().getLong(AppConstants.LOCK_APART_MILLISENCONS, 0); //Abwesenheitszeit abrufen
                     if (!TextUtils.isEmpty(savePkgName)) {
                         if (!TextUtils.isEmpty(packageName)) {
                             if (!savePkgName.equals(packageName)) { //
@@ -116,10 +116,10 @@ public class LockService extends IntentService {
                     }
                 }
 
-                //情况二  解锁后没关屏：退出应用后一段时间后再锁
+                //Fall 2: Nach Entsperrung ohne Bildschirmabschaltung: nach Verlassen der App nach einer Zeitspanne sperren
                 if (isLockOffScreenTime && isLockOffScreen) {
-                    long time = SpUtil.getInstance().getLong(AppConstants.LOCK_CURR_MILLISENCONS, 0); //获取记录的时间
-                    long leaverTime = SpUtil.getInstance().getLong(AppConstants.LOCK_APART_MILLISENCONS, 0); //获取离开时间
+                    long time = SpUtil.getInstance().getLong(AppConstants.LOCK_CURR_MILLISENCONS, 0); //gespeicherte Zeit abrufen
+                    long leaverTime = SpUtil.getInstance().getLong(AppConstants.LOCK_APART_MILLISENCONS, 0); //Abwesenheitszeit abrufen
                     if (!TextUtils.isEmpty(savePkgName)) {
                         if (!TextUtils.isEmpty(packageName)) {
                             if (!savePkgName.equals(packageName)) {
@@ -136,7 +136,7 @@ public class LockService extends IntentService {
                     }
                 }
 
-                //情况三 用户关屏后立马锁定，退出后也锁定
+                //Fall 3: Sofort nach Bildschirmabschaltung sperren, auch nach Verlassen sperren
                 if (!isLockOffScreenTime && isLockOffScreen) {
                     if (!TextUtils.isEmpty(savePkgName)) {
                         if (!TextUtils.isEmpty(packageName)) {
@@ -155,7 +155,7 @@ public class LockService extends IntentService {
                     }
                 }
 
-                //情况四 每次都锁
+                //Fall 4: Immer sperren
                 if (!isLockOffScreenTime && !isLockOffScreen) {
                     if (!TextUtils.isEmpty(savePkgName)) {
                         if (!TextUtils.isEmpty(packageName)) {
@@ -171,7 +171,7 @@ public class LockService extends IntentService {
                     }
                 }
 
-                // 查找各种的锁，若存在则判断逻辑
+                // Verschiedene Sperren suchen und Logik prüfen
                 if (mLockInfoManager.isLockedPackageName(packageName)) {
                     passwordLock(packageName);
                     continue;
@@ -188,7 +188,7 @@ public class LockService extends IntentService {
     }
 
     /**
-     * 白名单
+     * Whitelist
      */
     private boolean inWhiteList(String packageName) {
         return packageName.equals(AppConstants.APP_PACKAGE_NAME)
@@ -196,7 +196,7 @@ public class LockService extends IntentService {
     }
 
     /**
-     * 服务广播
+     * Dienst-Broadcast
      */
     public class ServiceReceiver extends BroadcastReceiver {
 
@@ -204,17 +204,17 @@ public class LockService extends IntentService {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
 
-            boolean isLockOffScreen = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_SCREEN, false); //是否在手机屏幕关闭后再次锁定
-            boolean isLockOffScreenTime = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_SCREEN_TIME, false); //是否在手机屏幕关闭后时间段后再次锁定
+            boolean isLockOffScreen = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_SCREEN, false); //ob nach Bildschirmabschaltung erneut sperren
+            boolean isLockOffScreenTime = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_SCREEN_TIME, false); //ob nach Bildschirmabschaltung Zeit-basierte Sperrung aktiv
 
             switch (action) {
-                case UNLOCK_ACTION:  //解锁后广播
-                    lastUnlockPackageName = intent.getStringExtra(LOCK_SERVICE_LASTAPP); //最后解锁的程序包名
-                    lastUnlockTimeSeconds = intent.getLongExtra(LOCK_SERVICE_LASTTIME, lastUnlockTimeSeconds); //最后解锁时间
+                case UNLOCK_ACTION:  //Broadcast nach Entsperrung
+                    lastUnlockPackageName = intent.getStringExtra(LOCK_SERVICE_LASTAPP); //Paketname der zuletzt entsperrten App
+                    lastUnlockTimeSeconds = intent.getLongExtra(LOCK_SERVICE_LASTTIME, lastUnlockTimeSeconds); //Zeitpunkt der letzten Entsperrung
                     break;
-                case Intent.ACTION_SCREEN_OFF: //屏幕关闭的广播
-                    SpUtil.getInstance().putLong(AppConstants.LOCK_CURR_MILLISENCONS, System.currentTimeMillis()); //记录屏幕关闭时间
-                    //情况三
+                case Intent.ACTION_SCREEN_OFF: //Broadcast bei Bildschirmabschaltung
+                    SpUtil.getInstance().putLong(AppConstants.LOCK_CURR_MILLISENCONS, System.currentTimeMillis()); //Zeitpunkt der Bildschirmabschaltung speichern
+                    //Fall 3
                     if (!isLockOffScreenTime && isLockOffScreen) {
                         String savePkgName = SpUtil.getInstance().getString(AppConstants.LOCK_LAST_LOAD_PKG_NAME, "");
                         if (!TextUtils.isEmpty(savePkgName)) {
@@ -229,7 +229,7 @@ public class LockService extends IntentService {
     }
 
     /**
-     * 获取栈顶应用包名
+     * Paketname der vordersten App ermitteln
      */
     public String getLauncherTopApp(Context context, ActivityManager activityManager) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -238,7 +238,7 @@ public class LockService extends IntentService {
                 return appTasks.get(0).topActivity.getPackageName();
             }
         } else {
-            //5.0以后需要用这方法
+            //ab Android 5.0 diese Methode verwenden
             UsageStatsManager sUsageStatsManager = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
             long endTime = System.currentTimeMillis();
             long beginTime = endTime - 10000;
@@ -259,7 +259,7 @@ public class LockService extends IntentService {
     }
 
     /**
-     * 获得属于桌面的应用的应用包名称
+     * Paketnamen der Launcher-Apps ermitteln
      */
     private List<String> getHomes() {
         List<String> names = new ArrayList<>();
@@ -274,7 +274,7 @@ public class LockService extends IntentService {
     }
 
     /**
-     * 转到解锁界面
+     * Zur Entsperrseite wechseln
      */
     private void passwordLock(String packageName) {
         LockApplication.getInstance().clearAllActivity();

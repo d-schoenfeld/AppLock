@@ -29,7 +29,7 @@
             android:layout_height="50dp"
             android:layout_toRightOf="@+id/btn_back"
             android:gravity="center"
-            android:text="应用锁"
+            android:text="App-Sperre"
             android:textColor="#2c2c2c"
             android:textSize="14sp"/>
 
@@ -60,7 +60,7 @@
             android:background="@drawable/bg_frame_search"
             android:drawableLeft="@drawable/ic_search"
             android:drawablePadding="10dp"
-            android:hint="搜索应用"
+            android:hint="App suchen"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColorHint="#9F9F9F"

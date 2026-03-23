@@ -3,7 +3,7 @@
           xmlns:tools="http://schemas.android.com/tools"
           package="com.lzx.lock">
 
-    <!--应用锁需要的权限-->
+    <!--Benötigte Berechtigungen für App-Sperre-->
     <uses-permission android:name="android.permission.GET_TASKS"/>
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
@@ -37,11 +37,11 @@
 
         <activity
             android:name=".module.pwd.CreatePwdActivity"
-            android:label="创建密码"
+            android:label="Passwort erstellen"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".module.lock.GestureSelfUnlockActivity"
-            android:label="解锁"
+            android:label="Entsperren"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".module.lock.GestureUnlockActivity"
@@ -53,15 +53,15 @@
             android:theme="@style/unlock_activity_style"/>
         <activity
             android:name=".module.setting.LockSettingActivity"
-            android:label="设置"
+            android:label="Einstellungen"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".module.lock.GestureCreateActivity"
-            android:label="创建图案锁"
+            android:label="Mustersperre erstellen"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".module.about.AboutMeActivity"
-            android:label="关于我"
+            android:label="Über mich"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".module.main.MainActivity"

@@ -6,7 +6,7 @@ import com.lzx.lock.R;
 
 /**
  * Created by lzx on 2017/1/8.
- * 图案锁的状态
+ * Zustandsklasse für die Mustersperre
  */
 
 public enum LockStage {

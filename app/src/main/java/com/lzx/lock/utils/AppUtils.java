@@ -12,10 +12,10 @@ public class AppUtils {
     public static void hideStatusBar(Window window, boolean enable) {
         WindowManager.LayoutParams p = window.getAttributes();
         if (enable)
-            //|=：或等于，取其一
+            //|=: ODER-Zuweisung, entweder oder
             p.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
         else
-            //&=：与等于，取其二同时满足，     ~ ： 取反
+            //&=: UND-Zuweisung, beide müssen erfüllt sein, ~ : bitweise Negation
             p.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         window.setAttributes(p);

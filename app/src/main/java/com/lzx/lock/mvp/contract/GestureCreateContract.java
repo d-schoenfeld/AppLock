@@ -14,29 +14,29 @@ import java.util.List;
 public interface GestureCreateContract {
 
     interface View extends BaseView<MainContract.Presenter> {
-        void updateUiStage(LockStage stage); //更新UI状态
+        void updateUiStage(LockStage stage); //UI-Status aktualisieren
 
-        void updateChosenPattern(List<LockPatternView.Cell> mChosenPattern); //更新密码
+        void updateChosenPattern(List<LockPatternView.Cell> mChosenPattern); //Passwort aktualisieren
 
-        void updateLockTip(String text,boolean isToast); //更新解锁提示
+        void updateLockTip(String text,boolean isToast); //Entsperrhinweis aktualisieren
 
         void setHeaderMessage(int headerMessage);
 
-        void lockPatternViewConfiguration(boolean patternEnabled, LockPatternView.DisplayMode displayMode);  //控件的一些配置
+        void lockPatternViewConfiguration(boolean patternEnabled, LockPatternView.DisplayMode displayMode);  //Widget-Konfiguration
 
-        void Introduction(); //控件状态（刚开始）
+        void Introduction(); //Widget-Status (Anfang)
 
-        void HelpScreen(); //帮助（错误多少次后可以启动帮助动画）
+        void HelpScreen(); //Hilfe (nach wie vielen Fehlern die Hilfsanimation startet)
 
-        void ChoiceTooShort(); //锁屏路径太短
+        void ChoiceTooShort(); //Entsperrmuster zu kurz
 
-        void moveToStatusTwo(); //转到第二步
+        void moveToStatusTwo(); //Zu Schritt 2 wechseln
 
-        void clearPattern(); //清空控件状态
+        void clearPattern(); //Widget-Status zurücksetzen
 
-        void ConfirmWrong(); //两次的路径不一样
+        void ConfirmWrong(); //Die zwei Muster stimmen nicht überein
 
-        void ChoiceConfirmed(); //成功绘制了2次路径
+        void ChoiceConfirmed(); //Muster zweimal erfolgreich gezeichnet
     }
 
     interface Presenter extends BasePresenter {

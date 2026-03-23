@@ -9,7 +9,7 @@ import android.util.DisplayMetrics;
 
 public class ScreenUtil {
     /**
-     * 获取屏幕高度
+     * Bildschirmhöhe ermitteln
      *
      * @param context
      * @return
@@ -20,7 +20,7 @@ public class ScreenUtil {
     }
 
     /**
-     * 获取屏幕宽度
+     * Bildschirmbreite ermitteln
      *
      * @param context
      * @return
@@ -31,7 +31,7 @@ public class ScreenUtil {
     }
 
     /**
-     * 获取屏幕的分辨率
+     * Bildschirmauflösung ermitteln
      *
      * @param context
      * @return
@@ -42,9 +42,9 @@ public class ScreenUtil {
     }
 
     /**
-     * 获取屏幕旋转方向
-     * @param context 上下文
-     * @return 屏幕方向 ORIENTATION_LANDSCAPE, ORIENTATION_PORTRAIT.
+     * Bildschirmausrichtung ermitteln
+     * @param context Kontext
+     * @return Bildschirmausrichtung ORIENTATION_LANDSCAPE, ORIENTATION_PORTRAIT.
      */
     public static int getDisplayOrient (Context context) {
         return context.getResources().getConfiguration().orientation;

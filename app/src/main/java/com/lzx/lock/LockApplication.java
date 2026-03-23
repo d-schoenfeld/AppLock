@@ -16,7 +16,7 @@ import java.util.List;
 public class LockApplication extends LitePalApplication {
 
     private static LockApplication application;
-    private static List<BaseActivity> activityList; //acticity管理
+    private static List<BaseActivity> activityList; //Activity-Verwaltung
 
     @Override
     public void onCreate() {

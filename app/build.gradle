@@ -17,9 +17,9 @@ android {
     }
     buildTypes {
         release {
-            zipAlignEnabled true //Zipalign优化
-            shrinkResources false //移除无用的resource文件
-            minifyEnabled false  //混淆
+            zipAlignEnabled true //Zipalign-Optimierung
+            shrinkResources false //Nicht verwendete Ressourcendateien entfernen
+            minifyEnabled false  //Obfuskierung
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -27,13 +27,13 @@ android {
         variant.outputs.each { output ->
             def outputFile = output.outputFile
             if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                //这里修改apk文件名
+                //APK-Dateiname anpassen
                 def fileName = "AppLock_v${defaultConfig.versionName}_${releaseTime()}.apk"
                 output.outputFile = new File(outputFile.parent, fileName)
             }
         }
     }
-    //忽略一些错误
+    //Einige Fehler ignorieren
     lintOptions {
         abortOnError true
     }
@@ -43,6 +43,6 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.android.support:design:25.0.0'
-    //数据库
+    //Datenbank
     compile 'org.litepal.android:core:1.4.1'
 }

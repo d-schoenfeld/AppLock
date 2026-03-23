@@ -68,7 +68,7 @@ public class Camera2Fragment extends Fragment {
     CameraCaptureSession mCameraSession;
     CameraCharacteristics mCameraCharacteristics;
     Ringtone ringtone;
-    //相机会话的监听器，通过他得到mCameraSession对象，这个对象可以用来发送预览和拍照请求
+    //Kamera-Session-Listener, über den das mCameraSession-Objekt empfangen wird, das Vorschau- und Fotoaufnahme-Anfragen senden kann
     private CameraCaptureSession.StateCallback mSessionStateCallBack = new CameraCaptureSession
             .StateCallback() {
         @Override
@@ -87,11 +87,11 @@ public class Camera2Fragment extends Fragment {
         }
     };
     private Surface surface;
-    //打开相机时候的监听器，通过他可以得到相机实例，这个实例可以创建请求建造者
+    //Listener beim Öffnen der Kamera, über den die Kamerainstanz empfangen wird, die Request-Builder erstellen kann
     private CameraDevice.StateCallback cameraOpenCallBack = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(CameraDevice cameraDevice) {
-            Log.d(TAG, "相机已经打开");
+            Log.d(TAG, "Kamera geöffnet");
             try {
                 mPreViewBuidler = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
                 SurfaceTexture texture = mTextureView.getSurfaceTexture();
@@ -107,12 +107,12 @@ public class Camera2Fragment extends Fragment {
 
         @Override
         public void onDisconnected(CameraDevice cameraDevice) {
-            Log.d(TAG, "相机连接断开");
+            Log.d(TAG, "Kameraverbindung getrennt");
         }
 
         @Override
         public void onError(CameraDevice cameraDevice, int i) {
-            Log.d(TAG, "相机打开失败");
+            Log.d(TAG, "Kamera konnte nicht geöffnet werden");
         }
     };
     private ImageReader.OnImageAvailableListener onImageAvaiableListener = new ImageReader
@@ -126,7 +126,7 @@ public class Camera2Fragment extends Fragment {
     private Rect maxZoomrect;
     private int maxRealRadio;
 
-    //预览图显示控件的监听器，可以监听这个surface的状态
+    //Listener für das Vorschau-Widget, überwacht den Zustand der Surface
     private TextureView.SurfaceTextureListener mSurfacetextlistener = new TextureView
             .SurfaceTextureListener() {
         @Override
@@ -140,10 +140,10 @@ public class Camera2Fragment extends Fragment {
             try {
                 mCameraCharacteristics = manager.getCameraCharacteristics(cameraid);
 
-                //画面传感器的面积，单位是像素。
+                //Sensorfläche des Bildes in Pixeln.
                 maxZoomrect = mCameraCharacteristics.get(CameraCharacteristics
                         .SENSOR_INFO_ACTIVE_ARRAY_SIZE);
-                //最大的数字缩放
+                //Maximaler digitaler Zoom
                 maxRealRadio = mCameraCharacteristics.get(CameraCharacteristics
                         .SCALER_AVAILABLE_MAX_DIGITAL_ZOOM).intValue();
                 picRect = new Rect(maxZoomrect);
@@ -167,7 +167,7 @@ public class Camera2Fragment extends Fragment {
                     return;
                 }
                 manager.openCamera(cameraid, cameraOpenCallBack, mHandler);
-                //设置点击拍照的监听
+                //Klick-Listener für Fotoaufnahme setzen
                 mButton.setOnTouchListener(onTouchListener);
             } catch (CameraAccessException e) {
                 e.printStackTrace();
@@ -198,14 +198,14 @@ public class Camera2Fragment extends Fragment {
                     try {
                         mCameraSession.setRepeatingRequest(initDngBuilder().build(), null, mHandler);
                     } catch (CameraAccessException e) {
-                        Toast.makeText(getActivity(), "请求相机权限被拒绝", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Kameraberechtigung verweigert", Toast.LENGTH_SHORT).show();
                     }
                     break;
                 case MotionEvent.ACTION_UP:
                     try {
                         updateCameraPreviewSession();
                     } catch (CameraAccessException e) {
-                        Toast.makeText(getActivity(), "请求相机权限被拒绝", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Kameraberechtigung verweigert", Toast.LENGTH_SHORT).show();
                     }
                     break;
             }
@@ -220,7 +220,7 @@ public class Camera2Fragment extends Fragment {
     }
 
     /**
-     * 设置连拍的参数
+     * Parameter für Serienaufnahme setzen
      *
      * @return
      */
@@ -237,18 +237,18 @@ public class Camera2Fragment extends Fragment {
             captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
             captureBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, (long) ((214735991 - 13231) / 2));
             captureBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, 0);
-            captureBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, (10000 - 100) / 2);//设置 ISO，感光度
+            captureBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, (10000 - 100) / 2);//ISO und Empfindlichkeit setzen
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 90);
-            //设置每秒30帧
+            //30 Bilder pro Sekunde setzen
             CameraManager cameraManager = (CameraManager) getActivity().getSystemService(Context.CAMERA_SERVICE);
             String cameraid = CameraCharacteristics.LENS_FACING_FRONT + "";
             CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraid);
             Range<Integer> fps[] = cameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES);
             captureBuilder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, fps[fps.length - 1]);
         } catch (CameraAccessException e) {
-            Toast.makeText(getActivity(), "请求相机权限被拒绝", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Kameraberechtigung verweigert", Toast.LENGTH_SHORT).show();
         } catch (NullPointerException e) {
-            Toast.makeText(getActivity(), "打开相机失败", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Kamera konnte nicht geöffnet werden", Toast.LENGTH_SHORT).show();
         }
         return captureBuilder;
     }
@@ -258,7 +258,7 @@ public class Camera2Fragment extends Fragment {
         public void onClick(View view) {
             try {
                 shootSound();
-                Log.d(TAG, "正在拍照");
+                Log.d(TAG, "Foto wird aufgenommen");
                 CaptureRequest.Builder builder = mCameraSession.getDevice().createCaptureRequest
                         (CameraDevice.TEMPLATE_STILL_CAPTURE);
                 builder.addTarget(mImageReader.getSurface());
@@ -275,13 +275,13 @@ public class Camera2Fragment extends Fragment {
         }
     };
     private View.OnTouchListener textTureOntuchListener = new View.OnTouchListener() {
-        //时时当前的zoom
+        //Aktueller Zoom
         public double zoom;
-        // 0<缩放比<mCameraCharacteristics.get(CameraCharacteristics
+        // 0 < Zoomfaktor < mCameraCharacteristics.get(CameraCharacteristics
         // .SCALER_AVAILABLE_MAX_DIGITAL_ZOOM).intValue();
-        //上次缩放前的zoom
+        //Zoom vor der letzten Skalierung
         public double lastzoom;
-        //两个手刚一起碰到手机屏幕的距离
+        //Abstand beider Finger beim ersten Berühren des Bildschirms
         public double lenth;
         int count;
 
@@ -334,7 +334,7 @@ public class Camera2Fragment extends Fragment {
             return true;
         }
     };
-    //相机缩放相关
+    //Kamerazoom-Einstellungen
     private Rect picRect;
 
 
@@ -345,13 +345,13 @@ public class Camera2Fragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_camera2, null);
         findview(v);
         mUIHandler = new Handler(new InnerCallBack());
-        //初始化拍照的声音
+        //Kamerasound initialisieren
         ringtone = RingtoneManager.getRingtone(getActivity(), Uri.parse
                 ("file:///system/media/audio/ui/camera_click.ogg"));
         AudioAttributes.Builder attr = new AudioAttributes.Builder();
         attr.setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION);
         ringtone.setAudioAttributes(attr.build());
-        //初始化相机布局
+        //Kamera-Layout initialisieren
         mTextureView.setSurfaceTextureListener(mSurfacetextlistener);
         mTextureView.setOnTouchListener(textTureOntuchListener);
         return v;
@@ -373,13 +373,13 @@ public class Camera2Fragment extends Fragment {
         mThumbnail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(), "别戳了，那个页面还没写", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Diese Seite ist noch nicht implementiert", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     /**
-     * 播放系统的拍照的声音
+     * Systemklang für Fotoaufnahme abspielen
      */
     public void shootSound() {
         ringtone.stop();
@@ -395,7 +395,7 @@ public class Camera2Fragment extends Fragment {
 
         @Override
         public void run() {
-            Log.d(TAG, "正在保存图片");
+            Log.d(TAG, "Bild wird gespeichert");
             File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
                     .getAbsoluteFile();
             if (!dir.exists()) {
@@ -413,7 +413,7 @@ public class Camera2Fragment extends Fragment {
                 Bitmap bm = BitmapFactory.decodeByteArray(buff, 0, buff.length, ontain);
                 Message.obtain(mUIHandler, SETIMAGE, bm).sendToTarget();
                 outputStream.write(buff);
-                Log.d(TAG, "保存图片完成");
+                Log.d(TAG, "Bild gespeichert");
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {

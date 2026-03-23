@@ -23,10 +23,10 @@ import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
 /**
- * 状态栏工具类
- * 状态栏两种模式(Android 4.4以上)
- * 1.沉浸式全屏模式
- * 2.状态栏着色模式
+ * Hilfklasse für die Statusleiste
+ * Zwei Modi der Statusleiste (ab Android 4.4)
+ * 1. Immersiver Vollbildmodus
+ * 2. Einfärbungsmodus der Statusleiste
  */
 public class SystemBarHelper {
 
@@ -36,10 +36,10 @@ public class SystemBarHelper {
 
 
   /**
-   * Android4.4以上的状态栏着色
+   * Statusleisteneinfärbung ab Android 4.4
    *
-   * @param activity Activity对象
-   * @param statusBarColor 状态栏颜色
+   * @param activity Activity-Objekt
+   * @param statusBarColor Statusleistenfarbe
    */
   public static void tintStatusBar(Activity activity, @ColorInt int statusBarColor) {
 
@@ -48,11 +48,11 @@ public class SystemBarHelper {
 
 
   /**
-   * Android4.4以上的状态栏着色
+   * Statusleisteneinfärbung ab Android 4.4
    *
-   * @param activity Activity对象
-   * @param statusBarColor 状态栏颜色
-   * @param alpha 透明栏透明度[0.0-1.0]
+   * @param activity Activity-Objekt
+   * @param statusBarColor Statusleistenfarbe
+   * @param alpha Transparenz der Statusleiste [0.0-1.0]
    */
   public static void tintStatusBar(Activity activity,
                                    @ColorInt int statusBarColor,
@@ -63,10 +63,10 @@ public class SystemBarHelper {
 
 
   /**
-   * Android4.4以上的状态栏着色
+   * Statusleisteneinfärbung ab Android 4.4
    *
-   * @param window 一般都是用于Activity的window,也可以是其他的例如Dialog,DialogFragment
-   * @param statusBarColor 状态栏颜色
+   * @param window Normalerweise das Activity-Fenster, kann aber auch Dialog oder DialogFragment sein
+   * @param statusBarColor Statusleistenfarbe
    */
   public static void tintStatusBar(Window window, @ColorInt int statusBarColor) {
 
@@ -75,11 +75,11 @@ public class SystemBarHelper {
 
 
   /**
-   * Android4.4以上的状态栏着色
+   * Statusleisteneinfärbung ab Android 4.4
    *
-   * @param window 一般都是用于Activity的window,也可以是其他的例如Dialog,DialogFragment
-   * @param statusBarColor 状态栏颜色
-   * @param alpha 透明栏透明度[0.0-1.0]
+   * @param window Normalerweise das Activity-Fenster, kann aber auch Dialog oder DialogFragment sein
+   * @param statusBarColor Statusleistenfarbe
+   * @param alpha Transparenz der Statusleiste [0.0-1.0]
    */
   public static void tintStatusBar(Window window,
                                    @ColorInt int statusBarColor,
@@ -111,14 +111,14 @@ public class SystemBarHelper {
 
 
   /**
-   * Android4.4以上的状态栏着色(针对于DrawerLayout)
-   * 注:
-   * 1.如果出现界面展示不正确,删除布局中所有fitsSystemWindows属性,尤其是DrawerLayout的fitsSystemWindows属性
-   * 2.可以版本判断在5.0以上不调用该方法,使用系统自带
+   * Statusleisteneinfärbung ab Android 4.4(für DrawerLayout)
+   * Hinweis:
+   * 1. Bei falscher Darstellung alle fitsSystemWindows-Attribute im Layout entfernen, insbesondere beim DrawerLayout
+   * 2. Ab Android 5.0 kann stattdessen die systemeigene Methode verwendet werden
    *
-   * @param activity Activity对象
-   * @param drawerLayout DrawerLayout对象
-   * @param statusBarColor 状态栏颜色
+   * @param activity Activity-Objekt
+   * @param drawerLayout DrawerLayout-Objekt
+   * @param statusBarColor Statusleistenfarbe
    */
   public static void tintStatusBarForDrawer(Activity activity, DrawerLayout drawerLayout,
                                             @ColorInt int statusBarColor) {
@@ -128,15 +128,15 @@ public class SystemBarHelper {
 
 
   /**
-   * Android4.4以上的状态栏着色(针对于DrawerLayout)
-   * 注:
-   * 1.如果出现界面展示不正确,删除布局中所有fitsSystemWindows属性,尤其是DrawerLayout的fitsSystemWindows属性
-   * 2.可以版本判断在5.0以上不调用该方法,使用系统自带
+   * Statusleisteneinfärbung ab Android 4.4(für DrawerLayout)
+   * Hinweis:
+   * 1. Bei falscher Darstellung alle fitsSystemWindows-Attribute im Layout entfernen, insbesondere beim DrawerLayout
+   * 2. Ab Android 5.0 kann stattdessen die systemeigene Methode verwendet werden
    *
-   * @param activity Activity对象
-   * @param drawerLayout DrawerLayout对象
-   * @param statusBarColor 状态栏颜色
-   * @param alpha 透明栏透明度[0.0-1.0]
+   * @param activity Activity-Objekt
+   * @param drawerLayout DrawerLayout-Objekt
+   * @param statusBarColor Statusleistenfarbe
+   * @param alpha Transparenz der Statusleiste [0.0-1.0]
    */
   public static void tintStatusBarForDrawer(Activity activity, DrawerLayout drawerLayout,
                                             @ColorInt int statusBarColor,
@@ -175,13 +175,13 @@ public class SystemBarHelper {
 
 
   /**
-   * Android4.4以上的沉浸式全屏模式
-   * 注:
-   * 1.删除fitsSystemWindows属性:Android5.0以上使用该方法如果出现界面展示不正确,删除布局中所有fitsSystemWindows属性
-   * 或者调用forceFitsSystemWindows方法
-   * 2.不删除fitsSystemWindows属性:也可以区别处理,Android5.0以上使用自己的方式实现,不调用该方法
+   * Immersiver Vollbildmodus ab Android 4.4
+   * Hinweis:
+   * 1. fitsSystemWindows-Attribut entfernen: Falls die Darstellung ab Android 5.0 fehlerhaft ist, alle fitsSystemWindows-Attribute im Layout entfernen
+   * oder die Methode forceFitsSystemWindows aufrufen
+   * 2. fitsSystemWindows-Attribut behalten: Ab Android 5.0 eigene Implementierung verwenden, diese Methode nicht aufrufen
    *
-   * @param activity Activity对象
+   * @param activity Activity-Objekt
    */
   public static void immersiveStatusBar(Activity activity) {
 
@@ -190,14 +190,14 @@ public class SystemBarHelper {
 
 
   /**
-   * Android4.4以上的沉浸式全屏模式
-   * 注:
-   * 1.删除fitsSystemWindows属性:Android5.0以上使用该方法如果出现界面展示不正确,删除布局中所有fitsSystemWindows属性
-   * 或者调用forceFitsSystemWindows方法
-   * 2.不删除fitsSystemWindows属性:也可以区别处理,Android5.0以上使用自己的方式实现,不调用该方法
+   * Immersiver Vollbildmodus ab Android 4.4
+   * Hinweis:
+   * 1. fitsSystemWindows-Attribut entfernen: Falls die Darstellung ab Android 5.0 fehlerhaft ist, alle fitsSystemWindows-Attribute im Layout entfernen
+   * oder die Methode forceFitsSystemWindows aufrufen
+   * 2. fitsSystemWindows-Attribut behalten: Ab Android 5.0 eigene Implementierung verwenden, diese Methode nicht aufrufen
    *
-   * @param activity Activity对象
-   * @param alpha 透明栏透明度[0.0-1.0]
+   * @param activity Activity-Objekt
+   * @param alpha Transparenz der Statusleiste [0.0-1.0]
    */
   public static void immersiveStatusBar(Activity activity,
                                         @FloatRange(from = 0.0, to = 1.0) float alpha) {
@@ -207,13 +207,13 @@ public class SystemBarHelper {
 
 
   /**
-   * Android4.4以上的沉浸式全屏模式
-   * 注:
-   * 1.删除fitsSystemWindows属性:Android5.0以上使用该方法如果出现界面展示不正确,删除布局中所有fitsSystemWindows属性
-   * 或者调用forceFitsSystemWindows方法
-   * 2.不删除fitsSystemWindows属性:也可以区别处理,Android5.0以上使用自己的方式实现,不调用该方法
+   * Immersiver Vollbildmodus ab Android 4.4
+   * Hinweis:
+   * 1. fitsSystemWindows-Attribut entfernen: Falls die Darstellung ab Android 5.0 fehlerhaft ist, alle fitsSystemWindows-Attribute im Layout entfernen
+   * oder die Methode forceFitsSystemWindows aufrufen
+   * 2. fitsSystemWindows-Attribut behalten: Ab Android 5.0 eigene Implementierung verwenden, diese Methode nicht aufrufen
    *
-   * @param window 一般都是用于Activity的window,也可以是其他的例如Dialog,DialogFragment
+   * @param window Normalerweise das Activity-Fenster, kann aber auch Dialog oder DialogFragment sein
    */
   public static void immersiveStatusBar(Window window) {
 
@@ -222,14 +222,14 @@ public class SystemBarHelper {
 
 
   /**
-   * Android4.4以上的沉浸式全屏模式
-   * 注:
-   * 1.删除fitsSystemWindows属性:Android5.0以上使用该方法如果出现界面展示不正确,删除布局中所有fitsSystemWindows属性
-   * 或者调用forceFitsSystemWindows方法
-   * 2.不删除fitsSystemWindows属性:也可以区别处理,Android5.0以上使用自己的方式实现,不调用该方法
+   * Immersiver Vollbildmodus ab Android 4.4
+   * Hinweis:
+   * 1. fitsSystemWindows-Attribut entfernen: Falls die Darstellung ab Android 5.0 fehlerhaft ist, alle fitsSystemWindows-Attribute im Layout entfernen
+   * oder die Methode forceFitsSystemWindows aufrufen
+   * 2. fitsSystemWindows-Attribut behalten: Ab Android 5.0 eigene Implementierung verwenden, diese Methode nicht aufrufen
    *
-   * @param window 一般都是用于Activity的window,也可以是其他的例如Dialog,DialogFragment
-   * @param alpha 透明栏透明度[0.0-1.0]
+   * @param window Normalerweise das Activity-Fenster, kann aber auch Dialog oder DialogFragment sein
+   * @param alpha Transparenz der Statusleiste [0.0-1.0]
    */
   public static void immersiveStatusBar(Window window,
                                         @FloatRange(from = 0.0, to = 1.0) float alpha) {
@@ -268,7 +268,7 @@ public class SystemBarHelper {
 
 
   /**
-   * 设置状态栏darkMode,字体颜色及icon变黑(目前支持MIUI6以上,Flyme4以上,Android M以上)
+   * StatusBar-DarkMode setzen, Schriftfarbe und Icons schwärzen (unterstützt MIUI6+, Flyme4+, Android M+)
    */
   public static void setStatusBarDarkMode(Activity activity) {
 
@@ -277,7 +277,7 @@ public class SystemBarHelper {
 
 
   /**
-   * 设置状态栏darkMode,字体颜色及icon变黑(目前支持MIUI6以上,Flyme4以上,Android M以上)
+   * StatusBar-DarkMode setzen, Schriftfarbe und Icons schwärzen (unterstützt MIUI6+, Flyme4+, Android M+)
    */
   public static void setStatusBarDarkMode(Window window) {
 
@@ -294,7 +294,7 @@ public class SystemBarHelper {
 
 
   /**
-   * android 6.0设置字体颜色
+   * Android 6.0: Schriftfarbe setzen
    */
   @TargetApi(Build.VERSION_CODES.M)
   public static void setStatusBarDarkModeForM(Window window) {
@@ -310,7 +310,7 @@ public class SystemBarHelper {
 
 
   /**
-   * 设置Flyme4+的darkMode,darkMode时候字体颜色及icon变黑
+   * DarkMode für Flyme4+ setzen, im DarkMode werden Schriftfarbe und Icons schwarz
    * http://open-wiki.flyme.cn/index.php?title=Flyme%E7%B3%BB%E7%BB%9FAPI
    */
   public static boolean setStatusBarDarkModeForFlyme4(Window window, boolean dark) {
@@ -345,7 +345,7 @@ public class SystemBarHelper {
 
 
   /**
-   * 设置MIUI6+的状态栏是否为darkMode,darkMode时候字体颜色及icon变黑
+   * DarkMode der Statusleiste für MIUI6+ setzen, im DarkMode werden Schriftfarbe und Icons schwarz
    * http://dev.xiaomi.com/doc/p=4769/
    */
   public static void setStatusBarDarkModeForMIUI6(Window window, boolean darkmode) {
@@ -365,7 +365,7 @@ public class SystemBarHelper {
 
 
   /**
-   * 创建假的状态栏View
+   * Gefälschte Statusleisten-View erstellen
    */
   private static void setStatusBar(ViewGroup container, @ColorInt
       int statusBarColor, boolean visible, boolean addToFirst) {
@@ -391,7 +391,7 @@ public class SystemBarHelper {
 
 
   /**
-   * 创建假的状态栏View
+   * Gefälschte Statusleisten-View erstellen
    */
   private static void setStatusBar(ViewGroup container,
                                    @ColorInt int statusBarColor, boolean visible) {
@@ -401,7 +401,7 @@ public class SystemBarHelper {
 
 
   /**
-   * 创建假的透明栏
+   * Gefälschte transparente Leiste erstellen
    */
   private static void setTranslucentView(ViewGroup container,
                                          @FloatRange(from = 0.0, to = 1.0) float alpha) {
@@ -422,7 +422,7 @@ public class SystemBarHelper {
 
 
   /**
-   * 获取状态栏高度
+   * Höhe der Statusleiste ermitteln
    */
   public static int getStatusBarHeight(Context context) {
 
@@ -436,7 +436,7 @@ public class SystemBarHelper {
 
 
   /**
-   * 判断是否Flyme4以上
+   * Prüfen ob Flyme4 oder höher
    */
   public static boolean isFlyme4Later() {
 
@@ -448,7 +448,7 @@ public class SystemBarHelper {
 
 
   /**
-   * 判断是否为MIUI6以上
+   * Prüfen ob MIUI6 oder höher
    */
   public static boolean isMIUI6Later() {
 
@@ -466,13 +466,13 @@ public class SystemBarHelper {
 
 
   /**
-   * 增加View的高度以及paddingTop,增加的值为状态栏高度.一般是在沉浸式全屏给ToolBar用的
+   * Höhe und paddingTop der View um die Statusleistenhöhe erhöhen. Wird typischerweise für die Toolbar im Vollbildmodus verwendet
    */
   public static void setHeightAndPadding(Context context, View view) {
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
       ViewGroup.LayoutParams lp = view.getLayoutParams();
-      lp.height += getStatusBarHeight(context);//增高
+      lp.height += getStatusBarHeight(context);//Höhe erhöhen
       view.setPadding(view.getPaddingLeft(), view.getPaddingTop() + getStatusBarHeight(context),
           view.getPaddingRight(), view.getPaddingBottom());
     }
@@ -480,7 +480,7 @@ public class SystemBarHelper {
 
 
   /**
-   * 增加View的paddingTop,增加的值为状态栏高度
+   * paddingTop der View um die Statusleistenhöhe erhöhen
    */
   public static void setPadding(Context context, View view) {
 
@@ -492,7 +492,7 @@ public class SystemBarHelper {
 
 
   /**
-   * 强制rootView下面的子View的FitsSystemWindows为false
+   * Alle FitsSystemWindows-Attribute der untergeordneten Views von rootView auf false setzen
    */
   public static void forceFitsSystemWindows(Activity activity) {
 
@@ -501,7 +501,7 @@ public class SystemBarHelper {
 
 
   /**
-   * 强制rootView下面的子View的FitsSystemWindows为false
+   * Alle FitsSystemWindows-Attribute der untergeordneten Views von rootView auf false setzen
    */
   public static void forceFitsSystemWindows(Window window) {
 
@@ -511,7 +511,7 @@ public class SystemBarHelper {
 
 
   /**
-   * 强制rootView下面的子View的FitsSystemWindows为false
+   * Alle FitsSystemWindows-Attribute der untergeordneten Views von rootView auf false setzen
    */
   public static void forceFitsSystemWindows(ViewGroup viewGroup) {
 
