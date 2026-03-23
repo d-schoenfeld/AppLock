@@ -138,9 +138,11 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
                 boolean isLockAutoScreen = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_SCREEN, false);
                 if (isLockAutoScreen) {
                     SpUtil.getInstance().putBoolean(AppConstants.LOCK_AUTO_SCREEN, false);
+                    LockService.sLockAutoScreen = false; //Statische Variable aktualisieren
                     mLockScreenSwitch.setText("Aus");
                 } else {
                     SpUtil.getInstance().putBoolean(AppConstants.LOCK_AUTO_SCREEN, true);
+                    LockService.sLockAutoScreen = true; //Statische Variable aktualisieren
                     mLockScreenSwitch.setText("Ein");
                 }
                 break;
@@ -188,11 +190,15 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
                     SpUtil.getInstance().putString(AppConstants.LOCK_APART_TITLE, info.getTitle());
                     SpUtil.getInstance().putLong(AppConstants.LOCK_APART_MILLISENCONS, 0L);
                     SpUtil.getInstance().putBoolean(AppConstants.LOCK_AUTO_SCREEN_TIME, false);
+                    LockService.sLockApartMilliseconds = 0L; //Statische Variable aktualisieren
+                    LockService.sLockAutoScreenTime = false; //Statische Variable aktualisieren
                 } else {
                     mLockTime.setText(info.getTitle());
                     SpUtil.getInstance().putString(AppConstants.LOCK_APART_TITLE, info.getTitle());
                     SpUtil.getInstance().putLong(AppConstants.LOCK_APART_MILLISENCONS, info.getTime());
                     SpUtil.getInstance().putBoolean(AppConstants.LOCK_AUTO_SCREEN_TIME, true);
+                    LockService.sLockApartMilliseconds = info.getTime(); //Statische Variable aktualisieren
+                    LockService.sLockAutoScreenTime = true; //Statische Variable aktualisieren
                 }
                 dialog.dismiss();
             }

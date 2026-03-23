@@ -64,10 +64,23 @@ public class LockService extends Service {
     public static boolean isActionLock = false;
     public String savePkgName;
 
+    // Globale statische Variablen als Cache für häufig gelesene SharedPreferences-Werte
+    public static volatile boolean sLockAutoScreen = false;
+    public static volatile boolean sLockAutoScreenTime = false;
+    public static volatile long sLockCurrMilliseconds = 0;
+    public static volatile long sLockApartMilliseconds = 0;
+    public static volatile String sLastLoadPkgName = "";
+
     @Override
     public void onCreate() {
         super.onCreate();
         lockState = SpUtil.getInstance().getBoolean(AppConstants.LOCK_STATE);
+        // Statische Variablen beim Start aus den SharedPreferences initialisieren
+        sLockAutoScreen = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_SCREEN, false);
+        sLockAutoScreenTime = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_SCREEN_TIME, false);
+        sLockCurrMilliseconds = SpUtil.getInstance().getLong(AppConstants.LOCK_CURR_MILLISENCONS, 0);
+        sLockApartMilliseconds = SpUtil.getInstance().getLong(AppConstants.LOCK_APART_MILLISENCONS, 0);
+        sLastLoadPkgName = SpUtil.getInstance().getString(AppConstants.LOCK_LAST_LOAD_PKG_NAME, "");
         mLockInfoManager = new CommLockInfoManager(this);
         activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
 
@@ -99,14 +112,14 @@ public class LockService extends Service {
 
             //Entsperrseite anhand des Paketnamens öffnen
             if (lockState && !inWhiteList(packageName) && !TextUtils.isEmpty(packageName)) {
-                boolean isLockOffScreenTime = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_SCREEN_TIME, false); //ob temporäres Verlassen aktiv
-                boolean isLockOffScreen = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_SCREEN, false); //ob nach Bildschirmabschaltung erneut sperren
-                savePkgName = SpUtil.getInstance().getString(AppConstants.LOCK_LAST_LOAD_PKG_NAME, "");
+                boolean isLockOffScreenTime = sLockAutoScreenTime; //ob temporäres Verlassen aktiv
+                boolean isLockOffScreen = sLockAutoScreen; //ob nach Bildschirmabschaltung erneut sperren
+                savePkgName = sLastLoadPkgName;
                 //Log.i("Server", "packageName = " + packageName + "  savePkgName = " + savePkgName);
                 //Fall 1: Erst nach einer Zeitspanne nach der Entsperrung wieder sperren
                 if (isLockOffScreenTime && !isLockOffScreen) {
-                    long time = SpUtil.getInstance().getLong(AppConstants.LOCK_CURR_MILLISENCONS, 0); //gespeicherte Zeit abrufen
-                    long leaverTime = SpUtil.getInstance().getLong(AppConstants.LOCK_APART_MILLISENCONS, 0); //Abwesenheitszeit abrufen
+                    long time = sLockCurrMilliseconds; //gespeicherte Zeit abrufen
+                    long leaverTime = sLockApartMilliseconds; //Abwesenheitszeit abrufen
                     if (!TextUtils.isEmpty(savePkgName)) {
                         if (!TextUtils.isEmpty(packageName)) {
                             if (!savePkgName.equals(packageName)) { //
@@ -125,8 +138,8 @@ public class LockService extends Service {
 
                 //Fall 2: Nach Entsperrung ohne Bildschirmabschaltung: nach Verlassen der App nach einer Zeitspanne sperren
                 if (isLockOffScreenTime && isLockOffScreen) {
-                    long time = SpUtil.getInstance().getLong(AppConstants.LOCK_CURR_MILLISENCONS, 0); //gespeicherte Zeit abrufen
-                    long leaverTime = SpUtil.getInstance().getLong(AppConstants.LOCK_APART_MILLISENCONS, 0); //Abwesenheitszeit abrufen
+                    long time = sLockCurrMilliseconds; //gespeicherte Zeit abrufen
+                    long leaverTime = sLockApartMilliseconds; //Abwesenheitszeit abrufen
                     if (!TextUtils.isEmpty(savePkgName)) {
                         if (!TextUtils.isEmpty(packageName)) {
                             if (!savePkgName.equals(packageName)) {
@@ -211,8 +224,8 @@ public class LockService extends Service {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
 
-            boolean isLockOffScreen = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_SCREEN, false); //ob nach Bildschirmabschaltung erneut sperren
-            boolean isLockOffScreenTime = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_SCREEN_TIME, false); //ob nach Bildschirmabschaltung Zeit-basierte Sperrung aktiv
+            boolean isLockOffScreen = sLockAutoScreen; //ob nach Bildschirmabschaltung erneut sperren
+            boolean isLockOffScreenTime = sLockAutoScreenTime; //ob nach Bildschirmabschaltung Zeit-basierte Sperrung aktiv
 
             switch (action) {
                 case UNLOCK_ACTION:  //Broadcast nach Entsperrung
@@ -220,10 +233,12 @@ public class LockService extends Service {
                     lastUnlockTimeSeconds = intent.getLongExtra(LOCK_SERVICE_LASTTIME, lastUnlockTimeSeconds); //Zeitpunkt der letzten Entsperrung
                     break;
                 case Intent.ACTION_SCREEN_OFF: //Broadcast bei Bildschirmabschaltung
-                    SpUtil.getInstance().putLong(AppConstants.LOCK_CURR_MILLISENCONS, System.currentTimeMillis()); //Zeitpunkt der Bildschirmabschaltung speichern
+                    long screenOffTime = System.currentTimeMillis();
+                    SpUtil.getInstance().putLong(AppConstants.LOCK_CURR_MILLISENCONS, screenOffTime); //Zeitpunkt der Bildschirmabschaltung speichern
+                    sLockCurrMilliseconds = screenOffTime; //Statische Variable aktualisieren
                     //Fall 3
                     if (!isLockOffScreenTime && isLockOffScreen) {
-                        String savePkgName = SpUtil.getInstance().getString(AppConstants.LOCK_LAST_LOAD_PKG_NAME, "");
+                        String savePkgName = sLastLoadPkgName;
                         if (!TextUtils.isEmpty(savePkgName)) {
                             if (isActionLock) {
                                 mLockInfoManager.lockCommApplication(lastUnlockPackageName);
