@@ -1,7 +1,7 @@
 package com.lzx.lock.service;
 
 import android.app.ActivityManager;
-import android.app.IntentService;
+import android.app.Service;
 import android.app.usage.UsageEvents;
 import android.app.usage.UsageStatsManager;
 import android.content.BroadcastReceiver;
@@ -10,10 +10,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.lzx.lock.LockApplication;
 import com.lzx.lock.base.AppConstants;
@@ -28,10 +31,9 @@ import java.util.List;
  * Created by xian on 2017/2/17.
  */
 
-public class LockService extends IntentService {
-    public LockService() {
-        super("LockService");
-    }
+public class LockService extends Service {
+
+    private AtomicBoolean mIsServiceDestroyed = new AtomicBoolean(false);
 
     @Nullable
     @Override
@@ -39,9 +41,11 @@ public class LockService extends IntentService {
         return null;
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_STICKY;
+    }
 
-
-    public boolean threadIsTerminate = false; //ob Schleife aktiv
 
     public static final String UNLOCK_ACTION = "UNLOCK_ACTION";
     public static final String LOCK_SERVICE_LASTTIME = "LOCK_SERVICE_LASTTIME";
@@ -76,17 +80,20 @@ public class LockService extends IntentService {
         registerReceiver(mServiceReceiver, filter);
 
         //Thread zum Prüfen der Bildschirmsperre starten
-        threadIsTerminate = true;
+        mIsServiceDestroyed.set(false);
+        AsyncTask.SERIAL_EXECUTOR.execute(new ServiceWorker());
 
     }
 
-    @Override
-    protected void onHandleIntent(Intent intent) {
-        checkData();
+    private class ServiceWorker implements Runnable {
+        @Override
+        public void run() {
+            checkData();
+        }
     }
 
     private void checkData() {
-        while (threadIsTerminate) {
+        while (!mIsServiceDestroyed.get()) {
             //Paketname der vordersten App ermitteln
             String packageName = getLauncherTopApp(LockService.this, activityManager);
 
@@ -288,8 +295,8 @@ public class LockService extends IntentService {
 
     @Override
     public void onDestroy() {
+        mIsServiceDestroyed.set(true);
         super.onDestroy();
-        threadIsTerminate = false;
         unregisterReceiver(mServiceReceiver);
     }
 }
