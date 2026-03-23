@@ -88,7 +88,7 @@ public class GestureSelfUnlockActivity extends BaseActivity {
                     } else if (actionFrom.equals(AppConstants.LOCK_FROM_UNLOCK)) {
                         mManager.setIsUnLockThisApp(pkgName, true);
                         mManager.unlockCommApplication(pkgName);
-                        sendBroadcast(new Intent(GestureUnlockActivity.FINISH_UNLOCK_THIS_APP));
+                        sendBroadcast(new Intent(UnlockView.FINISH_UNLOCK_THIS_APP));
                         finish();
                     }
                 } else {
