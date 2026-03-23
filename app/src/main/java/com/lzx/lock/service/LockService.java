@@ -18,10 +18,9 @@ import android.text.TextUtils;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.lzx.lock.LockApplication;
 import com.lzx.lock.base.AppConstants;
 import com.lzx.lock.db.CommLockInfoManager;
-import com.lzx.lock.module.lock.GestureUnlockActivity;
+import com.lzx.lock.module.lock.UnlockView;
 import com.lzx.lock.utils.SpUtil;
 
 import java.util.ArrayList;
@@ -63,6 +62,7 @@ public class LockService extends Service {
 
     public static boolean isActionLock = false;
     public String savePkgName;
+    private UnlockView mUnlockView;
 
     // Globale statische Variablen als Cache für häufig gelesene SharedPreferences-Werte
     public static volatile boolean sLockAutoScreen = false;
@@ -83,6 +83,8 @@ public class LockService extends Service {
         sLastLoadPkgName = SpUtil.getInstance().getString(AppConstants.LOCK_LAST_LOAD_PKG_NAME, "");
         mLockInfoManager = new CommLockInfoManager(this);
         activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+
+        mUnlockView = new UnlockView(this);
 
         //Broadcast registrieren
         mServiceReceiver = new ServiceReceiver();
@@ -299,13 +301,9 @@ public class LockService extends Service {
      * Zur Entsperrseite wechseln
      */
     private void passwordLock(String packageName) {
-        LockApplication.getInstance().clearAllActivity();
-        Intent intent = new Intent(this, GestureUnlockActivity.class);
-
-        intent.putExtra(AppConstants.LOCK_PACKAGE_NAME, packageName);
-        intent.putExtra(AppConstants.LOCK_FROM, AppConstants.LOCK_FROM_FINISH);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        if (!mUnlockView.isShowing()) {
+            mUnlockView.showUnLockView(packageName);
+        }
     }
 
     @Override
