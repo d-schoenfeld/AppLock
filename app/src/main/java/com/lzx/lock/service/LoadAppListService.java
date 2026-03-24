@@ -62,8 +62,7 @@ public class LoadAppListService extends IntentService {
             List<CommLockInfo> dbList = mLockInfoManager.getAllCommLockInfos(); //Datenbankliste abrufen
             //App-Liste verarbeiten
             for (ResolveInfo resolveInfo : resolveInfos) {
-                if (!resolveInfo.activityInfo.packageName.equals(AppConstants.APP_PACKAGE_NAME) &&
-                        !resolveInfo.activityInfo.packageName.equals("com.android.settings")) {
+                if (!resolveInfo.activityInfo.packageName.equals(AppConstants.APP_PACKAGE_NAME)) {
                     appList.add(resolveInfo);
                 }
             }

@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -144,6 +145,9 @@ public class UnlockView extends FrameLayout {
      * Entsperrungsansicht öffnen
      */
     public void showUnLockView(final String packageName) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(mContext)) {
+            return;
+        }
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -161,7 +165,13 @@ public class UnlockView extends FrameLayout {
                     mPinUnlockSection.setVisibility(View.GONE);
                 }
                 if (!isShowing()) {
-                    mWindowManager.addView(UnlockView.this, mLayoutParams);
+                    try {
+                        mWindowManager.addView(UnlockView.this, mLayoutParams);
+                    } catch (WindowManager.BadTokenException e) {
+                        e.printStackTrace();
+                    } catch (SecurityException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });

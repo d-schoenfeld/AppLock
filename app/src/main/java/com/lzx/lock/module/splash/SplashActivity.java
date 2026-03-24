@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.ImageView;
@@ -201,6 +203,19 @@ public class SplashActivity extends BaseActivity {
                 }
             });
         } else {
+            checkOverlayPermission();
+        }
+    }
+
+    /**
+     * Berechtigung zum Einblenden über anderen Apps prüfen und ggf. anfordern
+     */
+    private void checkOverlayPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent, RESULT_ACTION_MANAGE_OVERLAY_PERMISSION);
+        } else {
             gotoCreatePwdActivity();
         }
     }
@@ -210,9 +225,16 @@ public class SplashActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RESULT_ACTION_USAGE_ACCESS_SETTINGS) {
             if (LockUtil.isStatAccessPermissionSet(SplashActivity.this)) {
-                gotoCreatePwdActivity();
+                checkOverlayPermission();
             } else {
                 ToastUtil.showToast("Keine Berechtigung");
+                finish();
+            }
+        } else if (requestCode == RESULT_ACTION_MANAGE_OVERLAY_PERMISSION) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)) {
+                gotoCreatePwdActivity();
+            } else {
+                ToastUtil.showToast("Berechtigung fehlt: Bitte erlauben Sie das Einblenden über anderen Apps in den Einstellungen");
                 finish();
             }
         }

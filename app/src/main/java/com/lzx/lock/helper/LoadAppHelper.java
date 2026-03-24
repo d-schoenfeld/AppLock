@@ -187,7 +187,6 @@ public class LoadAppHelper {
      */
     private static boolean isFilterOutApps(String packageName) {
         return packageName.equals(AppConstants.APP_PACKAGE_NAME) ||
-                packageName.equals("com.android.settings") ||
                 packageName.equals("com.google.android.googlequicksearchbox");
     }
 }
