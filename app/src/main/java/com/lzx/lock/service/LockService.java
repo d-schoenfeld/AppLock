@@ -196,6 +196,11 @@ public class LockService extends Service {
                 // Verschiedene Sperren suchen und Logik prüfen
                 if (mLockInfoManager.isLockedPackageName(packageName)) {
                     passwordLock(packageName);
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
                     continue;
                 } else {
 
