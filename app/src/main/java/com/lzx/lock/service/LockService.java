@@ -375,10 +375,27 @@ public class LockService extends Service {
     }
 
     /**
-     * Zur Entsperrseite wechseln
+     * Zur Entsperrseite wechseln.
+     * Navigiert zuerst zur Startseite, damit das Overlay auch über System-Apps wie
+     * "Einstellungen" sichtbar ist (die ab Android 12 mit HIDE_OVERLAY_WINDOWS
+     * Overlays ausblenden können).
      */
-    private void passwordLock(String packageName) {
+    private void passwordLock(final String packageName) {
         if (!mUnlockView.isShowing()) {
+            // Zuerst zur Startseite navigieren, damit das Sperr-Overlay angezeigt werden kann.
+            // Manche System-Apps (z.B. Einstellungen) blenden Overlays aus (HIDE_OVERLAY_WINDOWS),
+            // daher muss die App den Vordergrund verlassen, bevor das Overlay gezeigt wird.
+            Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+            homeIntent.addCategory(Intent.CATEGORY_HOME);
+            homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(homeIntent);
+            // Kurz warten, damit der Übergang zur Startseite abgeschlossen ist,
+            // bevor das Sperr-Overlay auf dem Hauptthread hinzugefügt wird.
+            try {
+                Thread.sleep(300);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
             mUnlockView.showUnLockView(packageName);
         }
     }
