@@ -6,21 +6,16 @@ import android.content.Intent;
 import android.os.Build;
 
 import com.lzx.lock.base.AppConstants;
-import com.lzx.lock.service.LoadAppListService;
 import com.lzx.lock.service.LockService;
-import com.lzx.lock.utils.LogUtil;
 import com.lzx.lock.utils.SpUtil;
 
 /**
- * Broadcast für Systemstart
- * Created by xian on 2017/3/4.
+ * Broadcast-Empfänger zum Neustart des LockService nach unerwarteter Beendigung.
+ * Wird über AlarmManager ausgelöst, wenn der Dienst beendet wurde.
  */
-
-public class BootBroadcastReceiver extends BroadcastReceiver {
+public class ServiceRestartReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        LogUtil.i("Dienst beim Systemstart gestartet....");
-        context.startService(new Intent(context, LoadAppListService.class));
         if (SpUtil.getInstance().getBoolean(AppConstants.LOCK_STATE, false)) {
             Intent serviceIntent = new Intent(context, LockService.class);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

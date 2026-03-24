@@ -63,4 +63,9 @@
     <string name="pin_too_short">Mindestens 4 Zeichen eingeben.</string>
     <string name="pin_enter_to_unlock">Passwort/PIN zum Entsperren eingeben</string>
     <string name="pin_wrong">Falsches Passwort. Erneut versuchen.</string>
+
+    <!-- Vordergrunddienst-Benachrichtigung -->
+    <string name="lock_service_notification_channel">App-Sperre Dienst</string>
+    <string name="lock_service_notification_title">App-Sperre aktiv</string>
+    <string name="lock_service_notification_text">Apps werden überwacht und gesperrt.</string>
 </resources>
