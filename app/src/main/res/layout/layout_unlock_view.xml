@@ -82,7 +82,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@drawable/bg_btn_blue"
-            android:text="Entsperren"
+            android:text="@string/btn_unlock"
             android:gravity="center"
             android:textColor="@color/white"
             android:textSize="16sp"

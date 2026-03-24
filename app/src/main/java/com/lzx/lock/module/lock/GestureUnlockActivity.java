@@ -11,7 +11,9 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -23,6 +25,7 @@ import com.lzx.lock.module.main.MainActivity;
 import com.lzx.lock.service.LockService;
 import com.lzx.lock.utils.LockPatternUtils;
 import com.lzx.lock.utils.LockUtil;
+import com.lzx.lock.utils.PinUtils;
 import com.lzx.lock.utils.SpUtil;
 import com.lzx.lock.utils.StatusBarUtil;
 import com.lzx.lock.widget.LockPatternView;
@@ -37,11 +40,19 @@ import java.util.List;
 
 public class GestureUnlockActivity extends BaseActivity implements View.OnClickListener {
 
+    /** Gibt an, ob der Sperr-Bildschirm gerade angezeigt wird (für LockService-Guard). */
+    public static volatile boolean isShowing = false;
+
     private ImageView mIconMore;
     private LockPatternView mLockPatternView;
     private ImageView mUnLockIcon, mBgLayout, mAppLogo;
     private TextView mUnLockText, mUnlockFailTip, mAppLabel;
     private RelativeLayout mUnLockLayout;
+
+    // PIN-Entsperrung
+    private LinearLayout mPinUnlockSection;
+    private EditText mEtPinUnlock;
+    private TextView mBtnPinUnlock;
 
     private PackageManager packageManager;
     private String pkgName; //Paketname der zu entsperrenden App
@@ -76,15 +87,18 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
         mAppLogo = (ImageView) findViewById(R.id.app_logo);
         mAppLabel = (TextView) findViewById(R.id.app_label);
 
-
+        mPinUnlockSection = (LinearLayout) findViewById(R.id.pin_unlock_section);
+        mEtPinUnlock = (EditText) findViewById(R.id.et_pin_unlock);
+        mBtnPinUnlock = (TextView) findViewById(R.id.btn_pin_unlock);
     }
 
     @Override
     protected void initData() {
         //Paketname der zu entsperrenden App abrufen
         pkgName = getIntent().getStringExtra(AppConstants.LOCK_PACKAGE_NAME);
-        //Aktion bei Zurück-Taste abrufen
+        //Aktion bei Zurück-Taste abrufen; Standard: LOCK_FROM_FINISH (wenn vom Dienst gestartet)
         actionFrom = getIntent().getStringExtra(AppConstants.LOCK_FROM);
+        if (actionFrom == null) actionFrom = AppConstants.LOCK_FROM_FINISH;
         //Initialisieren
         packageManager = getPackageManager();
 
@@ -93,7 +107,8 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
 
         initLayoutBackground();
         initLockPatternView();
-
+        initPinUnlockView();
+        initUnlockViews();
 
         mGestureUnlockReceiver = new GestureUnlockReceiver();
         IntentFilter filter = new IntentFilter();
@@ -146,25 +161,7 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
             public void onPatternDetected(List<LockPatternView.Cell> pattern) {
                 if (mLockPatternUtils.checkPattern(pattern)) { //Entsperrung erfolgreich, Datenbankstatus aktualisieren
                     mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Correct);
-                    if (actionFrom.equals(AppConstants.LOCK_FROM_LOCK_MAIN_ACITVITY)) {
-                        startActivity(new Intent(GestureUnlockActivity.this, MainActivity.class));
-                        finish();
-                    } else {
-                        long unlockTime = System.currentTimeMillis();
-                        SpUtil.getInstance().putLong(AppConstants.LOCK_CURR_MILLISENCONS, unlockTime); //Entsperrzeit speichern
-                        SpUtil.getInstance().putString(AppConstants.LOCK_LAST_LOAD_PKG_NAME, pkgName);//Entsperr-Paketnamen speichern
-                        LockService.sLockCurrMilliseconds = unlockTime; //Statische Variable aktualisieren
-                        LockService.sLastLoadPkgName = pkgName; //Statische Variable aktualisieren
-
-                        //Zeitpunkt der letzten Entsperrung an den App-Sperrdienst senden
-                        Intent intent = new Intent(LockService.UNLOCK_ACTION);
-                        intent.putExtra(LockService.LOCK_SERVICE_LASTTIME, System.currentTimeMillis());
-                        intent.putExtra(LockService.LOCK_SERVICE_LASTAPP, pkgName);
-                        sendBroadcast(intent);
-
-                        mLockInfoManager.unlockCommApplication(pkgName);
-                        finish();
-                    }
+                    handleUnlockSuccess();
                 } else {
                     mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Wrong);
                     if (pattern.size() >= LockPatternUtils.MIN_PATTERN_REGISTER_FAIL) {
@@ -194,6 +191,67 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
         mLockPatternView.setTactileFeedbackEnabled(true);
     }
 
+    /**
+     * PIN-Entsperrung initialisieren
+     */
+    private void initPinUnlockView() {
+        mBtnPinUnlock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String pin = mEtPinUnlock.getText().toString().trim();
+                if (pin.length() < PinUtils.MIN_PIN_LENGTH) {
+                    mUnlockFailTip.setText(getString(R.string.pin_too_short));
+                    return;
+                }
+                if (PinUtils.checkPin(pin)) {
+                    mEtPinUnlock.setText("");
+                    handleUnlockSuccess();
+                } else {
+                    mEtPinUnlock.setText("");
+                    mUnlockFailTip.setText(getString(R.string.pin_wrong));
+                }
+            }
+        });
+    }
+
+    /**
+     * Entsperrungsmethode bestimmen und passende UI anzeigen
+     */
+    private void initUnlockViews() {
+        if (PinUtils.isPinMethod()) {
+            mLockPatternView.setVisibility(View.GONE);
+            mPinUnlockSection.setVisibility(View.VISIBLE);
+            mUnlockFailTip.setText(getString(R.string.pin_enter_to_unlock));
+        } else {
+            mLockPatternView.setVisibility(View.VISIBLE);
+            mPinUnlockSection.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * Entsperrung erfolgreich – Zustand aktualisieren und Activity beenden
+     */
+    private void handleUnlockSuccess() {
+        if (AppConstants.LOCK_FROM_LOCK_MAIN_ACITVITY.equals(actionFrom)) {
+            startActivity(new Intent(GestureUnlockActivity.this, MainActivity.class));
+            finish();
+        } else {
+            long unlockTime = System.currentTimeMillis();
+            SpUtil.getInstance().putLong(AppConstants.LOCK_CURR_MILLISENCONS, unlockTime);
+            SpUtil.getInstance().putString(AppConstants.LOCK_LAST_LOAD_PKG_NAME, pkgName);
+            LockService.sLockCurrMilliseconds = unlockTime;
+            LockService.sLastLoadPkgName = pkgName;
+
+            Intent intent = new Intent(LockService.UNLOCK_ACTION);
+            intent.putExtra(LockService.LOCK_SERVICE_LASTTIME, unlockTime);
+            intent.putExtra(LockService.LOCK_SERVICE_LASTAPP, pkgName);
+            sendBroadcast(intent);
+
+            mLockInfoManager.unlockCommApplication(pkgName);
+            finish();
+        }
+    }
+
     private Runnable mClearPatternRunnable = new Runnable() {
         public void run() {
             mLockPatternView.clearPattern();
@@ -209,6 +267,18 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
         } else {
             startActivity(new Intent(this, MainActivity.class));
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isShowing = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isShowing = false;
     }
     
     @Override

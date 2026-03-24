@@ -309,7 +309,7 @@ public class UnlockView extends FrameLayout {
         mBtnPinUnlock.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                String pin = mEtPinUnlock.getText().toString();
+                String pin = mEtPinUnlock.getText().toString().trim();
                 if (pin.length() < PinUtils.MIN_PIN_LENGTH) {
                     mUnlockFailTip.setText(mContext.getString(R.string.pin_too_short));
                     return;
@@ -325,7 +325,7 @@ public class UnlockView extends FrameLayout {
         });
     }
 
-    /** Entsperrung erfolgreich – Zustand aktualisieren, Ansicht schließen und App starten */
+    /** Entsperrung erfolgreich – Zustand aktualisieren und Ansicht schließen */
     private void handleUnlockSuccess() {
         long unlockTime = System.currentTimeMillis();
         SpUtil.getInstance().putLong(AppConstants.LOCK_CURR_MILLISENCONS, unlockTime);
@@ -339,20 +339,6 @@ public class UnlockView extends FrameLayout {
         mContext.sendBroadcast(intent);
 
         mLockInfoManager.unlockCommApplication(mPackageName);
-
-        // Entsperrte App direkt starten, da der Nutzer vorher zur Startseite umgeleitet wurde.
-        // Falls kein Start-Intent verfügbar ist (z.B. bei reinen Hintergrunddiensten),
-        // verbleibt der Nutzer auf der Startseite und kann die App manuell öffnen.
-        try {
-            Intent launchIntent = mPackageManager.getLaunchIntentForPackage(mPackageName);
-            if (launchIntent != null) {
-                launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                mContext.startActivity(launchIntent);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         closeUnLockView();
     }
 
