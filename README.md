@@ -20,8 +20,8 @@ Schütze deine Privatsphäre mit einer Mustersperre oder PIN für einzelne Apps.
 
 ### Voraussetzungen
 
-- Android 4.0 (API 14) oder höher
-- Auf Android 5.0 (Lollipop) und höher: Berechtigung **„App-Nutzungsdaten abrufen"** erforderlich
+- Android 5.0 (API 21) oder höher
+- Berechtigung **„App-Nutzungsdaten abrufen"** erforderlich
 
 ---
 
@@ -30,8 +30,8 @@ Schütze deine Privatsphäre mit einer Mustersperre oder PIN für einzelne Apps.
 ### Entwicklungsvoraussetzungen
 
 - [Android Studio](https://developer.android.com/studio) (aktuelle Version empfohlen)
-- Android SDK (mindestens API 14)
-- Java Development Kit (JDK) 8 oder höher
+- Android SDK (mindestens API 21)
+- Java Development Kit (JDK) 11 oder höher
 
 ### Projekt klonen
 
@@ -49,7 +49,7 @@ cd AppLock
 
 ### App bauen und starten
 
-1. Gerät oder Emulator verbinden (Android 4.0+)
+1. Gerät oder Emulator verbinden (Android 5.0+)
 2. In Android Studio auf **Run ▶** klicken oder folgenden Befehl im Terminal ausführen:
 
 ```bash
@@ -60,7 +60,7 @@ Die APK-Datei wird anschließend unter `app/build/outputs/apk/debug/` abgelegt.
 
 ### Benötigte Berechtigungen
 
-Beim ersten Start der App wird (auf Android 5.0+) ein Dialog zur Vergabe der Berechtigung **„App-Nutzungsdaten abrufen"** angezeigt. Diese Berechtigung ist notwendig, damit AppLock erkennen kann, welche App gerade im Vordergrund läuft.
+Beim ersten Start der App wird ein Dialog zur Vergabe der Berechtigung **„App-Nutzungsdaten abrufen"** angezeigt. Diese Berechtigung ist notwendig, damit AppLock erkennen kann, welche App gerade im Vordergrund läuft.
 
 ---
 
@@ -141,6 +141,7 @@ Die exportierte Datei enthält folgende Informationen:
 
 ---
 
+## Verwendete Bibliotheken
 
 - [LitePal](https://github.com/LitePalFramework/LitePal) – SQLite-Datenbankverwaltung
 
