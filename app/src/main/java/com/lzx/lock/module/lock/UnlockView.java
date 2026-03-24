@@ -309,7 +309,7 @@ public class UnlockView extends FrameLayout {
         mBtnPinUnlock.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                String pin = mEtPinUnlock.getText().toString();
+                String pin = mEtPinUnlock.getText().toString().trim();
                 if (pin.length() < PinUtils.MIN_PIN_LENGTH) {
                     mUnlockFailTip.setText(mContext.getString(R.string.pin_too_short));
                     return;

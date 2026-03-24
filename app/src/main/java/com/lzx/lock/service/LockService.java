@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.lzx.lock.R;
 import com.lzx.lock.base.AppConstants;
 import com.lzx.lock.db.CommLockInfoManager;
-import com.lzx.lock.module.lock.UnlockView;
+import com.lzx.lock.module.lock.GestureUnlockActivity;
 import com.lzx.lock.receiver.ServiceRestartReceiver;
 import com.lzx.lock.utils.SpUtil;
 
@@ -76,7 +76,6 @@ public class LockService extends Service {
 
     public static boolean isActionLock = false;
     public String savePkgName;
-    private UnlockView mUnlockView;
 
     // Globale statische Variablen als Cache für häufig gelesene SharedPreferences-Werte
     public static volatile boolean sLockAutoScreen = false;
@@ -97,8 +96,6 @@ public class LockService extends Service {
         sLastLoadPkgName = SpUtil.getInstance().getString(AppConstants.LOCK_LAST_LOAD_PKG_NAME, "");
         mLockInfoManager = new CommLockInfoManager(this);
         activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-
-        mUnlockView = new UnlockView(this);
 
         // Als Vordergrunddienst starten, damit Android den Dienst nicht beendet
         startForegroundWithNotification();
@@ -375,11 +372,18 @@ public class LockService extends Service {
     }
 
     /**
-     * Zur Entsperrseite wechseln
+     * Entsperrbildschirm als Activity starten.
+     * Durch Verwendung einer Activity statt eines Overlays funktioniert die Sperre
+     * auch für System-Apps wie "Einstellungen", die Overlays über HIDE_OVERLAY_WINDOWS
+     * ausblenden können (Android 12+).
      */
     private void passwordLock(String packageName) {
-        if (!mUnlockView.isShowing()) {
-            mUnlockView.showUnLockView(packageName);
+        if (!GestureUnlockActivity.isShowing) {
+            Intent intent = new Intent(LockService.this, GestureUnlockActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(AppConstants.LOCK_PACKAGE_NAME, packageName);
+            intent.putExtra(AppConstants.LOCK_FROM, AppConstants.LOCK_FROM_FINISH);
+            startActivity(intent);
         }
     }
 
