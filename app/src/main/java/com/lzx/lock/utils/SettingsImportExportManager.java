@@ -10,7 +10,7 @@ import com.lzx.lock.bean.CommLockInfo;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.litepal.crud.DataSupport;
+import org.litepal.LitePal;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -62,7 +62,7 @@ public class SettingsImportExportManager {
 
         // Gesperrte Apps aus der Datenbank
         JSONArray lockedApps = new JSONArray();
-        List<CommLockInfo> allApps = DataSupport.findAll(CommLockInfo.class);
+        List<CommLockInfo> allApps = LitePal.findAll(CommLockInfo.class);
         for (CommLockInfo app : allApps) {
             if (app.isLocked()) {
                 lockedApps.put(app.getPackageName());
@@ -129,12 +129,12 @@ public class SettingsImportExportManager {
             // Vorhandene DB-Einträge sofort aktualisieren
             ContentValues unlockValues = new ContentValues();
             unlockValues.put("isLocked", 0);
-            DataSupport.updateAll(CommLockInfo.class, unlockValues);
+            LitePal.updateAll(CommLockInfo.class, unlockValues);
 
             ContentValues lockValues = new ContentValues();
             lockValues.put("isLocked", 1);
             for (String pkg : lockedPkgs) {
-                DataSupport.updateAll(CommLockInfo.class, lockValues, "packageName = ?", pkg);
+                LitePal.updateAll(CommLockInfo.class, lockValues, "packageName = ?", pkg);
             }
         }
     }

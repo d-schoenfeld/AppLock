@@ -1,13 +1,13 @@
 package com.lzx.lock.bean;
 
-import org.litepal.crud.DataSupport;
+import org.litepal.crud.LitePalSupport;
 
 /**
  * Created by lzx on 2017/3/9.
  * 386707112@qq.com
  */
 
-public class LockPrivate extends DataSupport {
+public class LockPrivate extends LitePalSupport {
 
     private boolean isRead;
     private long lookDate;

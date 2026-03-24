@@ -4,13 +4,13 @@ import android.content.pm.ApplicationInfo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import org.litepal.crud.DataSupport;
+import org.litepal.crud.LitePalSupport;
 
 /**
  * Created by xian on 2017/2/17.
  */
 
-public class CommLockInfo extends DataSupport implements Parcelable {
+public class CommLockInfo extends LitePalSupport implements Parcelable {
 
     private long id;
     private String packageName;

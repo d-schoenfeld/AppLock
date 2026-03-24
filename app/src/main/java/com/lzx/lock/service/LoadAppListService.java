@@ -11,7 +11,7 @@ import com.lzx.lock.bean.FaviterInfo;
 import com.lzx.lock.db.CommLockInfoManager;
 import com.lzx.lock.utils.SpUtil;
 
-import org.litepal.crud.DataSupport;
+import org.litepal.LitePal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -147,7 +147,7 @@ public class LoadAppListService extends IntentService {
             faviterInfos.add(info);
         }
 
-        DataSupport.deleteAll(FaviterInfo.class);
-        DataSupport.saveAll(faviterInfos);
+        LitePal.deleteAll(FaviterInfo.class);
+        LitePal.saveAll(faviterInfos);
     }
 }

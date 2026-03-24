@@ -5,7 +5,7 @@ import android.content.Context;
 
 import com.lzx.lock.bean.LockPrivate;
 
-import org.litepal.crud.DataSupport;
+import org.litepal.LitePal;
 
 import java.util.List;
 
@@ -31,20 +31,20 @@ public class LockPrivateManager {
         values.put("isRead", lockPrivate.isRead());
         values.put("lookDate", lockPrivate.getLookDate());
         values.put("picPath", lockPrivate.getPicPath());
-        DataSupport.updateAll(LockPrivate.class, values, "packageName = ?", lockPrivate.getPackageName());
+        LitePal.updateAll(LockPrivate.class, values, "packageName = ?", lockPrivate.getPackageName());
     }
 
     public void setLockPrivateWasReaded(LockPrivate lockPrivate) {
         ContentValues values = new ContentValues();
         values.put("isRead", true);
-        DataSupport.updateAll(LockPrivate.class, values, "packageName = ?", lockPrivate.getPackageName());
+        LitePal.updateAll(LockPrivate.class, values, "packageName = ?", lockPrivate.getPackageName());
     }
 
     public List<LockPrivate> getAllLockPrivate() {
-        return DataSupport.findAll(LockPrivate.class);
+        return LitePal.findAll(LockPrivate.class);
     }
 
     public void clearLookMyPrivate() {
-        DataSupport.deleteAll(LockPrivate.class);
+        LitePal.deleteAll(LockPrivate.class);
     }
 }
