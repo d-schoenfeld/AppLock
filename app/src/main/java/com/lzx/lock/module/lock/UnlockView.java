@@ -20,8 +20,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -31,7 +33,9 @@ import com.lzx.lock.db.CommLockInfoManager;
 import com.lzx.lock.service.LockService;
 import com.lzx.lock.utils.LockPatternUtils;
 import com.lzx.lock.utils.LockUtil;
+import com.lzx.lock.utils.PinUtils;
 import com.lzx.lock.utils.SpUtil;
+import com.lzx.lock.utils.ToastUtil;
 import com.lzx.lock.widget.LockPatternView;
 import com.lzx.lock.widget.LockPatternViewPattern;
 
@@ -53,10 +57,17 @@ public class UnlockView extends FrameLayout {
     private RelativeLayout mUnLockLayout;
     private ImageView mUnLockIcon, mAppLogo;
     private TextView mUnLockText, mUnlockFailTip, mAppLabel;
-    private LockPatternView mPatternView;
 
+    // Muster-Entsperrung
+    private LockPatternView mPatternView;
     private LockPatternUtils mPatternUtils;
     private LockPatternViewPattern mPatternViewPattern;
+
+    // PIN-Entsperrung
+    private LinearLayout mPinUnlockSection;
+    private EditText mEtPinUnlock;
+    private TextView mBtnPinUnlock;
+
     private CommLockInfoManager mLockInfoManager;
     private PackageManager mPackageManager;
 
@@ -93,7 +104,11 @@ public class UnlockView extends FrameLayout {
         mUnLockText = (TextView) mUnLockView.findViewById(R.id.unlock_text);
         mUnlockFailTip = (TextView) mUnLockView.findViewById(R.id.unlock_fail_tip);
         mAppLabel = (TextView) mUnLockView.findViewById(R.id.app_label);
+
         mPatternView = (LockPatternView) mUnLockView.findViewById(R.id.unlock_lock_view);
+        mPinUnlockSection = (LinearLayout) mUnLockView.findViewById(R.id.pin_unlock_section);
+        mEtPinUnlock = (EditText) mUnLockView.findViewById(R.id.et_pin_unlock);
+        mBtnPinUnlock = (TextView) mUnLockView.findViewById(R.id.btn_pin_unlock);
 
         // Schwebendes Fenster erstellen
         mWindowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
@@ -112,7 +127,7 @@ public class UnlockView extends FrameLayout {
         );
         mLayoutParams.gravity = Gravity.CENTER;
 
-        initLockPatternView();
+        initUnlockViews();
     }
 
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -135,7 +150,16 @@ public class UnlockView extends FrameLayout {
                 mPackageName = packageName;
                 mFailedPatternAttemptsSinceLastTimeout = 0;
                 mPatternView.clearPattern();
+                mEtPinUnlock.setText("");
                 initBgView();
+                // Entsperrungsmethode bestimmen und passende UI anzeigen
+                if (PinUtils.isPinMethod()) {
+                    mPatternView.setVisibility(View.GONE);
+                    mPinUnlockSection.setVisibility(View.VISIBLE);
+                } else {
+                    mPatternView.setVisibility(View.VISIBLE);
+                    mPinUnlockSection.setVisibility(View.GONE);
+                }
                 if (!isShowing()) {
                     mWindowManager.addView(UnlockView.this, mLayoutParams);
                 }
@@ -204,7 +228,9 @@ public class UnlockView extends FrameLayout {
                 mAppLogo.setImageDrawable(iconDrawable);
                 mUnLockText.setText(appLabel);
                 mAppLabel.setText(appLabel);
-                mUnlockFailTip.setText(mContext.getString(R.string.password_gestrue_tips));
+                mUnlockFailTip.setText(PinUtils.isPinMethod()
+                        ? mContext.getString(R.string.pin_enter_to_unlock)
+                        : mContext.getString(R.string.password_gestrue_tips));
                 mUnLockLayout.setBackgroundDrawable(iconDrawable);
                 mUnLockLayout.getViewTreeObserver().addOnPreDrawListener(
                         new ViewTreeObserver.OnPreDrawListener() {
@@ -213,7 +239,7 @@ public class UnlockView extends FrameLayout {
                                 mUnLockLayout.getViewTreeObserver().removeOnPreDrawListener(this);
                                 mUnLockLayout.buildDrawingCache();
                                 Bitmap bmp = LockUtil.drawableToBitmap(iconDrawable, mUnLockLayout);
-                                LockUtil.blur(mContext, LockUtil.big(bmp), mUnLockLayout); // Gaußscher Weichzeichner
+                                LockUtil.blur(mContext, LockUtil.big(bmp), mUnLockLayout);
                                 return true;
                             }
                         });
@@ -224,7 +250,15 @@ public class UnlockView extends FrameLayout {
     }
 
     /**
-     * Entsperr-Widget initialisieren
+     * Entsperr-Views initialisieren (sowohl PIN als auch Muster)
+     */
+    private void initUnlockViews() {
+        initLockPatternView();
+        initPinUnlockView();
+    }
+
+    /**
+     * Muster-Entsperr-Widget initialisieren
      */
     private void initLockPatternView() {
         mPatternView.setLineColorRight(0x80ffffff);
@@ -233,23 +267,9 @@ public class UnlockView extends FrameLayout {
         mPatternViewPattern.setPatternListener(new LockPatternViewPattern.onPatternListener() {
             @Override
             public void onPatternDetected(List<LockPatternView.Cell> pattern) {
-                if (mPatternUtils.checkPattern(pattern)) { // Entsperrung erfolgreich
+                if (mPatternUtils.checkPattern(pattern)) {
                     mPatternView.setDisplayMode(LockPatternView.DisplayMode.Correct);
-
-                    long unlockTime = System.currentTimeMillis();
-                    SpUtil.getInstance().putLong(AppConstants.LOCK_CURR_MILLISENCONS, unlockTime);
-                    SpUtil.getInstance().putString(AppConstants.LOCK_LAST_LOAD_PKG_NAME, mPackageName);
-                    LockService.sLockCurrMilliseconds = unlockTime;
-                    LockService.sLastLoadPkgName = mPackageName;
-
-                    // Zeitpunkt der letzten Entsperrung an den App-Sperrdienst senden
-                    Intent intent = new Intent(LockService.UNLOCK_ACTION);
-                    intent.putExtra(LockService.LOCK_SERVICE_LASTTIME, unlockTime);
-                    intent.putExtra(LockService.LOCK_SERVICE_LASTAPP, mPackageName);
-                    mContext.sendBroadcast(intent);
-
-                    mLockInfoManager.unlockCommApplication(mPackageName);
-                    closeUnLockView();
+                    handleUnlockSuccess();
                 } else {
                     mPatternView.setDisplayMode(LockPatternView.DisplayMode.Wrong);
                     if (pattern.size() >= LockPatternUtils.MIN_PATTERN_REGISTER_FAIL) {
@@ -264,20 +284,52 @@ public class UnlockView extends FrameLayout {
                         mUnlockFailTip.setText(
                                 mContext.getResources().getString(R.string.password_short));
                     }
-                    if (mFailedPatternAttemptsSinceLastTimeout >= 3) { // Fehlversuche > 3
-                        mPatternView.postDelayed(mClearPatternRunnable, 500);
-                    }
-                    if (mFailedPatternAttemptsSinceLastTimeout
-                            >= LockPatternUtils.FAILED_ATTEMPTS_BEFORE_TIMEOUT) { // Fehlversuche >= Maximum
-                        mPatternView.postDelayed(mClearPatternRunnable, 500);
-                    } else {
-                        mPatternView.postDelayed(mClearPatternRunnable, 500);
-                    }
+                    mPatternView.postDelayed(mClearPatternRunnable, 500);
                 }
             }
         });
         mPatternView.setOnPatternListener(mPatternViewPattern);
         mPatternView.setTactileFeedbackEnabled(true);
+    }
+
+    /**
+     * PIN-Entsperrung initialisieren
+     */
+    private void initPinUnlockView() {
+        mBtnPinUnlock.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String pin = mEtPinUnlock.getText().toString();
+                if (pin.length() < PinUtils.MIN_PIN_LENGTH) {
+                    mUnlockFailTip.setText(mContext.getString(R.string.pin_too_short));
+                    return;
+                }
+                if (PinUtils.checkPin(pin)) {
+                    mEtPinUnlock.setText("");
+                    handleUnlockSuccess();
+                } else {
+                    mEtPinUnlock.setText("");
+                    mUnlockFailTip.setText(mContext.getString(R.string.pin_wrong));
+                }
+            }
+        });
+    }
+
+    /** Entsperrung erfolgreich – Zustand aktualisieren und Ansicht schließen */
+    private void handleUnlockSuccess() {
+        long unlockTime = System.currentTimeMillis();
+        SpUtil.getInstance().putLong(AppConstants.LOCK_CURR_MILLISENCONS, unlockTime);
+        SpUtil.getInstance().putString(AppConstants.LOCK_LAST_LOAD_PKG_NAME, mPackageName);
+        LockService.sLockCurrMilliseconds = unlockTime;
+        LockService.sLastLoadPkgName = mPackageName;
+
+        Intent intent = new Intent(LockService.UNLOCK_ACTION);
+        intent.putExtra(LockService.LOCK_SERVICE_LASTTIME, unlockTime);
+        intent.putExtra(LockService.LOCK_SERVICE_LASTAPP, mPackageName);
+        mContext.sendBroadcast(intent);
+
+        mLockInfoManager.unlockCommApplication(mPackageName);
+        closeUnLockView();
     }
 
     private final Runnable mClearPatternRunnable = new Runnable() {
@@ -307,7 +359,6 @@ public class UnlockView extends FrameLayout {
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
             if (isShowing()) {
-                // Zurück-Taste: zur Home-Oberfläche wechseln
                 Intent homeIntent = new Intent(Intent.ACTION_MAIN);
                 homeIntent.addCategory(Intent.CATEGORY_HOME);
                 homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

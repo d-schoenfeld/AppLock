@@ -160,6 +160,15 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        // "Muster anzeigen"-Option nur bei Muster-Sperrmethode anzeigen
+        boolean isPattern = AppConstants.LOCK_METHOD_PATTERN.equals(
+                SpUtil.getInstance().getString(AppConstants.LOCK_METHOD, AppConstants.LOCK_METHOD_PIN));
+        mIsShowPath.setVisibility(isPattern ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
