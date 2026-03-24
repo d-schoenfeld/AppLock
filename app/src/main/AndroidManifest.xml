@@ -71,11 +71,6 @@
             android:label="Mustersperre erstellen"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".module.about.AboutMeActivity"
-            android:exported="false"
-            android:label="Über mich"
-            android:screenOrientation="portrait"/>
-        <activity
             android:name=".module.main.MainActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
