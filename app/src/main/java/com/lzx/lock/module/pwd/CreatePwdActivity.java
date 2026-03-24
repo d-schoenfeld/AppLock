@@ -1,6 +1,7 @@
 package com.lzx.lock.module.pwd;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -189,7 +190,12 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
 
     private void gotoLockMainActivity() {
         SpUtil.getInstance().putBoolean(AppConstants.LOCK_STATE, true);
-        startService(new Intent(this, LockService.class));
+        Intent serviceIntent = new Intent(this, LockService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        } else {
+            startService(serviceIntent);
+        }
         SpUtil.getInstance().putBoolean(AppConstants.LOCK_IS_FIRST_LOCK, false);
         startActivity(new Intent(this, MainActivity.class));
         finish();

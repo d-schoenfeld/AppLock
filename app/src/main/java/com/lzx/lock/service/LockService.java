@@ -1,6 +1,11 @@
 package com.lzx.lock.service;
 
 import android.app.ActivityManager;
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.app.usage.UsageEvents;
 import android.app.usage.UsageStatsManager;
@@ -13,14 +18,18 @@ import android.content.pm.ResolveInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.lzx.lock.R;
 import com.lzx.lock.base.AppConstants;
 import com.lzx.lock.db.CommLockInfoManager;
 import com.lzx.lock.module.lock.UnlockView;
+import com.lzx.lock.receiver.ServiceRestartReceiver;
 import com.lzx.lock.utils.SpUtil;
 
 import java.util.ArrayList;
@@ -49,6 +58,11 @@ public class LockService extends Service {
     public static final String UNLOCK_ACTION = "UNLOCK_ACTION";
     public static final String LOCK_SERVICE_LASTTIME = "LOCK_SERVICE_LASTTIME";
     public static final String LOCK_SERVICE_LASTAPP = "LOCK_SERVICE_LASTAPP";
+
+    /** Notification-Kanal-ID für den Vordergrunddienst */
+    public static final String NOTIFICATION_CHANNEL_ID = "lock_service_channel";
+    /** Notification-ID für den Vordergrunddienst */
+    private static final int NOTIFICATION_ID = 1001;
 
 
     private long lastUnlockTimeSeconds = 0; //Zeitpunkt der letzten Entsperrung
@@ -86,6 +100,9 @@ public class LockService extends Service {
 
         mUnlockView = new UnlockView(this);
 
+        // Als Vordergrunddienst starten, damit Android den Dienst nicht beendet
+        startForegroundWithNotification();
+
         //Broadcast registrieren
         mServiceReceiver = new ServiceReceiver();
         IntentFilter filter = new IntentFilter();
@@ -104,6 +121,62 @@ public class LockService extends Service {
         @Override
         public void run() {
             checkData();
+        }
+    }
+
+    /**
+     * Vordergrunddienst-Benachrichtigung erstellen und Dienst in den Vordergrund bringen.
+     * Verhindert, dass Android den Dienst bei Speichermangel beendet.
+     */
+    private void startForegroundWithNotification() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    NOTIFICATION_CHANNEL_ID,
+                    getString(R.string.lock_service_notification_channel),
+                    NotificationManager.IMPORTANCE_LOW
+            );
+            channel.setShowBadge(false);
+            NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (nm != null) {
+                nm.createNotificationChannel(channel);
+            }
+        }
+        Notification notification = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(getString(R.string.lock_service_notification_title))
+                .setContentText(getString(R.string.lock_service_notification_text))
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setOngoing(true)
+                .build();
+        startForeground(NOTIFICATION_ID, notification);
+    }
+
+    /**
+     * Neustart des Dienstes über AlarmManager planen.
+     * Wird nach onDestroy() und onTaskRemoved() aufgerufen, damit der Dienst
+     * nach einer unerwarteten Beendigung automatisch neu gestartet wird.
+     */
+    private void scheduleServiceRestart() {
+        if (!SpUtil.getInstance().getBoolean(AppConstants.LOCK_STATE, false)) {
+            return;
+        }
+        Intent restartIntent = new Intent(getApplicationContext(), ServiceRestartReceiver.class);
+        restartIntent.setPackage(getPackageName());
+        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            flags |= PendingIntent.FLAG_IMMUTABLE;
+        }
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                getApplicationContext(), 1, restartIntent, flags);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                        SystemClock.elapsedRealtime() + 1000, pendingIntent);
+            } else {
+                alarmManager.set(AlarmManager.ELAPSED_REALTIME,
+                        SystemClock.elapsedRealtime() + 1000, pendingIntent);
+            }
         }
     }
 
@@ -209,7 +282,7 @@ public class LockService extends Service {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
         }
     }
@@ -218,8 +291,7 @@ public class LockService extends Service {
      * Whitelist
      */
     private boolean inWhiteList(String packageName) {
-        return packageName.equals(AppConstants.APP_PACKAGE_NAME)
-                || packageName.equals("com.android.settings");
+        return packageName.equals(AppConstants.APP_PACKAGE_NAME);
     }
 
     /**
@@ -270,7 +342,7 @@ public class LockService extends Service {
             //ab Android 5.0 diese Methode verwenden
             UsageStatsManager sUsageStatsManager = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
             long endTime = System.currentTimeMillis();
-            long beginTime = endTime - 10000;
+            long beginTime = endTime - 60000; // 60 Sekunden zurückblicken für zuverlässige Erkennung
             String result = "";
             UsageEvents.Event event = new UsageEvents.Event();
             UsageEvents usageEvents = sUsageStatsManager.queryEvents(beginTime, endTime);
@@ -312,9 +384,18 @@ public class LockService extends Service {
     }
 
     @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        // Neustart planen, wenn der Nutzer die App aus der Aufgabenliste entfernt
+        scheduleServiceRestart();
+    }
+
+    @Override
     public void onDestroy() {
         mIsServiceDestroyed.set(true);
         super.onDestroy();
         unregisterReceiver(mServiceReceiver);
+        // Neustart planen, damit der Dienst nach unerwarteter Beendigung wieder startet
+        scheduleServiceRestart();
     }
 }

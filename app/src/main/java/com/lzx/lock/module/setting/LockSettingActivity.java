@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
@@ -98,7 +99,11 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
                 Intent intent = new Intent(LockSettingActivity.this, LockService.class);
                 if (b) {
                     mLockTip.setText("Aktiviert – gesperrte Apps erfordern ein Passwort");
-                    startService(intent);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        startForegroundService(intent);
+                    } else {
+                        startService(intent);
+                    }
                 } else {
                     mLockTip.setText("Deaktiviert – gesperrte Apps erfordern kein Passwort");
                     stopService(intent);

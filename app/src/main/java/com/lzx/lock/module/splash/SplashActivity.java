@@ -65,7 +65,12 @@ public class SplashActivity extends BaseActivity {
     protected void initData() {
         mDisposables = new CompositeDisposable();
         if (SpUtil.getInstance().getBoolean(AppConstants.LOCK_STATE, false)) {
-            startService(new Intent(this, LockService.class));
+            Intent serviceIntent = new Intent(this, LockService.class);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(serviceIntent);
+            } else {
+                startService(serviceIntent);
+            }
         }
         animator = ObjectAnimator.ofFloat(mImgSplash, "alpha", 0.5f, 1);
         animator.setDuration(1500);
