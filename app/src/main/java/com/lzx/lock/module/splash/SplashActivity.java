@@ -1,5 +1,6 @@
 package com.lzx.lock.module.splash;
 
+import android.app.AlarmManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
@@ -48,6 +49,7 @@ public class SplashActivity extends BaseActivity {
     private ObjectAnimator animator;
     private int RESULT_ACTION_USAGE_ACCESS_SETTINGS = 1;
     private int RESULT_ACTION_MANAGE_OVERLAY_PERMISSION = 2;
+    private int RESULT_ACTION_SCHEDULE_EXACT_ALARM = 3;
     private CompositeDisposable mDisposables;
 
     @Override
@@ -221,8 +223,27 @@ public class SplashActivity extends BaseActivity {
                     Uri.parse("package:" + getPackageName()));
             startActivityForResult(intent, RESULT_ACTION_MANAGE_OVERLAY_PERMISSION);
         } else {
-            gotoCreatePwdActivity();
+            checkExactAlarmPermission();
         }
+    }
+
+    /**
+     * Berechtigung für exakte Alarme prüfen und ggf. anfordern (Android 12+).
+     * Exakte Alarme werden für den automatischen Neustart des LockService benötigt.
+     * Falls die Berechtigung nicht erteilt wird, bleibt die App funktionsfähig,
+     * da ein Fallback auf inexakte Alarme vorhanden ist.
+     */
+    private void checkExactAlarmPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            if (alarmManager != null && !alarmManager.canScheduleExactAlarms()) {
+                Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                        Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, RESULT_ACTION_SCHEDULE_EXACT_ALARM);
+                return;
+            }
+        }
+        gotoCreatePwdActivity();
     }
 
     @Override
@@ -237,11 +258,15 @@ public class SplashActivity extends BaseActivity {
             }
         } else if (requestCode == RESULT_ACTION_MANAGE_OVERLAY_PERMISSION) {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)) {
-                gotoCreatePwdActivity();
+                checkExactAlarmPermission();
             } else {
                 ToastUtil.showToast("Berechtigung fehlt: Bitte erlauben Sie das Einblenden über anderen Apps in den Einstellungen");
                 finish();
             }
+        } else if (requestCode == RESULT_ACTION_SCHEDULE_EXACT_ALARM) {
+            // Unabhängig davon, ob die Berechtigung erteilt wurde, fortfahren.
+            // Falls nicht erteilt, greift der Fallback auf inexakte Alarme.
+            gotoCreatePwdActivity();
         }
     }
 
