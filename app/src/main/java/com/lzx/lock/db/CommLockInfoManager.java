@@ -99,7 +99,20 @@ public class CommLockInfoManager {
         }
         list = DataUtil.clearRepeatCommLockInfo(list);  //doppelte Einträge entfernen
 
-        LitePal.saveAll(list);
+        // Bereits in der Datenbank vorhandene Pakete herausfiltern
+        List<CommLockInfo> existing = LitePal.select("packageName").find(CommLockInfo.class);
+        Set<String> existingPackages = new HashSet<>();
+        for (CommLockInfo info : existing) {
+            existingPackages.add(info.getPackageName());
+        }
+        List<CommLockInfo> toInsert = new ArrayList<>();
+        for (CommLockInfo info : list) {
+            if (!existingPackages.contains(info.getPackageName())) {
+                toInsert.add(info);
+            }
+        }
+
+        LitePal.saveAll(toInsert);
     }
 
     /**

@@ -75,7 +75,21 @@ public class DbManager {
      */
     public synchronized void saveInfoList(List<CommLockInfo> list) {
         List<CommLockInfo> unique = removeDuplicates(list);
-        LitePal.saveAll(unique);
+
+        // Bereits in der Datenbank vorhandene Pakete herausfiltern
+        List<CommLockInfo> existing = LitePal.select("packageName").find(CommLockInfo.class);
+        java.util.Set<String> existingPackages = new java.util.HashSet<>();
+        for (CommLockInfo info : existing) {
+            existingPackages.add(info.getPackageName());
+        }
+        List<CommLockInfo> toInsert = new ArrayList<>();
+        for (CommLockInfo info : unique) {
+            if (!existingPackages.contains(info.getPackageName())) {
+                toInsert.add(info);
+            }
+        }
+
+        LitePal.saveAll(toInsert);
     }
 
     /**

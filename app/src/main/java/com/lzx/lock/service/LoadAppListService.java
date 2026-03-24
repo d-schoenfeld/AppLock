@@ -66,14 +66,22 @@ public class LoadAppListService extends IntentService {
                     appList.add(resolveInfo);
                 }
             }
-            if (appList.size() > dbList.size()) { //wenn neue App installiert wurde
+            // Eindeutige Paketnamen bestimmen (ein Paket kann mehrere Launcher-Aktivitäten haben)
+            java.util.Set<String> uniquePackageNames = new java.util.HashSet<>();
+            for (ResolveInfo info : appList) {
+                uniquePackageNames.add(info.activityInfo.packageName);
+            }
+            int uniqueAppCount = uniquePackageNames.size();
+            if (uniqueAppCount > dbList.size()) { //wenn neue App installiert wurde
                 List<ResolveInfo> reslist = new ArrayList<>();
                 HashMap<String, CommLockInfo> hashMap = new HashMap<>();
                 for (CommLockInfo info : dbList) {
                     hashMap.put(info.getPackageName(), info);
                 }
+                java.util.Set<String> addedPackages = new java.util.HashSet<>();
                 for (ResolveInfo info : appList) {
-                    if (!hashMap.containsKey(info.activityInfo.packageName)) {
+                    String pkg = info.activityInfo.packageName;
+                    if (!hashMap.containsKey(pkg) && addedPackages.add(pkg)) {
                         reslist.add(info);
                     }
                 }
@@ -83,7 +91,7 @@ public class LoadAppListService extends IntentService {
                 } catch (PackageManager.NameNotFoundException e) {
                     e.printStackTrace();
                 }
-            } else if (appList.size() < dbList.size()) { //wenn App deinstalliert wurde
+            } else if (uniqueAppCount < dbList.size()) { //wenn App deinstalliert wurde
                 List<CommLockInfo> commlist = new ArrayList<>();
                 HashMap<String, ResolveInfo> hashMap = new HashMap<>();
                 for (ResolveInfo info : appList) {

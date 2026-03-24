@@ -11,7 +11,9 @@ import com.lzx.lock.base.AppConstants;
 import com.lzx.lock.bean.CommLockInfo;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -60,11 +62,15 @@ public class LoadAppHelper {
      */
     private static List<CommLockInfo> loadLockAppInfo(Activity activity) {
         List<CommLockInfo> list = new ArrayList<>();
+        Set<String> seenPackages = new HashSet<>();
         try {
             PackageManager mPackageManager = activity.getPackageManager();
             List<ResolveInfo> resolveInfos = loadPhoneAppList(mPackageManager);
             for (ResolveInfo resolveInfo : resolveInfos) {
                 String packageName = resolveInfo.activityInfo.packageName;
+                if (seenPackages.contains(packageName)) {
+                    continue;
+                }
                 boolean isRecommend = isRecommendApp(packageName);
                 CommLockInfo info = new CommLockInfo(packageName, false, isRecommend);
                 ApplicationInfo appInfo = mPackageManager.getApplicationInfo(packageName, PackageManager.GET_UNINSTALLED_PACKAGES);
@@ -79,6 +85,7 @@ public class LoadAppHelper {
                     info.setAppInfo(appInfo);
                     list.add(info);
                 }
+                seenPackages.add(packageName);
             }
         } catch (Exception e) {
             e.printStackTrace();
