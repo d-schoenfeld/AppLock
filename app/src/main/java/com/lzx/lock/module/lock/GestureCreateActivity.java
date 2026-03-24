@@ -2,15 +2,20 @@ package com.lzx.lock.module.lock;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lzx.lock.R;
+import com.lzx.lock.base.AppConstants;
 import com.lzx.lock.base.BaseActivity;
 import com.lzx.lock.bean.LockStage;
 import com.lzx.lock.mvp.contract.GestureCreateContract;
 import com.lzx.lock.mvp.p.GestureCreatePresenter;
 import com.lzx.lock.utils.LockPatternUtils;
+import com.lzx.lock.utils.PinUtils;
+import com.lzx.lock.utils.SpUtil;
 import com.lzx.lock.utils.SystemBarHelper;
 import com.lzx.lock.utils.ToastUtil;
 import com.lzx.lock.widget.LockPatternView;
@@ -19,16 +24,27 @@ import com.lzx.lock.widget.LockPatternViewPattern;
 import java.util.List;
 
 /**
- * Created by xian on 2017/2/17.
+ * Passwort/Muster ändern (aus den Einstellungen)
  */
-
 public class GestureCreateActivity extends BaseActivity implements View.OnClickListener, GestureCreateContract.View {
 
+    // Methoden-Auswahl
+    private TextView mBtnSelectPin;
+    private TextView mBtnSelectPattern;
+    private LinearLayout mPinSection;
+
+    // PIN-Abschnitt
+    private TextView mPinTip;
+    private EditText mEtPin;
+    private EditText mEtPinConfirm;
+    private TextView mBtnPinNext;
+
+    // Muster-Abschnitt
     private LockPatternView mLockPatternView;
     private TextView mLockTip;
 
     private LockStage mUiStage = LockStage.Introduction;
-    protected List<LockPatternView.Cell> mChosenPattern = null; //Passwort
+    protected List<LockPatternView.Cell> mChosenPattern = null;
     private static final String KEY_PATTERN_CHOICE = "chosenPattern";
     private static final String KEY_UI_STAGE = "uiStage";
     private LockPatternUtils mLockPatternUtils;
@@ -43,21 +59,38 @@ public class GestureCreateActivity extends BaseActivity implements View.OnClickL
 
     @Override
     protected void initViews(Bundle savedInstanceState) {
+        mTopLayout = (RelativeLayout) findViewById(R.id.top_layout);
+        mTopLayout.setPadding(0, SystemBarHelper.getStatusBarHeight(this), 0, 0);
+
+        mBtnSelectPin = (TextView) findViewById(R.id.btn_select_pin);
+        mBtnSelectPattern = (TextView) findViewById(R.id.btn_select_pattern);
+        mPinSection = (LinearLayout) findViewById(R.id.pin_section);
+        mPinTip = (TextView) findViewById(R.id.pin_tip);
+        mEtPin = (EditText) findViewById(R.id.et_pin);
+        mEtPinConfirm = (EditText) findViewById(R.id.et_pin_confirm);
+        mBtnPinNext = (TextView) findViewById(R.id.btn_pin_next);
+
         mLockTip = (TextView) findViewById(R.id.lock_tip);
         mLockPatternView = (LockPatternView) findViewById(R.id.lock_pattern_view);
-        mTopLayout = (RelativeLayout) findViewById(R.id.top_layout);
-        mTopLayout.setPadding(0, SystemBarHelper.getStatusBarHeight(this),0,0);
 
         mGestureCreatePresenter = new GestureCreatePresenter(this, this);
         initLockPatternView();
-        if (savedInstanceState == null) {
-            mGestureCreatePresenter.updateStage(LockStage.Introduction);
-        } else {
-            final String patternString = savedInstanceState.getString(KEY_PATTERN_CHOICE);
-            if (patternString != null) {
-                mChosenPattern = LockPatternUtils.stringToPattern(patternString);
+
+        // Aktuell gespeicherte Methode vorauswählen (Standard: Muster für Bestandsnutzer)
+        String currentMethod = PinUtils.getLockMethod();
+        if (AppConstants.LOCK_METHOD_PATTERN.equals(currentMethod)) {
+            showPatternMode();
+            if (savedInstanceState != null) {
+                final String patternString = savedInstanceState.getString(KEY_PATTERN_CHOICE);
+                if (patternString != null) {
+                    mChosenPattern = LockPatternUtils.stringToPattern(patternString);
+                }
+                mGestureCreatePresenter.updateStage(LockStage.values()[savedInstanceState.getInt(KEY_UI_STAGE)]);
+            } else {
+                mGestureCreatePresenter.updateStage(LockStage.Introduction);
             }
-            mGestureCreatePresenter.updateStage(LockStage.values()[savedInstanceState.getInt(KEY_UI_STAGE)]);
+        } else {
+            showPinMode();
         }
     }
 
@@ -77,20 +110,79 @@ public class GestureCreateActivity extends BaseActivity implements View.OnClickL
         mLockPatternView.setTactileFeedbackEnabled(true);
     }
 
-
     @Override
     protected void initData() {
-
     }
 
     @Override
     protected void initAction() {
-
+        mBtnSelectPin.setOnClickListener(this);
+        mBtnSelectPattern.setOnClickListener(this);
+        mBtnPinNext.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_select_pin:
+                showPinMode();
+                break;
+            case R.id.btn_select_pattern:
+                showPatternMode();
+                break;
+            case R.id.btn_pin_next:
+                handlePinNextStep();
+                break;
+        }
+    }
 
+    /** Wechsel zu PIN-Modus */
+    private void showPinMode() {
+        mEtPin.setText("");
+        mEtPinConfirm.setText("");
+        mPinTip.setText(getString(R.string.pin_enter_hint));
+        mPinSection.setVisibility(View.VISIBLE);
+        mLockPatternView.setVisibility(View.GONE);
+
+        mBtnSelectPin.setBackgroundResource(R.drawable.bg_btn_blue);
+        mBtnSelectPin.setTextColor(getResources().getColor(R.color.white));
+        mBtnSelectPattern.setBackgroundResource(R.drawable.bg_btn_method_unselected);
+        mBtnSelectPattern.setTextColor(getResources().getColor(R.color.font_deep_gray));
+    }
+
+    /** Wechsel zu Muster-Modus */
+    private void showPatternMode() {
+        mPinSection.setVisibility(View.GONE);
+        mLockPatternView.setVisibility(View.VISIBLE);
+        mGestureCreatePresenter.updateStage(LockStage.Introduction);
+
+        mBtnSelectPattern.setBackgroundResource(R.drawable.bg_btn_blue);
+        mBtnSelectPattern.setTextColor(getResources().getColor(R.color.white));
+        mBtnSelectPin.setBackgroundResource(R.drawable.bg_btn_method_unselected);
+        mBtnSelectPin.setTextColor(getResources().getColor(R.color.font_deep_gray));
+    }
+
+    /** PIN-Eingabe bestätigen und speichern */
+    private void handlePinNextStep() {
+        String pin = mEtPin.getText().toString();
+        String confirmPin = mEtPinConfirm.getText().toString();
+        if (pin.length() < PinUtils.MIN_PIN_LENGTH) {
+            ToastUtil.showToast(getString(R.string.pin_too_short));
+            return;
+        }
+        if (!pin.equals(confirmPin)) {
+            ToastUtil.showToast(getString(R.string.pin_mismatch));
+            mEtPin.setText("");
+            mEtPinConfirm.setText("");
+            return;
+        }
+        PinUtils.savePin(pin);
+        SpUtil.getInstance().putString(AppConstants.LOCK_METHOD, AppConstants.LOCK_METHOD_PIN);
+        // Altes Muster löschen, wenn Methode gewechselt
+        mLockPatternUtils.clearLock();
+        clearPattern();
+        setResult(RESULT_OK);
+        finish();
     }
 
     @Override
@@ -134,12 +226,11 @@ public class GestureCreateActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void HelpScreen() {
-
     }
 
     @Override
     public void ChoiceTooShort() {
-        mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Wrong);  //Muster zu kurz
+        mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Wrong);
         mLockPatternView.removeCallbacks(mClearPatternRunnable);
         mLockPatternView.postDelayed(mClearPatternRunnable, 1000);
     }
@@ -152,7 +243,6 @@ public class GestureCreateActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void moveToStatusTwo() {
-
     }
 
     @Override
@@ -168,7 +258,10 @@ public class GestureCreateActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void ChoiceConfirmed() {
-        mLockPatternUtils.saveLockPattern(mChosenPattern); //Passwort speichern
+        mLockPatternUtils.saveLockPattern(mChosenPattern);
+        SpUtil.getInstance().putString(AppConstants.LOCK_METHOD, AppConstants.LOCK_METHOD_PATTERN);
+        // Alten PIN löschen, wenn Methode gewechselt
+        PinUtils.clearPin();
         clearPattern();
         setResult(RESULT_OK);
         finish();
