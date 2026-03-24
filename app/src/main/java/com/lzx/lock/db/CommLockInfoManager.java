@@ -5,18 +5,22 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.text.TextUtils;
 
 import com.lzx.lock.base.AppConstants;
 import com.lzx.lock.bean.CommLockInfo;
 import com.lzx.lock.bean.FaviterInfo;
 import com.lzx.lock.utils.DataUtil;
+import com.lzx.lock.utils.SpUtil;
 
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.litepal.crud.DataSupport.where;
 
@@ -58,6 +62,19 @@ public class CommLockInfoManager {
     public synchronized void instanceCommLockInfoTable(List<ResolveInfo> resolveInfos) throws PackageManager.NameNotFoundException {
         List<CommLockInfo> list = new ArrayList<>();
 
+        // Importierte gesperrte Apps prüfen (gesetzt beim JSON-Import vor DB-Initialisierung)
+        String importedAppsStr = SpUtil.getInstance().getString(AppConstants.LOCK_IMPORTED_APPS, "");
+        Set<String> importedAppsSet = new HashSet<>();
+        boolean hasImportedApps = !TextUtils.isEmpty(importedAppsStr);
+        if (hasImportedApps) {
+            for (String pkg : importedAppsStr.split(",")) {
+                String trimmed = pkg.trim();
+                if (!TextUtils.isEmpty(trimmed)) {
+                    importedAppsSet.add(trimmed);
+                }
+            }
+        }
+
         for (ResolveInfo resolveInfo : resolveInfos) {
             boolean isfaviterApp = isHasFaviterAppInfo(resolveInfo.activityInfo.packageName); //ob empfohlene zu sperrende App
             CommLockInfo commLockInfo = new CommLockInfo(resolveInfo.activityInfo.packageName, false, isfaviterApp); // Standardmäßige Schutzaktivierung muss noch hinzugefügt werden
@@ -66,7 +83,10 @@ public class CommLockInfoManager {
             //einige Apps herausfiltern
             if (!commLockInfo.getPackageName().equals(AppConstants.APP_PACKAGE_NAME) && !commLockInfo.getPackageName().equals("com.android.settings")
                     && !commLockInfo.getPackageName().equals("com.google.android.googlequicksearchbox")) {
-                if (isfaviterApp) { //wenn empfohlen
+                // Sperrstatus: bei vorhandenem Import diesen verwenden, sonst Faviten-Standardliste
+                if (hasImportedApps) {
+                    commLockInfo.setLocked(importedAppsSet.contains(commLockInfo.getPackageName()));
+                } else if (isfaviterApp) {
                     commLockInfo.setLocked(true);
                 } else {
                     commLockInfo.setLocked(false);

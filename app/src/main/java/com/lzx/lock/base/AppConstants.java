@@ -33,4 +33,5 @@ public class AppConstants {
     public static final String LOCK_METHOD_PIN = "pin"; // Sperrmethode: Passwort/PIN
     public static final String LOCK_METHOD_PATTERN = "pattern"; // Sperrmethode: Muster
     public static final String LOCK_PIN_HASH = "lock_pin_hash"; // SHA-256-Hash des Passworts/PINs
+    public static final String LOCK_IMPORTED_APPS = "lock_imported_apps"; // kommagetrennte Paketliste aus Import (für DB-Initialisierung)
 }

@@ -64,7 +64,83 @@ Beim ersten Start der App wird (auf Android 5.0+) ein Dialog zur Vergabe der Ber
 
 ---
 
-## Verwendete Bibliotheken
+## Import & Export der Einstellungen via ADB
+
+AppLock bietet die Möglichkeit, alle Einstellungen als JSON-Datei zu exportieren und auf ein anderes Gerät zu übertragen – vollständig über die ADB-Kommandozeile ohne Verwendung der UI.
+
+### Voraussetzungen
+
+- ADB-Debugging auf dem Gerät aktiviert
+- AppLock auf dem Gerät installiert und mindestens einmal gestartet
+
+### Geschützte Schnittstelle
+
+Der Import/Export-Receiver ist durch die Systemberechtigung `android.permission.DUMP` geschützt. Diese Berechtigung besitzen nur der ADB-Shell-Nutzer (uid 2000) und System-Apps – reguläre Nutzer-Apps haben keinen Zugriff.
+
+### Export
+
+Exportiert alle Einstellungen in eine JSON-Datei:
+
+```bash
+# Export in das Standard-App-Verzeichnis
+adb shell am broadcast -a com.lzx.lock.EXPORT_SETTINGS
+
+# Export in einen benutzerdefinierten Pfad
+adb shell am broadcast -a com.lzx.lock.EXPORT_SETTINGS \
+    --es path /sdcard/Android/data/com.lzx.lock/files/applock_settings.json
+
+# Datei auf den PC kopieren
+adb pull /sdcard/Android/data/com.lzx.lock/files/applock_settings.json
+```
+
+### Import
+
+Importiert Einstellungen von einer JSON-Datei:
+
+```bash
+# Datei auf das Gerät kopieren
+adb push applock_settings.json /sdcard/Android/data/com.lzx.lock/files/applock_settings.json
+
+# Import auslösen
+adb shell am broadcast -a com.lzx.lock.IMPORT_SETTINGS \
+    --es path /sdcard/Android/data/com.lzx.lock/files/applock_settings.json
+```
+
+### Übertragung zwischen Geräten
+
+```bash
+# 1. Auf Quellgerät exportieren und Datei holen
+adb -s <QUELLE> shell am broadcast -a com.lzx.lock.EXPORT_SETTINGS
+adb -s <QUELLE> pull /sdcard/Android/data/com.lzx.lock/files/applock_settings.json
+
+# 2. Datei auf Zielgerät übertragen und importieren
+adb -s <ZIEL> push applock_settings.json /sdcard/Android/data/com.lzx.lock/files/applock_settings.json
+adb -s <ZIEL> shell am broadcast -a com.lzx.lock.IMPORT_SETTINGS \
+    --es path /sdcard/Android/data/com.lzx.lock/files/applock_settings.json
+```
+
+### Inhalt der JSON-Datei
+
+Die exportierte Datei enthält folgende Informationen:
+
+| Feld | Beschreibung |
+|---|---|
+| `settings.app_lock_state` | AppLock aktiviert/deaktiviert |
+| `settings.lock_method` | Sperrmethode (`pin` oder `pattern`) |
+| `settings.lock_pin_hash` | SHA-256-Hash des PINs/Passworts |
+| `settings.lock_auto_screen` | Sperre nach Bildschirmabschaltung |
+| `settings.lock_auto_screen_time` | Zeitverzögerung für Auto-Sperre |
+| `settings.lock_apart_milliseconds` | Zeitabstand in Millisekunden |
+| `settings.lock_apart_title` | Anzeigename des Zeitabstands |
+| `settings.AutoRecordPic` | Automatische Fotoaufnahme aktiviert |
+| `settings.lock_is_hide_line` | Muster ausblenden |
+| `gesture_pattern_hex` | Muster-Hash als Hex-String (nur bei Mustersperre) |
+| `locked_apps` | Liste der gesperrten App-Paketnamen |
+
+> **Hinweis:** Der PIN-Hash wird als SHA-256-Wert exportiert – das ursprüngliche Passwort kann daraus nicht abgeleitet werden. Nach dem Import ist dasselbe Passwort wie auf dem Quellgerät gültig.
+
+---
+
 
 - [LitePal](https://github.com/LitePalFramework/LitePal) – SQLite-Datenbankverwaltung
 
