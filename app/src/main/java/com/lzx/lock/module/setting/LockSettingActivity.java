@@ -14,7 +14,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lzx.lock.R;
-import com.lzx.lock.module.about.AboutMeActivity;
 import com.lzx.lock.module.lock.GestureCreateActivity;
 import com.lzx.lock.base.BaseActivity;
 import com.lzx.lock.base.AppConstants;
@@ -32,7 +31,7 @@ import com.lzx.lock.widget.SelectLockTimeDialog;
 
 public class LockSettingActivity extends BaseActivity implements View.OnClickListener
         , DialogInterface.OnDismissListener {
-    private TextView mBtnAbout, mLockTime, mBtnChangePwd, mIsShowPath, mLockTip, mLockScreenSwitch,mLockTakePicSwitch;
+    private TextView mLockTime, mBtnChangePwd, mLockTip, mLockScreenSwitch,mLockTakePicSwitch;
     private CheckBox mLockSwitch;
     private RelativeLayout mLockWhen, mLockScreen,mLockTakePic;
     private LockSettingReceiver mLockSettingReceiver;
@@ -50,12 +49,10 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
     protected void initViews(Bundle savedInstanceState) {
         mBtnChangePwd = (TextView) findViewById(R.id.btn_change_pwd);
         mLockTime = (TextView) findViewById(R.id.lock_time);
-        mBtnAbout = (TextView) findViewById(R.id.about_me);
         mLockSwitch = (CheckBox) findViewById(R.id.switch_compat);
         mLockWhen = (RelativeLayout) findViewById(R.id.lock_when);
         mLockScreen = (RelativeLayout) findViewById(R.id.lock_screen);
         mLockTakePic = (RelativeLayout) findViewById(R.id.lock_take_pic);
-        mIsShowPath = (TextView) findViewById(R.id.is_show_path);
         mLockTip = (TextView) findViewById(R.id.lock_tip);
         mLockScreenSwitch = (TextView) findViewById(R.id.lock_screen_switch);
         mLockTakePicSwitch = (TextView) findViewById(R.id.lock_take_pic_switch);
@@ -86,10 +83,8 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void initAction() {
         mBtnChangePwd.setOnClickListener(this);
-        mBtnAbout.setOnClickListener(this);
         mLockWhen.setOnClickListener(this);
         mLockScreen.setOnClickListener(this);
-        mIsShowPath.setOnClickListener(this);
         mLockScreenSwitch.setOnClickListener(this);
         mLockTakePic.setOnClickListener(this);
         mLockSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -120,24 +115,10 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
                 startActivityForResult(intent, REQUEST_CHANGE_PWD);
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 break;
-            case R.id.about_me:
-                intent = new Intent(LockSettingActivity.this, AboutMeActivity.class);
-                startActivity(intent);
-                break;
             case R.id.lock_when:
                 String title = SpUtil.getInstance().getString(AppConstants.LOCK_APART_TITLE, "");
                 dialog.setTitle(title);
                 dialog.show();
-                break;
-            case R.id.is_show_path:
-                boolean ishideline = SpUtil.getInstance().getBoolean(AppConstants.LOCK_IS_HIDE_LINE, false);
-                if (ishideline) {
-                    SpUtil.getInstance().putBoolean(AppConstants.LOCK_IS_HIDE_LINE, false);
-                    ToastUtil.showToast("Muster wird angezeigt");
-                } else {
-                    SpUtil.getInstance().putBoolean(AppConstants.LOCK_IS_HIDE_LINE, true);
-                    ToastUtil.showToast("Muster wird ausgeblendet");
-                }
                 break;
             case R.id.lock_screen:
                 boolean isLockAutoScreen = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_SCREEN, false);
@@ -162,15 +143,6 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
                 }
                 break;
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // "Muster anzeigen"-Option nur bei Muster-Sperrmethode anzeigen
-        boolean isPattern = AppConstants.LOCK_METHOD_PATTERN.equals(
-                SpUtil.getInstance().getString(AppConstants.LOCK_METHOD, AppConstants.LOCK_METHOD_PIN));
-        mIsShowPath.setVisibility(isPattern ? View.VISIBLE : View.GONE);
     }
 
     @Override
