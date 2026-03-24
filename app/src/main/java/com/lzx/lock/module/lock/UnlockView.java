@@ -377,6 +377,6 @@ public class UnlockView extends FrameLayout {
             }
             return true;
         }
-        return false;
+        return super.dispatchKeyEvent(event);
     }
 }
