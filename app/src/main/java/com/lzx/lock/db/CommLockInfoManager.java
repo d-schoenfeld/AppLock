@@ -13,7 +13,7 @@ import com.lzx.lock.bean.FaviterInfo;
 import com.lzx.lock.utils.DataUtil;
 import com.lzx.lock.utils.SpUtil;
 
-import org.litepal.crud.DataSupport;
+import org.litepal.LitePal;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.litepal.crud.DataSupport.where;
+import static org.litepal.LitePal.where;
 
 /**
  * Created by xian on 2017/2/17.
@@ -42,7 +42,7 @@ public class CommLockInfoManager {
      * Alle suchen
      */
     public synchronized List<CommLockInfo> getAllCommLockInfos() {
-        List<CommLockInfo> commLockInfos = DataSupport.findAll(CommLockInfo.class);
+        List<CommLockInfo> commLockInfos = LitePal.findAll(CommLockInfo.class);
         Collections.sort(commLockInfos, commLockInfoComparator);
         return commLockInfos;
     }
@@ -52,7 +52,7 @@ public class CommLockInfoManager {
      */
     public synchronized void deleteCommLockInfoTable(List<CommLockInfo> commLockInfos) {
         for (CommLockInfo info : commLockInfos) {
-            DataSupport.deleteAll(CommLockInfo.class, "packageName = ?", info.getPackageName());
+            LitePal.deleteAll(CommLockInfo.class, "packageName = ?", info.getPackageName());
         }
     }
 
@@ -99,14 +99,14 @@ public class CommLockInfoManager {
         }
         list = DataUtil.clearRepeatCommLockInfo(list);  //doppelte Einträge entfernen
 
-        DataSupport.saveAll(list);
+        LitePal.saveAll(list);
     }
 
     /**
      * Prüfen ob empfohlene zu sperrende App
      */
     public boolean isHasFaviterAppInfo(String packageName) {
-        List<FaviterInfo> infos = DataSupport.where("packageName = ?", packageName).find(FaviterInfo.class);
+        List<FaviterInfo> infos = LitePal.where("packageName = ?", packageName).find(FaviterInfo.class);
         return infos.size() > 0;
     }
 
@@ -127,7 +127,7 @@ public class CommLockInfoManager {
     public void updateLockStatus(String packageName, boolean isLock) {
         ContentValues values = new ContentValues();
         values.put("isLocked", isLock);
-        DataSupport.updateAll(CommLockInfo.class, values, "packageName = ?", packageName);
+        LitePal.updateAll(CommLockInfo.class, values, "packageName = ?", packageName);
     }
 
 
@@ -164,14 +164,14 @@ public class CommLockInfoManager {
      * Unscharfe Suche
      */
     public List<CommLockInfo> queryBlurryList(String appName) {
-        List<CommLockInfo> infos = DataSupport.where("appName like ?", "%" + appName + "%").find(CommLockInfo.class);
+        List<CommLockInfo> infos = LitePal.where("appName like ?", "%" + appName + "%").find(CommLockInfo.class);
         return infos;
     }
 
     public void setIsUnLockThisApp(String packageName, boolean isSetUnLock) {
         ContentValues values = new ContentValues();
         values.put("isSetUnLock", isSetUnLock);
-        DataSupport.updateAll(CommLockInfo.class, values, "packageName = ?", packageName);
+        LitePal.updateAll(CommLockInfo.class, values, "packageName = ?", packageName);
     }
 
 

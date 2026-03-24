@@ -2,7 +2,7 @@ package com.lzx.lock.db;
 
 import com.lzx.lock.bean.CommLockInfo;
 
-import org.litepal.crud.DataSupport;
+import org.litepal.LitePal;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +38,7 @@ public class DbManager {
      * Alle App-Informationen aus der Datenbank abrufen
      */
     public synchronized List<CommLockInfo> queryInfoList() {
-        List<CommLockInfo> list = DataSupport.findAll(CommLockInfo.class);
+        List<CommLockInfo> list = LitePal.findAll(CommLockInfo.class);
         Collections.sort(list, new Comparator<CommLockInfo>() {
             @Override
             public int compare(CommLockInfo lhs, CommLockInfo rhs) {
@@ -75,7 +75,7 @@ public class DbManager {
      */
     public synchronized void saveInfoList(List<CommLockInfo> list) {
         List<CommLockInfo> unique = removeDuplicates(list);
-        DataSupport.saveAll(unique);
+        LitePal.saveAll(unique);
     }
 
     /**
@@ -83,7 +83,7 @@ public class DbManager {
      */
     public synchronized void deleteInfoByList(List<CommLockInfo> list) {
         for (CommLockInfo info : list) {
-            DataSupport.deleteAll(CommLockInfo.class, "packageName = ?", info.getPackageName());
+            LitePal.deleteAll(CommLockInfo.class, "packageName = ?", info.getPackageName());
         }
     }
 

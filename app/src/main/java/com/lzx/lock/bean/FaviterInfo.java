@@ -1,13 +1,13 @@
 package com.lzx.lock.bean;
 
-import org.litepal.crud.DataSupport;
+import org.litepal.crud.LitePalSupport;
 
 /**
  * Created by xian on 2017/2/17.
  * Informationen zu empfohlenen zu sperrenden Apps
  */
 
-public class FaviterInfo extends DataSupport {
+public class FaviterInfo extends LitePalSupport {
     public String packageName;
 
     public FaviterInfo() {
