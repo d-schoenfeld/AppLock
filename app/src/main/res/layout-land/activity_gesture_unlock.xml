@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/unlock_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/transparent"
+                android:clipToPadding="false">
+
+    <ImageView
+        android:id="@+id/bg_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <!-- More-button (top right) -->
+    <ImageView
+        android:id="@+id/btn_more"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10dp"
+        android:paddingRight="20dp"
+        android:src="@drawable/ic_menu_small"/>
+
+    <!-- Horizontal split: left=info panel, right=unlock input -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <!-- Left panel: app info + unlock message (vertically centered) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingLeft="16dp"
+            android:paddingRight="8dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <ImageView
+                    android:id="@+id/app_logo"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_launcher"/>
+
+                <TextView
+                    android:id="@+id/app_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/app_name"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"/>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/unlock_icon"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/ic_launcher"
+                android:visibility="visible"/>
+
+            <TextView
+                android:id="@+id/unlock_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                android:textSize="16.0sp"
+                android:visibility="visible"/>
+
+            <TextView
+                android:id="@+id/unlock_fail_tip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_horizontal"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:visibility="visible"/>
+
+        </LinearLayout>
+
+        <!-- Right panel: unlock input (pattern or PIN) -->
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <!-- Muster-Entsperrung -->
+            <com.lzx.lock.widget.LockPatternView
+                android:id="@+id/unlock_lock_view"
+                android:layout_width="@dimen/pattern_view_size_landscape"
+                android:layout_height="@dimen/pattern_view_size_landscape"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+
+            <!-- PIN/Passwort-Entsperrung -->
+            <LinearLayout
+                android:id="@+id/pin_unlock_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/et_pin_unlock"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:inputType="textPassword"
+                    android:hint="@string/pin_enter_to_unlock"
+                    android:contentDescription="@string/pin_enter_to_unlock"
+                    android:gravity="center"
+                    android:background="@drawable/bg_frame_search"
+                    android:padding="8dp"/>
+
+                <TextView
+                    android:id="@+id/btn_pin_unlock"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_btn_blue"
+                    android:text="@string/btn_unlock"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:layout_marginTop="12dp"/>
+            </LinearLayout>
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -223,13 +223,15 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
             mPinUnlockSection.setVisibility(View.VISIBLE);
             mUnlockFailTip.setText(getString(R.string.pin_enter_to_unlock));
 
-            // Reposition fail tip (and the icon/name chain above it) above the PIN section
-            // instead of above the hidden pattern view, so icon and app name are visible
-            RelativeLayout.LayoutParams params =
-                    (RelativeLayout.LayoutParams) mUnlockFailTip.getLayoutParams();
-            params.removeRule(RelativeLayout.ABOVE);
-            params.addRule(RelativeLayout.ABOVE, R.id.pin_unlock_section);
-            mUnlockFailTip.setLayoutParams(params);
+            // In portrait layout, reposition fail tip above the PIN section
+            // (not needed in landscape layout where views are independently positioned)
+            if (mUnlockFailTip.getParent() instanceof RelativeLayout) {
+                RelativeLayout.LayoutParams params =
+                        (RelativeLayout.LayoutParams) mUnlockFailTip.getLayoutParams();
+                params.removeRule(RelativeLayout.ABOVE);
+                params.addRule(RelativeLayout.ABOVE, R.id.pin_unlock_section);
+                mUnlockFailTip.setLayoutParams(params);
+            }
         } else {
             mLockPatternView.setVisibility(View.VISIBLE);
             mPinUnlockSection.setVisibility(View.GONE);

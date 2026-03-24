@@ -32,8 +32,7 @@
         <activity
             android:name=".module.splash.SplashActivity"
             android:exported="true"
-            android:label=""
-            android:screenOrientation="portrait">
+            android:label="">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -44,13 +43,11 @@
         <activity
             android:name=".module.pwd.CreatePwdActivity"
             android:exported="false"
-            android:label="Passwort erstellen"
-            android:screenOrientation="portrait"/>
+            android:label="Passwort erstellen"/>
         <activity
             android:name=".module.lock.GestureSelfUnlockActivity"
             android:exported="false"
-            android:label="Entsperren"
-            android:screenOrientation="portrait"/>
+            android:label="Entsperren"/>
         <activity
             android:name=".module.lock.GestureUnlockActivity"
             android:excludeFromRecents="true"
@@ -58,22 +55,18 @@
             android:label=""
             android:launchMode="singleTask"
             android:noHistory="true"
-            android:screenOrientation="portrait"
             android:theme="@style/unlock_activity_style"/>
         <activity
             android:name=".module.setting.LockSettingActivity"
             android:exported="false"
-            android:label="Einstellungen"
-            android:screenOrientation="portrait"/>
+            android:label="Einstellungen"/>
         <activity
             android:name=".module.lock.GestureCreateActivity"
             android:exported="false"
-            android:label="Mustersperre erstellen"
-            android:screenOrientation="portrait"/>
+            android:label="Mustersperre erstellen"/>
         <activity
             android:name=".module.main.MainActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:exported="false"/>
 
         <service
             android:name=".service.LoadAppListService"
