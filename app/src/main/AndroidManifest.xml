@@ -98,11 +98,11 @@
 
             Export-Befehl (adb):
               adb shell am broadcast -a com.lzx.lock.EXPORT_SETTINGS \
-                  --es path /sdcard/Android/data/com.lzx.lock/files/applock_settings.json
+                  - -es path /sdcard/Android/data/com.lzx.lock/files/applock_settings.json
 
             Import-Befehl (adb):
               adb shell am broadcast -a com.lzx.lock.IMPORT_SETTINGS \
-                  --es path /sdcard/Android/data/com.lzx.lock/files/applock_settings.json
+                  - -es path /sdcard/Android/data/com.lzx.lock/files/applock_settings.json
         -->
         <receiver
             android:name=".receiver.ImportExportReceiver"
