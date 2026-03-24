@@ -380,7 +380,7 @@ public class LockService extends Service {
     private void passwordLock(String packageName) {
         if (!GestureUnlockActivity.isShowing) {
             Intent intent = new Intent(LockService.this, GestureUnlockActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
             intent.putExtra(AppConstants.LOCK_PACKAGE_NAME, packageName);
             intent.putExtra(AppConstants.LOCK_FROM, AppConstants.LOCK_FROM_FINISH);
             startActivity(intent);
