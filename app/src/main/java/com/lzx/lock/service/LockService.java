@@ -168,8 +168,15 @@ public class LockService extends Service {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                        SystemClock.elapsedRealtime() + 1000, pendingIntent);
+                boolean canScheduleExact = Build.VERSION.SDK_INT < Build.VERSION_CODES.S
+                        || alarmManager.canScheduleExactAlarms();
+                if (canScheduleExact) {
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                            SystemClock.elapsedRealtime() + 1000, pendingIntent);
+                } else {
+                    alarmManager.setAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                            SystemClock.elapsedRealtime() + 1000, pendingIntent);
+                }
             } else {
                 alarmManager.set(AlarmManager.ELAPSED_REALTIME,
                         SystemClock.elapsedRealtime() + 1000, pendingIntent);
