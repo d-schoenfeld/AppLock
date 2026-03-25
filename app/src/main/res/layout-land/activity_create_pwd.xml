@@ -2,14 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:orientation="horizontal">
+              android:gravity="center_horizontal"
+              android:orientation="vertical">
 
-    <!-- Left panel: header -->
     <RelativeLayout
         android:id="@+id/top_layout"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
         android:background="#2DAC7C">
 
         <ImageView
@@ -49,10 +48,10 @@
             android:textSize="14sp"/>
     </RelativeLayout>
 
-    <!-- Right panel: content (scrollable) -->
+    <!-- Scrollbarer Inhalt -->
     <ScrollView
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:fillViewport="true">
 
@@ -120,6 +119,8 @@
                     android:id="@+id/et_pin"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:layout_gravity="center_horizontal"
+                    android:maxWidth="500dp"
                     android:inputType="textPassword"
                     android:hint="@string/pin_enter_hint"
                     android:contentDescription="@string/pin_enter_hint"
@@ -131,6 +132,8 @@
                     android:id="@+id/et_pin_confirm"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:layout_gravity="center_horizontal"
+                    android:maxWidth="500dp"
                     android:inputType="textPassword"
                     android:hint="@string/pin_confirm_hint"
                     android:contentDescription="@string/pin_confirm_hint"
@@ -144,6 +147,8 @@
                     android:id="@+id/btn_pin_next"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:layout_gravity="center_horizontal"
+                    android:maxWidth="500dp"
                     android:background="@drawable/bg_btn_blue"
                     android:text="@string/pin_confirm"
                     android:gravity="center"
@@ -155,8 +160,8 @@
             <!-- Muster-Abschnitt -->
             <com.lzx.lock.widget.LockPatternView
                 android:id="@+id/lock_pattern_view"
-                android:layout_width="@dimen/pattern_view_size_landscape"
-                android:layout_height="@dimen/pattern_view_size_landscape"
+                android:layout_width="290dp"
+                android:layout_height="290dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
                 android:visibility="gone"/>

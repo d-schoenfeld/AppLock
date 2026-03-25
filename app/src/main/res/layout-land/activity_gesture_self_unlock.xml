@@ -5,14 +5,13 @@
               android:layout_height="match_parent"
               android:background="@color/white"
               android:clipToPadding="false"
-              android:orientation="horizontal">
+              android:gravity="center_horizontal"
+              android:orientation="vertical">
 
-    <!-- Left panel: header -->
     <RelativeLayout
         android:id="@+id/top_layout"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
         android:background="#2DAC7C">
 
         <TextureView
@@ -57,10 +56,10 @@
             android:textSize="14sp"/>
     </RelativeLayout>
 
-    <!-- Right panel: unlock method (scrollable) -->
+    <!-- Scrollbarer Inhalt -->
     <ScrollView
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:fillViewport="true">
 
@@ -69,8 +68,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp">
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp">
 
             <!-- PIN/Passwort-Entsperrung -->
             <LinearLayout
@@ -96,6 +95,8 @@
                     android:id="@+id/et_pin_unlock"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:layout_gravity="center_horizontal"
+                    android:maxWidth="500dp"
                     android:inputType="textPassword"
                     android:hint="@string/pin_enter_to_unlock"
                     android:contentDescription="@string/pin_enter_to_unlock"
@@ -107,6 +108,8 @@
                     android:id="@+id/btn_pin_unlock"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:layout_gravity="center_horizontal"
+                    android:maxWidth="500dp"
                     android:background="@drawable/bg_btn_blue"
                     android:text="Entsperren"
                     android:gravity="center"
@@ -118,8 +121,8 @@
             <!-- Muster-Entsperrung -->
             <com.lzx.lock.widget.LockPatternView
                 android:id="@+id/unlock_lock_view"
-                android:layout_width="@dimen/pattern_view_size_landscape"
-                android:layout_height="@dimen/pattern_view_size_landscape"
+                android:layout_width="290dp"
+                android:layout_height="290dp"
                 android:layout_gravity="center_horizontal"
                 android:visibility="gone"/>
 
