@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.lzx.lock.R;
-import com.lzx.lock.module.lock.GestureSelfUnlockActivity;
+import com.lzx.lock.module.lock.SelfUnlockActivity;
 import com.lzx.lock.base.BaseActivity;
 import com.lzx.lock.base.AppConstants;
 import com.lzx.lock.bean.CommLockInfo;
@@ -208,7 +208,7 @@ public class SplashActivity extends BaseActivity {
         if (isFirstLock) {
             gotoCreatePwdActivity();
         } else {
-            Intent intent = new Intent(SplashActivity.this, GestureSelfUnlockActivity.class);
+            Intent intent = new Intent(SplashActivity.this, SelfUnlockActivity.class);
             intent.putExtra(AppConstants.LOCK_PACKAGE_NAME, AppConstants.APP_PACKAGE_NAME);
             intent.putExtra(AppConstants.LOCK_FROM, AppConstants.LOCK_FROM_LOCK_MAIN_ACITVITY);
             startActivity(intent);

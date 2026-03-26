@@ -29,6 +29,7 @@ public class AppConstants {
     public static final String LOCK_FROM_UNLOCK = "lock_from_unlock"; //Action nach der Entsperrung
     public static final String LOCK_FROM_LOCK_MAIN_ACITVITY = "lock_from_lock_main_activity";
     public static final String LOCK_AUTO_RECORD_PIC = "AutoRecordPic"; //ob automatische Fotoaufnahme aktiviert
+    public static final String LOCK_AUTO_RECORD_PIC_ATTEMPT = "AutoRecordPicAttempt"; //Anzahl der Fehlversuche vor Fotoaufnahme
     public static final String LOCK_METHOD = "lock_method"; // Sperrmethode ("pin" oder "pattern")
     public static final String LOCK_METHOD_PIN = "pin"; // Sperrmethode: Passwort/PIN
     public static final String LOCK_METHOD_PATTERN = "pattern"; // Sperrmethode: Muster

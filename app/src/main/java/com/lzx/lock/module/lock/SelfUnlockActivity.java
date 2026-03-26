@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Entsperrungsbildschirm für die App selbst (beim App-Start)
  */
-public class GestureSelfUnlockActivity extends BaseActivity implements View.OnClickListener {
+public class SelfUnlockActivity extends BaseActivity implements View.OnClickListener {
 
     // PIN-Entsperrung
     private LinearLayout mPinUnlockSection;
@@ -49,7 +49,7 @@ public class GestureSelfUnlockActivity extends BaseActivity implements View.OnCl
 
     @Override
     public int getLayoutId() {
-        return R.layout.activity_gesture_self_unlock;
+        return R.layout.activity_self_unlock;
     }
 
     @Override
@@ -156,17 +156,17 @@ public class GestureSelfUnlockActivity extends BaseActivity implements View.OnCl
             mManager.unlockCommApplication(pkgName);
             finish();
         } else if (AppConstants.LOCK_FROM_SETTING.equals(actionFrom)) {
-            startActivity(new Intent(GestureSelfUnlockActivity.this, LockSettingActivity.class));
+            startActivity(new Intent(SelfUnlockActivity.this, LockSettingActivity.class));
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             finish();
         } else if (AppConstants.LOCK_FROM_UNLOCK.equals(actionFrom)) {
             mManager.setIsUnLockThisApp(pkgName, true);
             mManager.unlockCommApplication(pkgName);
-            sendBroadcast(new Intent(UnlockView.FINISH_UNLOCK_THIS_APP));
+            sendBroadcast(new Intent(UnlockActivity.FINISH_UNLOCK_THIS_APP));
             finish();
         } else {
             // LOCK_FROM_LOCK_MAIN_ACITVITY oder anderer Wert: zur Hauptansicht navigieren
-            Intent intent = new Intent(GestureSelfUnlockActivity.this, MainActivity.class);
+            Intent intent = new Intent(SelfUnlockActivity.this, MainActivity.class);
             startActivity(intent);
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             finish();

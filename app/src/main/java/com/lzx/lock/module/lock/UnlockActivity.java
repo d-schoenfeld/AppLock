@@ -36,10 +36,10 @@ import com.lzx.lock.widget.UnLockMenuPopWindow;
 import java.util.List;
 
 /**
- * Created by xian on 2017/2/17.
+ * Entsperrungsbildschirm – verarbeitet sowohl Muster- als auch Passwort/PIN-Entsperrung.
  */
 
-public class GestureUnlockActivity extends BaseActivity implements View.OnClickListener {
+public class UnlockActivity extends BaseActivity implements View.OnClickListener {
 
     /** Gibt an, ob der Sperr-Bildschirm gerade angezeigt wird (für LockService-Guard). */
     public static volatile boolean isShowing = false;
@@ -60,10 +60,11 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
     private String actionFrom;//Aktion bei Zurück-Taste
     private LockPatternUtils mLockPatternUtils;
     private int mFailedPatternAttemptsSinceLastTimeout = 0;
+    private int mFailedPicAttempts = 0;
     private CommLockInfoManager mLockInfoManager;
     private UnLockMenuPopWindow mPopWindow;
     private LockPatternViewPattern mPatternViewPattern;
-    private GestureUnlockReceiver mGestureUnlockReceiver;
+    private UnlockReceiver mUnlockReceiver;
     private ApplicationInfo appInfo;
     public static final String FINISH_UNLOCK_THIS_APP = "finish_unlock_this_app";
 
@@ -71,7 +72,7 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
     private String appLabel;
     @Override
     public int getLayoutId() {
-        return R.layout.activity_gesture_unlock;
+        return R.layout.activity_unlock;
     }
 
     @Override
@@ -102,6 +103,7 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
         if (actionFrom == null) actionFrom = AppConstants.LOCK_FROM_FINISH;
         //Initialisieren
         packageManager = getPackageManager();
+        mFailedPicAttempts = 0;
 
         mLockInfoManager = new CommLockInfoManager(this);
         mPopWindow = new UnLockMenuPopWindow(this, pkgName, true);
@@ -111,11 +113,11 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
         initPinUnlockView();
         initUnlockViews();
 
-        mGestureUnlockReceiver = new GestureUnlockReceiver();
+        mUnlockReceiver = new UnlockReceiver();
         IntentFilter filter = new IntentFilter();
       //  filter.addAction(UnLockMenuPopWindow.UPDATE_LOCK_VIEW);
         filter.addAction(FINISH_UNLOCK_THIS_APP);
-        registerReceiver(mGestureUnlockReceiver, filter);
+        registerReceiver(mUnlockReceiver, filter);
 
     }
 
@@ -140,7 +142,7 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
                                 mUnLockLayout.getViewTreeObserver().removeOnPreDrawListener(this);
                                 mUnLockLayout.buildDrawingCache();
                                 Bitmap bmp = LockUtil.drawableToBitmap(icon, mUnLockLayout);
-                                LockUtil.blur(GestureUnlockActivity.this, LockUtil.big(bmp), mUnLockLayout);  //Gaußscher Weichzeichner
+                                LockUtil.blur(UnlockActivity.this, LockUtil.big(bmp), mUnLockLayout);  //Gaußscher Weichzeichner
                                 return true;
                             }
                         });
@@ -236,7 +238,7 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
      */
     private void handleUnlockSuccess() {
         if (AppConstants.LOCK_FROM_LOCK_MAIN_ACITVITY.equals(actionFrom)) {
-            Intent mainIntent = new Intent(GestureUnlockActivity.this, MainActivity.class);
+            Intent mainIntent = new Intent(UnlockActivity.this, MainActivity.class);
             mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(mainIntent);
             finish();
@@ -258,11 +260,17 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
     }
 
     /**
-     * Nimmt ein Foto auf, wenn die Einstellung "Bei Fehleingabe fotografieren" aktiviert ist.
+     * Nimmt ein Foto auf, wenn die Einstellung "Bei Fehleingabe fotografieren" aktiviert ist
+     * und die konfigurierte Anzahl von Fehlversuchen erreicht wurde.
      */
     private void takePhotoIfEnabled() {
         if (SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_RECORD_PIC, false)) {
-            new Camera2Manager(this).capturePhoto();
+            mFailedPicAttempts++;
+            int threshold = (int) SpUtil.getInstance().getInt(AppConstants.LOCK_AUTO_RECORD_PIC_ATTEMPT, 1);
+            if (mFailedPicAttempts >= threshold) {
+                mFailedPicAttempts = 0;
+                new Camera2Manager(this).capturePhoto();
+            }
         }
     }
 
@@ -311,7 +319,7 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
         }
     }
 
-    private class GestureUnlockReceiver extends BroadcastReceiver {
+    private class UnlockReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -328,6 +336,6 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mGestureUnlockReceiver);
+        unregisterReceiver(mUnlockReceiver);
     }
 }

@@ -86,6 +86,22 @@
     <string name="pin_wrong">Falsches Passwort. Erneut versuchen.</string>
     <string name="btn_unlock">Entsperren</string>
 
+    <!-- Foto bei Fehleingabe: Anzahl der Fehlversuche -->
+    <string name="take_pic_attempt_title">Foto nach Fehlversuchen</string>
+    <string name="take_pic_attempt_dialog_title">Foto auslösen nach</string>
+    <string-array name="take_pic_attempt_labels">
+        <item>jedem Fehlversuch</item>
+        <item>2 Fehlversuchen</item>
+        <item>3 Fehlversuchen</item>
+        <item>5 Fehlversuchen</item>
+    </string-array>
+    <integer-array name="take_pic_attempt_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+    </integer-array>
+
     <!-- Vordergrunddienst-Benachrichtigung -->
     <string name="lock_service_notification_channel">App-Sperre Dienst</string>
     <string name="lock_service_notification_title">App-Sperre aktiv</string>

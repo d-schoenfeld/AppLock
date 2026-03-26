@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.lzx.lock.R;
 import com.lzx.lock.bean.LockStage;
-import com.lzx.lock.mvp.contract.GestureCreateContract;
+import com.lzx.lock.mvp.contract.LockCreateContract;
 import com.lzx.lock.utils.LockPatternUtils;
 import com.lzx.lock.widget.LockPatternView;
 
@@ -22,11 +22,11 @@ import static com.lzx.lock.bean.LockStage.NeedToConfirm;
  * Created by xian on 2017/2/17.
  */
 
-public class GestureCreatePresenter implements GestureCreateContract.Presenter {
-    private GestureCreateContract.View mView;
+public class LockCreatePresenter implements LockCreateContract.Presenter {
+    private LockCreateContract.View mView;
     private Context mContext;
 
-    public GestureCreatePresenter(GestureCreateContract.View view, Context context) {
+    public LockCreatePresenter(LockCreateContract.View view, Context context) {
         mView = view;
         mContext = context;
     }

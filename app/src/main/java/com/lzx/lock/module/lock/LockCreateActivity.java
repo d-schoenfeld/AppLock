@@ -11,8 +11,8 @@ import com.lzx.lock.R;
 import com.lzx.lock.base.AppConstants;
 import com.lzx.lock.base.BaseActivity;
 import com.lzx.lock.bean.LockStage;
-import com.lzx.lock.mvp.contract.GestureCreateContract;
-import com.lzx.lock.mvp.p.GestureCreatePresenter;
+import com.lzx.lock.mvp.contract.LockCreateContract;
+import com.lzx.lock.mvp.p.LockCreatePresenter;
 import com.lzx.lock.utils.LockPatternUtils;
 import com.lzx.lock.utils.PinUtils;
 import com.lzx.lock.utils.SpUtil;
@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Passwort/Muster ändern (aus den Einstellungen)
  */
-public class GestureCreateActivity extends BaseActivity implements View.OnClickListener, GestureCreateContract.View {
+public class LockCreateActivity extends BaseActivity implements View.OnClickListener, LockCreateContract.View {
 
     // Methoden-Auswahl
     private TextView mBtnSelectPin;
@@ -49,12 +49,12 @@ public class GestureCreateActivity extends BaseActivity implements View.OnClickL
     private static final String KEY_UI_STAGE = "uiStage";
     private LockPatternUtils mLockPatternUtils;
     private LockPatternViewPattern mPatternViewPattern;
-    private GestureCreatePresenter mGestureCreatePresenter;
+    private LockCreatePresenter mLockCreatePresenter;
     private RelativeLayout mTopLayout;
 
     @Override
     public int getLayoutId() {
-        return R.layout.activity_gesture_lock;
+        return R.layout.activity_lock_create;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class GestureCreateActivity extends BaseActivity implements View.OnClickL
         mLockTip = (TextView) findViewById(R.id.lock_tip);
         mLockPatternView = (LockPatternView) findViewById(R.id.lock_pattern_view);
 
-        mGestureCreatePresenter = new GestureCreatePresenter(this, this);
+        mLockCreatePresenter = new LockCreatePresenter(this, this);
         initLockPatternView();
 
         // Aktuell gespeicherte Methode vorauswählen (Standard: Muster für Bestandsnutzer)
@@ -85,9 +85,9 @@ public class GestureCreateActivity extends BaseActivity implements View.OnClickL
                 if (patternString != null) {
                     mChosenPattern = LockPatternUtils.stringToPattern(patternString);
                 }
-                mGestureCreatePresenter.updateStage(LockStage.values()[savedInstanceState.getInt(KEY_UI_STAGE)]);
+                mLockCreatePresenter.updateStage(LockStage.values()[savedInstanceState.getInt(KEY_UI_STAGE)]);
             } else {
-                mGestureCreatePresenter.updateStage(LockStage.Introduction);
+                mLockCreatePresenter.updateStage(LockStage.Introduction);
             }
         } else {
             showPinMode();
@@ -103,7 +103,7 @@ public class GestureCreateActivity extends BaseActivity implements View.OnClickL
         mPatternViewPattern.setPatternListener(new LockPatternViewPattern.onPatternListener() {
             @Override
             public void onPatternDetected(List<LockPatternView.Cell> pattern) {
-                mGestureCreatePresenter.onPatternDetected(pattern, mChosenPattern, mUiStage);
+                mLockCreatePresenter.onPatternDetected(pattern, mChosenPattern, mUiStage);
             }
         });
         mLockPatternView.setOnPatternListener(mPatternViewPattern);
@@ -155,7 +155,7 @@ public class GestureCreateActivity extends BaseActivity implements View.OnClickL
     private void showPatternMode() {
         mPinSection.setVisibility(View.GONE);
         mLockPatternView.setVisibility(View.VISIBLE);
-        mGestureCreatePresenter.updateStage(LockStage.Introduction);
+        mLockCreatePresenter.updateStage(LockStage.Introduction);
 
         mBtnSelectPattern.setBackgroundResource(R.drawable.bg_btn_blue);
         mBtnSelectPattern.setTextColor(getResources().getColor(R.color.white));
