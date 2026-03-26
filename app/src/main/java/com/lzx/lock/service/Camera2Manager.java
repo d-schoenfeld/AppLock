@@ -43,7 +43,7 @@ public class Camera2Manager {
 
     private static final String TAG = "Camera2Manager";
     /** Wartezeit in Millisekunden damit Belichtung, Weißabgleich und Fokus konvergieren. */
-    private static final long CAMERA_WARMUP_DELAY_MS = 1200;
+    private static final long CAMERA_WARMUP_DELAY_MS = 2000;
 
     private final Context mContext;
     private Handler mHandler;
