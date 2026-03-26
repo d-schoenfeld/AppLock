@@ -23,6 +23,7 @@ import android.media.ImageReader;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -33,12 +34,14 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.Range;
 import android.util.Size;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -238,7 +241,7 @@ public class Camera2Fragment extends Fragment {
             captureBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, (long) ((214735991 - 13231) / 2));
             captureBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, 0);
             captureBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, (10000 - 100) / 2);//ISO und Empfindlichkeit setzen
-            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 90);
+            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, computeJpegOrientation());
             //30 Bilder pro Sekunde setzen
             CameraManager cameraManager = (CameraManager) getActivity().getSystemService(Context.CAMERA_SERVICE);
             String cameraid = CameraCharacteristics.LENS_FACING_FRONT + "";
@@ -267,7 +270,7 @@ public class Camera2Fragment extends Fragment {
                         CaptureRequest.CONTROL_AF_MODE_EDOF);
 //                builder.set(CaptureRequest.CONTROL_AF_TRIGGER,
 //                        CameraMetadata.CONTROL_AF_TRIGGER_START);
-                builder.set(CaptureRequest.JPEG_ORIENTATION, 90);
+                builder.set(CaptureRequest.JPEG_ORIENTATION, computeJpegOrientation());
                 mCameraSession.capture(builder.build(), null, mHandler);
             } catch (CameraAccessException e) {
                 e.printStackTrace();
@@ -337,6 +340,39 @@ public class Camera2Fragment extends Fragment {
     //Kamerazoom-Einstellungen
     private Rect picRect;
 
+
+    /**
+     * Berechnet die JPEG-Ausrichtung basierend auf der aktuellen Geräterotation
+     * und der Sensorausrichtung der Kamera.
+     * Für Frontkameras wird die Geräterotation zur Sensorausrichtung addiert;
+     * für Rückkameras wird sie subtrahiert.
+     */
+    private int computeJpegOrientation() {
+        Display display;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            display = getActivity().getDisplay();
+        } else {
+            display = getActivity().getWindowManager().getDefaultDisplay();
+        }
+        int deviceRotation = (display != null) ? display.getRotation() : Surface.ROTATION_0;
+        int deviceDegrees;
+        switch (deviceRotation) {
+            case Surface.ROTATION_90:  deviceDegrees = 90;  break;
+            case Surface.ROTATION_180: deviceDegrees = 180; break;
+            case Surface.ROTATION_270: deviceDegrees = 270; break;
+            default:                   deviceDegrees = 0;   break;
+        }
+        Integer sensorOrientation = mCameraCharacteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+        int sensorDegrees = (sensorOrientation != null) ? sensorOrientation : 0;
+        Integer facing = mCameraCharacteristics.get(CameraCharacteristics.LENS_FACING);
+        if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
+            // Frontkamera: Geräterotation zur Sensorausrichtung addieren
+            return (sensorDegrees + deviceDegrees) % 360;
+        } else {
+            // Rückkamera: Geräterotation von der Sensorausrichtung subtrahieren
+            return (sensorDegrees - deviceDegrees + 360) % 360;
+        }
+    }
 
     @Nullable
     @Override
