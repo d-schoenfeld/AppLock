@@ -14,14 +14,18 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.hardware.display.DisplayManager;
 import android.media.Image;
 import android.media.ImageReader;
+import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.Size;
+import android.view.Display;
 import android.view.Surface;
+import android.view.WindowManager;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,6 +49,7 @@ public class Camera2Manager {
     private Handler mHandler;
     private HandlerThread mHandlerThread;
     private CameraDevice mCameraDevice;
+    private CameraCharacteristics mCameraCharacteristics;
     private CameraCaptureSession mCameraSession;
     private ImageReader mImageReader;
     private SurfaceTexture mDummySurfaceTexture;
@@ -89,6 +94,7 @@ public class Camera2Manager {
             }
 
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+            mCameraCharacteristics = characteristics;
             StreamConfigurationMap map = characteristics.get(
                     CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             Size largest = Collections.max(
@@ -103,9 +109,18 @@ public class Camera2Manager {
                 }
             }, mHandler);
 
-            // Unsichtbare Dummy-Surface für die Pflicht-Vorschau der Camera2-API
+            // Unsichtbare Dummy-Surface für die Pflicht-Vorschau der Camera2-API;
+            // Größe aus den vom Gerät unterstützten Vorschaugrößen ermitteln.
+            Size[] previewSizes = map.getOutputSizes(SurfaceTexture.class);
+            Size dummySize;
+            if (previewSizes != null && previewSizes.length > 0) {
+                // Kleinste unterstützte Größe wählen, um Ressourcen zu schonen.
+                dummySize = Collections.min(Arrays.asList(previewSizes), new CompareSizeByArea());
+            } else {
+                dummySize = new Size(640, 480);
+            }
             mDummySurfaceTexture = new SurfaceTexture(1);
-            mDummySurfaceTexture.setDefaultBufferSize(640, 480);
+            mDummySurfaceTexture.setDefaultBufferSize(dummySize.getWidth(), dummySize.getHeight());
             mDummySurface = new Surface(mDummySurfaceTexture);
 
             manager.openCamera(cameraId, new CameraDevice.StateCallback() {
@@ -214,7 +229,7 @@ public class Camera2Manager {
             captureBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_AUTO);
             captureBuilder.set(CaptureRequest.CONTROL_AF_MODE,
                     CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 90);
+            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, computeJpegOrientation(mCameraCharacteristics));
 
             mCameraSession.capture(captureBuilder.build(), new CameraCaptureSession.CaptureCallback() {
                 @Override
@@ -227,6 +242,42 @@ public class Camera2Manager {
             Log.e(TAG, "Fehler bei der Fotoaufnahme", e);
             mCapturing.set(false);
             cleanup();
+        }
+    }
+
+    /**
+     * Berechnet die JPEG-Ausrichtung basierend auf der aktuellen Geräterotation
+     * und der Sensorausrichtung der Kamera.
+     * Für Frontkameras wird die Geräterotation zur Sensorausrichtung addiert;
+     * für Rückkameras wird sie subtrahiert.
+     */
+    @SuppressLint("NewApi")
+    private int computeJpegOrientation(CameraCharacteristics characteristics) {
+        Display display;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            DisplayManager dm = (DisplayManager) mContext.getSystemService(Context.DISPLAY_SERVICE);
+            display = dm.getDisplay(Display.DEFAULT_DISPLAY);
+        } else {
+            WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+            display = wm.getDefaultDisplay();
+        }
+        int deviceRotation = (display != null) ? display.getRotation() : Surface.ROTATION_0;
+        int deviceDegrees;
+        switch (deviceRotation) {
+            case Surface.ROTATION_90:  deviceDegrees = 90;  break;
+            case Surface.ROTATION_180: deviceDegrees = 180; break;
+            case Surface.ROTATION_270: deviceDegrees = 270; break;
+            default:                   deviceDegrees = 0;   break;
+        }
+        Integer sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+        int sensorDegrees = (sensorOrientation != null) ? sensorOrientation : 0;
+        Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+        if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
+            // Frontkamera: Geräterotation zur Sensorausrichtung addieren
+            return (sensorDegrees + deviceDegrees) % 360;
+        } else {
+            // Rückkamera: Geräterotation von der Sensorausrichtung subtrahieren
+            return (sensorDegrees - deviceDegrees + 360) % 360;
         }
     }
 
@@ -248,6 +299,7 @@ public class Camera2Manager {
     @SuppressLint("NewApi")
     private void cleanup() {
         mCapturing.set(false);
+        mCameraCharacteristics = null;
         try {
             if (mCameraSession != null) {
                 mCameraSession.close();
