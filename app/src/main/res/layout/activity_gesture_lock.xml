@@ -31,7 +31,7 @@
             android:layout_height="50dp"
             android:layout_toRightOf="@+id/btn_back"
             android:gravity="center"
-            android:text="Passwort erstellen"
+            android:text="Sperrmethode ändern"
             android:textColor="@color/white"
             android:textSize="14sp"/>
 

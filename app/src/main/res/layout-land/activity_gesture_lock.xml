@@ -10,7 +10,7 @@
     <RelativeLayout
         android:id="@+id/top_layout"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="160dp"
         android:background="#2DAC7C">
 
         <ImageView
@@ -27,7 +27,7 @@
             android:layout_height="50dp"
             android:layout_toRightOf="@+id/btn_back"
             android:gravity="center"
-            android:text="Passwort erstellen"
+            android:text="Sperrmethode ändern"
             android:textColor="@color/white"
             android:textSize="14sp"/>
 
