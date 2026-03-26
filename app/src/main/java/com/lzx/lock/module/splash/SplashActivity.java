@@ -1,11 +1,9 @@
 package com.lzx.lock.module.splash;
 
-import android.app.AlarmManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -24,14 +22,11 @@ import com.lzx.lock.service.LockService;
 import com.lzx.lock.utils.AppUtils;
 import com.lzx.lock.utils.LockUtil;
 import com.lzx.lock.utils.SpUtil;
-import com.lzx.lock.utils.ToastUtil;
-import com.lzx.lock.widget.DialogPermission;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
@@ -47,9 +42,7 @@ public class SplashActivity extends BaseActivity {
 
     private ImageView mImgSplash;
     private ObjectAnimator animator;
-    private int RESULT_ACTION_USAGE_ACCESS_SETTINGS = 1;
-    private int RESULT_ACTION_MANAGE_OVERLAY_PERMISSION = 2;
-    private int RESULT_ACTION_SCHEDULE_EXACT_ALARM = 3;
+    private static final int RC_PERMISSION_SETUP = 1;
     private CompositeDisposable mDisposables;
 
     @Override
@@ -80,17 +73,7 @@ public class SplashActivity extends BaseActivity {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                boolean isFirstLock = SpUtil.getInstance().getBoolean(AppConstants.LOCK_IS_FIRST_LOCK, true);
-                if (isFirstLock) { //wenn erster Start
-                    showDialog();
-                } else {
-                    Intent intent = new Intent(SplashActivity.this, GestureSelfUnlockActivity.class);
-                    intent.putExtra(AppConstants.LOCK_PACKAGE_NAME, AppConstants.APP_PACKAGE_NAME); //eigenen Paketnamen übergeben
-                    intent.putExtra(AppConstants.LOCK_FROM, AppConstants.LOCK_FROM_LOCK_MAIN_ACITVITY);
-                    startActivity(intent);
-                    finish();
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                }
+                handleAfterSplash();
             }
         });
         initAppData();
@@ -195,78 +178,55 @@ public class SplashActivity extends BaseActivity {
     }
 
     /**
-     * Dialog anzeigen
+     * Nach der Splash-Animation: Berechtigungen prüfen und ggf. Einrichtungsassistenten starten.
+     * Der Assistent wird auch bei späteren Starts angezeigt, falls Berechtigungen fehlen.
      */
-    private void showDialog() {
-        //wenn keine Berechtigung für App-Nutzungsdaten und die entsprechende Einstellungsseite vorhanden ist
-        if (!LockUtil.isStatAccessPermissionSet(SplashActivity.this) && LockUtil.isNoOption(SplashActivity.this)) {
-            DialogPermission dialog = new DialogPermission(SplashActivity.this);
-            dialog.show();
-            dialog.setOnClickListener(new DialogPermission.onClickListener() {
-                @Override
-                public void onClick() {
-                    Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-                    startActivityForResult(intent, RESULT_ACTION_USAGE_ACCESS_SETTINGS);
-                }
-            });
+    private void handleAfterSplash() {
+        if (!allRequiredPermissionsGranted()) {
+            startActivityForResult(
+                    new Intent(SplashActivity.this, PermissionSetupActivity.class),
+                    RC_PERMISSION_SETUP);
         } else {
-            checkOverlayPermission();
+            proceedAfterPermissions();
         }
     }
 
     /**
-     * Berechtigung zum Einblenden über anderen Apps prüfen und ggf. anfordern
+     * Prüft ob alle für den App-Start erforderlichen Berechtigungen erteilt wurden.
      */
-    private void checkOverlayPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
-            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                    Uri.parse("package:" + getPackageName()));
-            startActivityForResult(intent, RESULT_ACTION_MANAGE_OVERLAY_PERMISSION);
-        } else {
-            checkExactAlarmPermission();
-        }
+    private boolean allRequiredPermissionsGranted() {
+        return LockUtil.isStatAccessPermissionSet(this)
+                && (Build.VERSION.SDK_INT < Build.VERSION_CODES.M
+                    || Settings.canDrawOverlays(this));
     }
 
     /**
-     * Berechtigung für exakte Alarme prüfen und ggf. anfordern (Android 12+).
-     * Exakte Alarme werden für den automatischen Neustart des LockService benötigt.
-     * Falls die Berechtigung nicht erteilt wird, bleibt die App funktionsfähig,
-     * da ein Fallback auf inexakte Alarme vorhanden ist.
+     * Navigiert nach erfolgreich erteilten Berechtigungen zur nächsten Ansicht.
      */
-    private void checkExactAlarmPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            if (alarmManager != null && !alarmManager.canScheduleExactAlarms()) {
-                Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
-                        Uri.parse("package:" + getPackageName()));
-                startActivityForResult(intent, RESULT_ACTION_SCHEDULE_EXACT_ALARM);
-                return;
-            }
+    private void proceedAfterPermissions() {
+        boolean isFirstLock = SpUtil.getInstance().getBoolean(AppConstants.LOCK_IS_FIRST_LOCK, true);
+        if (isFirstLock) {
+            gotoCreatePwdActivity();
+        } else {
+            Intent intent = new Intent(SplashActivity.this, GestureSelfUnlockActivity.class);
+            intent.putExtra(AppConstants.LOCK_PACKAGE_NAME, AppConstants.APP_PACKAGE_NAME);
+            intent.putExtra(AppConstants.LOCK_FROM, AppConstants.LOCK_FROM_LOCK_MAIN_ACITVITY);
+            startActivity(intent);
+            finish();
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }
-        gotoCreatePwdActivity();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RESULT_ACTION_USAGE_ACCESS_SETTINGS) {
-            if (LockUtil.isStatAccessPermissionSet(SplashActivity.this)) {
-                checkOverlayPermission();
+        if (requestCode == RC_PERMISSION_SETUP) {
+            if (resultCode == RESULT_OK) {
+                proceedAfterPermissions();
             } else {
-                ToastUtil.showToast("Keine Berechtigung");
+                // Erforderliche Berechtigungen wurden nicht erteilt – App kann nicht gestartet werden.
                 finish();
             }
-        } else if (requestCode == RESULT_ACTION_MANAGE_OVERLAY_PERMISSION) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)) {
-                checkExactAlarmPermission();
-            } else {
-                ToastUtil.showToast("Berechtigung fehlt: Bitte erlauben Sie das Einblenden über anderen Apps in den Einstellungen");
-                finish();
-            }
-        } else if (requestCode == RESULT_ACTION_SCHEDULE_EXACT_ALARM) {
-            // Unabhängig davon, ob die Berechtigung erteilt wurde, fortfahren.
-            // Falls nicht erteilt, greift der Fallback auf inexakte Alarme.
-            gotoCreatePwdActivity();
         }
     }
 
