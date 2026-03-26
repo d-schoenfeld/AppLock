@@ -55,6 +55,7 @@
             android:label=""
             android:launchMode="singleTask"
             android:noHistory="true"
+            android:taskAffinity=""
             android:theme="@style/unlock_activity_style"/>
         <activity
             android:name=".module.setting.LockSettingActivity"
