@@ -39,7 +39,7 @@ public class Camera2Manager {
 
     private static final String TAG = "Camera2Manager";
     /** Wartezeit in Millisekunden damit Belichtung, Weißabgleich und Fokus konvergieren. */
-    private static final long CAMERA_WARMUP_DELAY_MS = 2000;
+    private static final long CAMERA_WARMUP_DELAY_MS = 800;
 
     private final Context mContext;
     private Handler mHandler;
@@ -171,17 +171,26 @@ public class Camera2Manager {
 
                 @Override
                 public void onDisconnected(CameraDevice camera) {
-                    mCameraDevice = null;
-                    camera.close();
                     cleanup();
                 }
 
                 @Override
                 public void onError(CameraDevice camera, int error) {
                     Log.e(TAG, "Kamera-Fehler: " + error);
-                    mCameraDevice = null;
-                    camera.close();
                     cleanup();
+                }
+
+                // onClosed() is available from API 23; @SuppressLint suppresses the lint warning
+                // (consistent with the rest of this class).
+                @SuppressLint("NewApi")
+                @Override
+                public void onClosed(CameraDevice camera) {
+                    // Handler-Thread erst nach dem Schließen der Kamera beenden,
+                    // damit der onClosed-Callback noch zugestellt werden kann.
+                    if (mHandlerThread != null) {
+                        mHandlerThread.quitSafely();
+                        mHandlerThread = null;
+                    }
                 }
             }, mHandler);
         } catch (CameraAccessException e) {
@@ -205,7 +214,7 @@ public class Camera2Manager {
             captureBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_AUTO);
             captureBuilder.set(CaptureRequest.CONTROL_AF_MODE,
                     CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 270);
+            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 90);
 
             mCameraSession.capture(captureBuilder.build(), new CameraCaptureSession.CaptureCallback() {
                 @Override
@@ -247,13 +256,21 @@ public class Camera2Manager {
         } catch (Exception e) {
             Log.e(TAG, "Fehler beim Schließen der Session", e);
         }
-        try {
-            if (mCameraDevice != null) {
+        // Track whether we actually closed a live camera device.
+        // If so, the onClosed callback (delivered via mHandler) will quit the handler thread.
+        // If not (early exit before the camera was opened, or close() threw an exception where
+        // onClosed may not be delivered), quit the thread here directly as a fallback.
+        boolean cameraBeingClosed = false;
+        if (mCameraDevice != null) {
+            try {
                 mCameraDevice.close();
-                mCameraDevice = null;
+                // close() succeeded: onClosed will be delivered and will quit the thread.
+                cameraBeingClosed = true;
+            } catch (Exception e) {
+                Log.e(TAG, "Fehler beim Schließen der Kamera", e);
+                // close() failed – onClosed may not fire, so quit the thread here.
             }
-        } catch (Exception e) {
-            Log.e(TAG, "Fehler beim Schließen der Kamera", e);
+            mCameraDevice = null;
         }
         if (mImageReader != null) {
             mImageReader.close();
@@ -267,7 +284,7 @@ public class Camera2Manager {
             mDummySurfaceTexture.release();
             mDummySurfaceTexture = null;
         }
-        if (mHandlerThread != null) {
+        if (!cameraBeingClosed && mHandlerThread != null) {
             mHandlerThread.quitSafely();
             mHandlerThread = null;
         }
