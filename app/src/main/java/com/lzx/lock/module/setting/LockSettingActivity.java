@@ -19,7 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lzx.lock.R;
-import com.lzx.lock.module.lock.GestureCreateActivity;
+import com.lzx.lock.module.lock.LockCreateActivity;
 import com.lzx.lock.base.BaseActivity;
 import com.lzx.lock.base.AppConstants;
 import com.lzx.lock.bean.LockAutoTime;
@@ -125,7 +125,7 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_change_pwd:
-                Intent intent = new Intent(LockSettingActivity.this, GestureCreateActivity.class);
+                Intent intent = new Intent(LockSettingActivity.this, LockCreateActivity.class);
                 startActivityForResult(intent, REQUEST_CHANGE_PWD);
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 break;

@@ -50,7 +50,7 @@
             android:exported="false"
             android:label="Passwort erstellen"/>
         <activity
-            android:name=".module.lock.GestureSelfUnlockActivity"
+            android:name=".module.lock.SelfUnlockActivity"
             android:exported="false"
             android:label="Entsperren"/>
         <activity
@@ -67,7 +67,7 @@
             android:exported="false"
             android:label="Einstellungen"/>
         <activity
-            android:name=".module.lock.GestureCreateActivity"
+            android:name=".module.lock.LockCreateActivity"
             android:exported="false"
             android:label="Mustersperre erstellen"/>
         <activity

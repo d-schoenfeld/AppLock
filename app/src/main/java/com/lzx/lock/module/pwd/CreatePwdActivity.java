@@ -14,8 +14,8 @@ import com.lzx.lock.base.AppConstants;
 import com.lzx.lock.base.BaseActivity;
 import com.lzx.lock.bean.LockStage;
 import com.lzx.lock.module.main.MainActivity;
-import com.lzx.lock.mvp.contract.GestureCreateContract;
-import com.lzx.lock.mvp.p.GestureCreatePresenter;
+import com.lzx.lock.mvp.contract.LockCreateContract;
+import com.lzx.lock.mvp.p.LockCreatePresenter;
 import com.lzx.lock.service.LockService;
 import com.lzx.lock.utils.LockPatternUtils;
 import com.lzx.lock.utils.PinUtils;
@@ -31,7 +31,7 @@ import java.util.List;
  * Erstes Einrichten: Sperrmethode und Passwort/Muster festlegen
  */
 public class CreatePwdActivity extends BaseActivity implements View.OnClickListener,
-        GestureCreateContract.View {
+        LockCreateContract.View {
 
     // Methoden-Auswahl
     private TextView mBtnSelectPin;
@@ -54,7 +54,7 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
     protected List<LockPatternView.Cell> mChosenPattern = null;
     private LockPatternUtils mLockPatternUtils;
     private LockPatternViewPattern mPatternViewPattern;
-    private GestureCreatePresenter mGestureCreatePresenter;
+    private LockCreatePresenter mLockCreatePresenter;
     private RelativeLayout mTopLayout;
 
     @Override
@@ -82,7 +82,7 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     protected void initData() {
-        mGestureCreatePresenter = new GestureCreatePresenter(this, this);
+        mLockCreatePresenter = new LockCreatePresenter(this, this);
         initLockPatternView();
         // Standard: PIN-Modus
         showPinMode();
@@ -97,7 +97,7 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
         mPatternViewPattern.setPatternListener(new LockPatternViewPattern.onPatternListener() {
             @Override
             public void onPatternDetected(List<LockPatternView.Cell> pattern) {
-                mGestureCreatePresenter.onPatternDetected(pattern, mChosenPattern, mUiStage);
+                mLockCreatePresenter.onPatternDetected(pattern, mChosenPattern, mUiStage);
             }
         });
         mLockPatternView.setOnPatternListener(mPatternViewPattern);
@@ -152,7 +152,7 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
         mPinSection.setVisibility(View.GONE);
         mLockPatternView.setVisibility(View.VISIBLE);
         mBtnReset.setVisibility(View.VISIBLE);
-        mGestureCreatePresenter.updateStage(LockStage.Introduction);
+        mLockCreatePresenter.updateStage(LockStage.Introduction);
 
         // Schaltflächen-Hervorhebung aktualisieren
         mBtnSelectPattern.setBackgroundResource(R.drawable.bg_btn_blue);
@@ -185,7 +185,7 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
      * Zum ersten Schritt zurückgehen (Muster-Modus)
      */
     private void setStepOne() {
-        mGestureCreatePresenter.updateStage(LockStage.Introduction);
+        mLockCreatePresenter.updateStage(LockStage.Introduction);
         mLockTip.setText(getString(R.string.lock_recording_intro_header));
     }
 
@@ -202,7 +202,7 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
         finish();
     }
 
-    // --- GestureCreateContract.View ---
+    // --- LockCreateContract.View ---
 
     @Override
     public void updateUiStage(LockStage stage) {
@@ -283,6 +283,6 @@ public class CreatePwdActivity extends BaseActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mGestureCreatePresenter.onDestroy();
+        mLockCreatePresenter.onDestroy();
     }
 }

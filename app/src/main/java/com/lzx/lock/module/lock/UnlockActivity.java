@@ -72,7 +72,7 @@ public class UnlockActivity extends BaseActivity implements View.OnClickListener
     private String appLabel;
     @Override
     public int getLayoutId() {
-        return R.layout.activity_gesture_unlock;
+        return R.layout.activity_unlock;
     }
 
     @Override

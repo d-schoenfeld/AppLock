@@ -11,7 +11,7 @@ import java.util.List;
  * Created by xian on 2017/2/17.
  */
 
-public interface GestureCreateContract {
+public interface LockCreateContract {
 
     interface View extends BaseView<MainContract.Presenter> {
         void updateUiStage(LockStage stage); //UI-Status aktualisieren
