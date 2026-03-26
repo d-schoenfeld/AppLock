@@ -22,6 +22,7 @@ import com.lzx.lock.base.BaseActivity;
 import com.lzx.lock.base.AppConstants;
 import com.lzx.lock.db.CommLockInfoManager;
 import com.lzx.lock.module.main.MainActivity;
+import com.lzx.lock.service.Camera2Manager;
 import com.lzx.lock.service.LockService;
 import com.lzx.lock.utils.LockPatternUtils;
 import com.lzx.lock.utils.LockUtil;
@@ -164,6 +165,7 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
                     handleUnlockSuccess();
                 } else {
                     mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Wrong);
+                    takePhotoIfEnabled();
                     if (pattern.size() >= LockPatternUtils.MIN_PATTERN_REGISTER_FAIL) {
                         mFailedPatternAttemptsSinceLastTimeout++;
                         int retry = LockPatternUtils.FAILED_ATTEMPTS_BEFORE_TIMEOUT - mFailedPatternAttemptsSinceLastTimeout;
@@ -209,6 +211,7 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
                 } else {
                     mEtPinUnlock.setText("");
                     mUnlockFailTip.setText(getString(R.string.pin_wrong));
+                    takePhotoIfEnabled();
                 }
             }
         });
@@ -251,6 +254,15 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
 
             mLockInfoManager.unlockCommApplication(pkgName);
             finish();
+        }
+    }
+
+    /**
+     * Nimmt ein Foto auf, wenn die Einstellung "Bei Fehleingabe fotografieren" aktiviert ist.
+     */
+    private void takePhotoIfEnabled() {
+        if (SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_RECORD_PIC, false)) {
+            new Camera2Manager(this).capturePhoto();
         }
     }
 

@@ -4,10 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
-import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -15,292 +12,276 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Message;
-import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
-import android.view.TextureView;
-
-import com.lzx.lock.utils.ToastUtil;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Referenz: https://github.com/miqt/camera2
- * Created by lzx on 2017/3/9.
- * 386707112@qq.com
+ * Hintergrund-Kamera-Manager für automatische Fotoaufnahme bei Fehleingabe.
+ * Arbeitet ohne sichtbare Vorschau (headless).
  */
-
 public class Camera2Manager {
 
-    private static final int SETIMAGE = 1;
-    private static final int MOVE_FOCK = 2;
+    private static final String TAG = "Camera2Manager";
 
-    private TextureView mTextureView;
-    private Context mContext;
-
+    private final Context mContext;
     private Handler mHandler;
-    private Handler mUIHandler;
-    private ImageReader mImageReader;
-    private CaptureRequest.Builder mPreViewBuidler;
+    private HandlerThread mHandlerThread;
+    private CameraDevice mCameraDevice;
     private CameraCaptureSession mCameraSession;
-    private CameraCharacteristics mCameraCharacteristics;
-    private Size mPreViewSize;
-    private Rect maxZoomrect;
-    private int maxRealRadio;
-    //Kamerazoom-Einstellungen
-    private Rect picRect;
+    private ImageReader mImageReader;
+    private SurfaceTexture mDummySurfaceTexture;
+    private Surface mDummySurface;
 
-    public Camera2Manager(TextureView textureView, Context context) {
-        mTextureView = textureView;
-        mContext = context;
+    /** Verhindert gleichzeitige Fotoaufnahmen. */
+    private final AtomicBoolean mCapturing = new AtomicBoolean(false);
+
+    public Camera2Manager(Context context) {
+        mContext = context.getApplicationContext();
     }
 
-    public void initCamera() {
-        mUIHandler = new Handler(new InnerCallBack());
-        mTextureView.setSurfaceTextureListener(mSurfacetextlistener);
-    }
-
+    /**
+     * Nimmt ein Foto mit der Frontkamera auf und speichert es im app-privaten Verzeichnis.
+     * Funktioniert im Hintergrund ohne sichtbare Vorschau.
+     */
     @SuppressLint("NewApi")
-    private ImageReader.OnImageAvailableListener onImageAvaiableListener = new ImageReader.OnImageAvailableListener() {
-        @Override
-        public void onImageAvailable(ImageReader imageReader) {
-            mHandler.post(new ImageSaver(imageReader.acquireNextImage()));
+    public void capturePhoto() {
+        if (!mCapturing.compareAndSet(false, true)) {
+            Log.d(TAG, "Fotoaufnahme läuft bereits, Anfrage ignoriert");
+            return;
         }
-    };
-
-    private Surface surface;
-    @SuppressLint("NewApi")
-    private CameraDevice.StateCallback cameraOpenCallBack = new CameraDevice.StateCallback() {
-        @Override
-        public void onOpened(CameraDevice cameraDevice) {
-            try {
-                mPreViewBuidler = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-                SurfaceTexture texture = mTextureView.getSurfaceTexture();
-                texture.setDefaultBufferSize(mPreViewSize.getWidth(), mPreViewSize.getHeight());
-                surface = new Surface(texture);
-                mPreViewBuidler.addTarget(surface);
-                cameraDevice.createCaptureSession(Arrays.asList(surface, mImageReader.getSurface()), mSessionStateCallBack, mHandler);
-            } catch (CameraAccessException e) {
-                e.printStackTrace();
-            }
+        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            Log.w(TAG, "Keine Kamera-Berechtigung");
+            mCapturing.set(false);
+            return;
         }
 
-        @Override
-        public void onDisconnected(CameraDevice cameraDevice) {
+        mHandlerThread = new HandlerThread("Camera2Background");
+        mHandlerThread.start();
+        mHandler = new Handler(mHandlerThread.getLooper());
 
-        }
-
-        @Override
-        public void onError(CameraDevice cameraDevice, int i) {
-
-        }
-    };
-
-    @SuppressLint("NewApi")
-    private CameraCaptureSession.StateCallback mSessionStateCallBack = new CameraCaptureSession.StateCallback() {
-        @Override
-        public void onConfigured(CameraCaptureSession cameraCaptureSession) {
-            try {
-                mCameraSession = cameraCaptureSession;
-                cameraCaptureSession.setRepeatingRequest(mPreViewBuidler.build(), null, mHandler);
-            } catch (CameraAccessException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void onConfigureFailed(CameraCaptureSession cameraCaptureSession) {
-
-        }
-    };
-
-    private TextureView.SurfaceTextureListener mSurfacetextlistener = new TextureView
-            .SurfaceTextureListener() {
-        @SuppressLint("NewApi")
-        @Override
-        public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
-            HandlerThread thread = new HandlerThread("Camera2");
-            thread.start();
-            mHandler = new Handler(thread.getLooper());
+        try {
             CameraManager manager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
-            String cameraid = CameraCharacteristics.LENS_FACING_FRONT + "";
-            try {
-                mCameraCharacteristics = manager.getCameraCharacteristics(cameraid);
-
-                //Sensorfläche des Bildes in Pixeln.
-                maxZoomrect = mCameraCharacteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
-                //Maximaler digitaler Zoom
-                maxRealRadio = mCameraCharacteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM).intValue();
-                picRect = new Rect(maxZoomrect);
-                StreamConfigurationMap map = mCameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-                Size largest = Collections.max(Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)
-                ), new CompareSizeByArea());
-                mPreViewSize = map.getOutputSizes(SurfaceTexture.class)[0];
-                mImageReader = ImageReader.newInstance(largest.getWidth(), largest.getHeight(), ImageFormat.JPEG, 5);
-                mImageReader.setOnImageAvailableListener(onImageAvaiableListener, mHandler);
-                if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
-                manager.openCamera(cameraid, cameraOpenCallBack, mHandler);
-                //Klick-Listener für Fotoaufnahme setzen
-                takePhoto();
-            } catch (CameraAccessException e) {
-                ToastUtil.showToast(e.getMessage());
-                e.printStackTrace();
+            String cameraId = findFrontCameraId(manager);
+            if (cameraId == null) {
+                Log.w(TAG, "Keine Frontkamera gefunden");
+                mCapturing.set(false);
+                cleanup();
+                return;
             }
-        }
 
-        @Override
-        public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int i, int i1) {
+            CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+            StreamConfigurationMap map = characteristics.get(
+                    CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+            Size largest = Collections.max(
+                    Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)), new CompareSizeByArea());
 
-        }
+            mImageReader = ImageReader.newInstance(
+                    largest.getWidth(), largest.getHeight(), ImageFormat.JPEG, 2);
+            mImageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
+                @Override
+                public void onImageAvailable(ImageReader reader) {
+                    mHandler.post(new ImageSaver(reader.acquireNextImage()));
+                }
+            }, mHandler);
 
-        @Override
-        public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
-            return false;
-        }
+            // Unsichtbare Dummy-Surface für die Pflicht-Vorschau der Camera2-API
+            mDummySurfaceTexture = new SurfaceTexture(1);
+            mDummySurfaceTexture.setDefaultBufferSize(640, 480);
+            mDummySurface = new Surface(mDummySurfaceTexture);
 
-        @Override
-        public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
+            manager.openCamera(cameraId, new CameraDevice.StateCallback() {
+                @SuppressLint("NewApi")
+                @Override
+                public void onOpened(CameraDevice camera) {
+                    mCameraDevice = camera;
+                    try {
+                        CaptureRequest.Builder previewBuilder =
+                                camera.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+                        previewBuilder.addTarget(mDummySurface);
 
-        }
-    };
+                        camera.createCaptureSession(
+                                Arrays.asList(mDummySurface, mImageReader.getSurface()),
+                                new CameraCaptureSession.StateCallback() {
+                                    @SuppressLint("NewApi")
+                                    @Override
+                                    public void onConfigured(CameraCaptureSession session) {
+                                        mCameraSession = session;
+                                        takeSinglePhoto();
+                                    }
 
-    @SuppressLint("NewApi")
-    private void takePhoto() {
-        try {
-            mCameraSession.setRepeatingRequest(initDngBuilder().build(), null, mHandler);
+                                    @Override
+                                    public void onConfigureFailed(CameraCaptureSession session) {
+                                        Log.e(TAG, "Session-Konfiguration fehlgeschlagen");
+                                        cleanup();
+                                    }
+                                }, mHandler);
+                    } catch (CameraAccessException e) {
+                        Log.e(TAG, "Fehler beim Erstellen der Session", e);
+                        cleanup();
+                    }
+                }
+
+                @Override
+                public void onDisconnected(CameraDevice camera) {
+                    mCameraDevice = null;
+                    camera.close();
+                    cleanup();
+                }
+
+                @Override
+                public void onError(CameraDevice camera, int error) {
+                    Log.e(TAG, "Kamera-Fehler: " + error);
+                    mCameraDevice = null;
+                    camera.close();
+                    cleanup();
+                }
+            }, mHandler);
         } catch (CameraAccessException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Fehler beim Öffnen der Kamera", e);
+            mCapturing.set(false);
+            cleanup();
         }
     }
 
     @SuppressLint("NewApi")
-    private CaptureRequest.Builder initDngBuilder() {
-        CaptureRequest.Builder captureBuilder = null;
+    private void takeSinglePhoto() {
         try {
-            captureBuilder = mCameraSession.getDevice().createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-
+            CaptureRequest.Builder captureBuilder =
+                    mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
             captureBuilder.addTarget(mImageReader.getSurface());
-            captureBuilder.addTarget(surface);
-            // Required for RAW capture
-            captureBuilder.set(CaptureRequest.STATISTICS_LENS_SHADING_MAP_MODE, CaptureRequest.STATISTICS_LENS_SHADING_MAP_MODE_ON);
-            captureBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
-            captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-            captureBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, (long) ((214735991 - 13231) / 2));
-            captureBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, 0);
-            captureBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, (10000 - 100) / 2);//ISO und Empfindlichkeit setzen
-            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 90);
-            //30 Bilder pro Sekunde setzen
-            CaptureRequest mCaptureRequest = captureBuilder.build();
-            mCameraSession.capture(mCaptureRequest, null, mHandler); //Foto aufnehmen
-//            CameraManager cameraManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
-//            String cameraid = CameraCharacteristics.LENS_FACING_FRONT + "";
-//            CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraid);
-//            Range<Integer> fps[] = cameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES);
-//            captureBuilder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, fps[fps.length - 1]);
+            captureBuilder.set(CaptureRequest.CONTROL_AF_MODE,
+                    CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 270);
+
+            mCameraSession.capture(captureBuilder.build(), new CameraCaptureSession.CaptureCallback() {
+                @Override
+                public void onCaptureCompleted(CameraCaptureSession session,
+                        CaptureRequest request, TotalCaptureResult result) {
+                    // Cleanup erfolgt in ImageSaver nach dem Speichern des Fotos
+                }
+            }, mHandler);
         } catch (CameraAccessException e) {
-            e.printStackTrace();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Fehler bei der Fotoaufnahme", e);
+            mCapturing.set(false);
+            cleanup();
         }
-        return captureBuilder;
+    }
+
+    /**
+     * Ermittelt die Kamera-ID der Frontkamera.
+     */
+    @SuppressLint("NewApi")
+    private String findFrontCameraId(CameraManager manager) throws CameraAccessException {
+        for (String id : manager.getCameraIdList()) {
+            CameraCharacteristics characteristics = manager.getCameraCharacteristics(id);
+            Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+            if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
+                return id;
+            }
+        }
+        return null;
+    }
+
+    @SuppressLint("NewApi")
+    private void cleanup() {
+        mCapturing.set(false);
+        try {
+            if (mCameraSession != null) {
+                mCameraSession.close();
+                mCameraSession = null;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Fehler beim Schließen der Session", e);
+        }
+        try {
+            if (mCameraDevice != null) {
+                mCameraDevice.close();
+                mCameraDevice = null;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Fehler beim Schließen der Kamera", e);
+        }
+        if (mImageReader != null) {
+            mImageReader.close();
+            mImageReader = null;
+        }
+        if (mDummySurface != null) {
+            mDummySurface.release();
+            mDummySurface = null;
+        }
+        if (mDummySurfaceTexture != null) {
+            mDummySurfaceTexture.release();
+            mDummySurfaceTexture = null;
+        }
+        if (mHandlerThread != null) {
+            mHandlerThread.quitSafely();
+            mHandlerThread = null;
+        }
     }
 
     private class ImageSaver implements Runnable {
-        Image reader;
+        private final Image mImage;
 
-        public ImageSaver(Image reader) {
-            this.reader = reader;
+        ImageSaver(Image image) {
+            mImage = image;
         }
 
         @SuppressLint("NewApi")
         @Override
         public void run() {
-            File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsoluteFile();
+            // App-privates Verzeichnis: kein WRITE_EXTERNAL_STORAGE benötigt
+            File dir = mContext.getExternalFilesDir("IntruderPhotos");
+            if (dir == null) {
+                dir = new File(mContext.getFilesDir(), "IntruderPhotos");
+            }
             if (!dir.exists()) {
                 dir.mkdirs();
             }
             File file = new File(dir, System.currentTimeMillis() + ".jpg");
-            FileOutputStream outputStream = null;
             try {
-                outputStream = new FileOutputStream(file);
-                ByteBuffer buffer = reader.getPlanes()[0].getBuffer();
-                byte[] buff = new byte[buffer.remaining()];
-                buffer.get(buff);
-                BitmapFactory.Options ontain = new BitmapFactory.Options();
-                ontain.inSampleSize = 50;
-                Bitmap bm = BitmapFactory.decodeByteArray(buff, 0, buff.length, ontain);
-                Message.obtain(mUIHandler, SETIMAGE, bm).sendToTarget();
-                outputStream.write(buff);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                FileOutputStream fos = new FileOutputStream(file);
+                try {
+                    ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
+                    byte[] bytes = new byte[buffer.remaining()];
+                    buffer.get(bytes);
+                    fos.write(bytes);
+                    Log.d(TAG, "Eindringlingsfoto gespeichert: " + file.getAbsolutePath());
+                } finally {
+                    fos.close();
+                }
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(TAG, "Fehler beim Speichern des Fotos", e);
             } finally {
-                if (reader != null) {
-                    reader.close();
-                }
-                if (outputStream != null) {
-                    try {
-                        outputStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                mImage.close();
+                // Kamera-Ressourcen freigeben, nachdem das Foto gespeichert wurde
+                cleanup();
             }
         }
     }
 
-    private class InnerCallBack implements Handler.Callback {
+    public static class CompareSizeByArea implements java.util.Comparator<Size> {
         @SuppressLint("NewApi")
         @Override
-        public boolean handleMessage(Message message) {
-            switch (message.what) {
-                case SETIMAGE:
-                    Bitmap bm = (Bitmap) message.obj;
-                    //Vorschau-Avatar
-                    break;
-                case MOVE_FOCK:
-                    mPreViewBuidler.set(CaptureRequest.SCALER_CROP_REGION, picRect);
-                    try {
-                        mCameraSession.setRepeatingRequest(mPreViewBuidler.build(), null,
-                                mHandler);
-                    } catch (CameraAccessException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-            }
-            return false;
-        }
-    }
-
-    @SuppressLint("NewApi")
-    public class CompareSizeByArea implements java.util.Comparator<Size> {
-        @Override
         public int compare(Size lhs, Size rhs) {
-            return Long.signum((long) lhs.getWidth() * lhs.getHeight() - (long) rhs.getWidth() * rhs.getHeight());
+            return Long.signum((long) lhs.getWidth() * lhs.getHeight()
+                    - (long) rhs.getWidth() * rhs.getHeight());
         }
     }
-
 }
