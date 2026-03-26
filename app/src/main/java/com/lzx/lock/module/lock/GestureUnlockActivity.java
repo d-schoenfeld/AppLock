@@ -60,6 +60,7 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
     private String actionFrom;//Aktion bei Zurück-Taste
     private LockPatternUtils mLockPatternUtils;
     private int mFailedPatternAttemptsSinceLastTimeout = 0;
+    private int mFailedPicAttempts = 0;
     private CommLockInfoManager mLockInfoManager;
     private UnLockMenuPopWindow mPopWindow;
     private LockPatternViewPattern mPatternViewPattern;
@@ -102,6 +103,7 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
         if (actionFrom == null) actionFrom = AppConstants.LOCK_FROM_FINISH;
         //Initialisieren
         packageManager = getPackageManager();
+        mFailedPicAttempts = 0;
 
         mLockInfoManager = new CommLockInfoManager(this);
         mPopWindow = new UnLockMenuPopWindow(this, pkgName, true);
@@ -258,11 +260,17 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
     }
 
     /**
-     * Nimmt ein Foto auf, wenn die Einstellung "Bei Fehleingabe fotografieren" aktiviert ist.
+     * Nimmt ein Foto auf, wenn die Einstellung "Bei Fehleingabe fotografieren" aktiviert ist
+     * und die konfigurierte Anzahl von Fehlversuchen erreicht wurde.
      */
     private void takePhotoIfEnabled() {
         if (SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_RECORD_PIC, false)) {
-            new Camera2Manager(this).capturePhoto();
+            mFailedPicAttempts++;
+            int threshold = (int) SpUtil.getInstance().getInt(AppConstants.LOCK_AUTO_RECORD_PIC_ATTEMPT, 1);
+            if (mFailedPicAttempts >= threshold) {
+                mFailedPicAttempts = 0;
+                new Camera2Manager(this).capturePhoto();
+            }
         }
     }
 

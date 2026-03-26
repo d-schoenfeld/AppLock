@@ -133,6 +133,7 @@ Die exportierte Datei enthält folgende Informationen:
 | `settings.lock_apart_milliseconds` | Zeitabstand in Millisekunden |
 | `settings.lock_apart_title` | Anzeigename des Zeitabstands |
 | `settings.AutoRecordPic` | Automatische Fotoaufnahme aktiviert |
+| `settings.AutoRecordPicAttempt` | Anzahl der Fehlversuche vor Fotoaufnahme (Standard: 1) |
 | `settings.lock_is_hide_line` | Muster ausblenden |
 | `gesture_pattern_hex` | Muster-Hash als Hex-String (nur bei Mustersperre) |
 | `locked_apps` | Liste der gesperrten App-Paketnamen |

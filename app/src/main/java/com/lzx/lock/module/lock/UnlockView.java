@@ -50,6 +50,7 @@ import java.util.List;
 public class UnlockView extends FrameLayout {
 
     private int mFailedPatternAttemptsSinceLastTimeout = 0;
+    private int mFailedPicAttempts = 0;
 
     private WindowManager.LayoutParams mLayoutParams;
     private WindowManager mWindowManager;
@@ -154,6 +155,7 @@ public class UnlockView extends FrameLayout {
             public void run() {
                 mPackageName = packageName;
                 mFailedPatternAttemptsSinceLastTimeout = 0;
+                mFailedPicAttempts = 0;
                 mPatternView.clearPattern();
                 mEtPinUnlock.setText("");
                 initBgView();
@@ -346,11 +348,17 @@ public class UnlockView extends FrameLayout {
     }
 
     /**
-     * Nimmt ein Foto auf, wenn die Einstellung "Bei Fehleingabe fotografieren" aktiviert ist.
+     * Nimmt ein Foto auf, wenn die Einstellung "Bei Fehleingabe fotografieren" aktiviert ist
+     * und die konfigurierte Anzahl von Fehlversuchen erreicht wurde.
      */
     private void takePhotoIfEnabled() {
         if (SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_RECORD_PIC, false)) {
-            new Camera2Manager(mContext).capturePhoto();
+            mFailedPicAttempts++;
+            int threshold = (int) SpUtil.getInstance().getInt(AppConstants.LOCK_AUTO_RECORD_PIC_ATTEMPT, 1);
+            if (mFailedPicAttempts >= threshold) {
+                mFailedPicAttempts = 0;
+                new Camera2Manager(mContext).capturePhoto();
+            }
         }
     }
 
