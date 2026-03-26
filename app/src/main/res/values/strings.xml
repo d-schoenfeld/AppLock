@@ -51,6 +51,26 @@
     <string name="dialog_tip">Dein System ist Android 5.0 oder höher. Die Berechtigung „App-Nutzungsdaten abrufen" wird benötigt.
     </string>
 
+    <!-- Einrichtungsassistent für Berechtigungen -->
+    <string name="perm_step_indicator">Schritt %1$d von %2$d</string>
+    <string name="perm_required">Erforderlich</string>
+    <string name="perm_optional">Optional</string>
+    <string name="perm_grant_button">Berechtigung erteilen</string>
+    <string name="perm_skip_button">Überspringen</string>
+    <string name="perm_required_hint">Diese Berechtigung wird benötigt, um die App zu starten.</string>
+
+    <string name="perm_usage_stats_title">App-Nutzungsdaten</string>
+    <string name="perm_usage_stats_desc">App-Sperre muss erkennen, welche App gerade geöffnet ist, um den Sperrbildschirm rechtzeitig einzublenden. Dafür ist der Zugriff auf App-Nutzungsdaten erforderlich. Ohne diese Berechtigung kann keine App gesperrt werden.</string>
+
+    <string name="perm_overlay_title">Über anderen Apps einblenden</string>
+    <string name="perm_overlay_desc">Der Sperrbildschirm wird über der zu sperrenden App angezeigt. Dafür wird die Berechtigung „Über anderen Apps einblenden" benötigt. Ohne diese Berechtigung kann kein Sperrbildschirm erscheinen.</string>
+
+    <string name="perm_exact_alarm_title">Genaue Alarme</string>
+    <string name="perm_exact_alarm_desc">Für einen zuverlässigen automatischen Neustart des Sperr-Dienstes werden genaue Alarme verwendet. Ohne diese Berechtigung kann der Dienst nach einem Neustart mit kurzer Verzögerung starten – die Sperrfunktion bleibt aber grundsätzlich erhalten.</string>
+
+    <string name="perm_camera_title">Kamera</string>
+    <string name="perm_camera_desc">Bei mehrfach falsch eingegebenem Passwort kann App-Sperre optional ein Foto des Eindringlings aufnehmen. Diese Funktion kann auch später in den Einstellungen aktiviert oder deaktiviert werden.</string>
+
     <!-- Sperrmethode Auswahl -->
     <string name="lock_method_selection_title">Sperrmethode wählen</string>
     <string name="lock_method_pin">Passwort/PIN</string>

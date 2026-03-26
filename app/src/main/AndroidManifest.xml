@@ -41,6 +41,11 @@
         </activity>
 
         <activity
+            android:name=".module.splash.PermissionSetupActivity"
+            android:exported="false"
+            android:label="Berechtigungen einrichten"/>
+
+        <activity
             android:name=".module.pwd.CreatePwdActivity"
             android:exported="false"
             android:label="Passwort erstellen"/>
