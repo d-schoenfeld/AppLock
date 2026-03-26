@@ -300,7 +300,7 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_more:
-                mPopWindow.showAsDropDown(mIconMore);
+                onBackPressed();
                 break;
         }
     }
