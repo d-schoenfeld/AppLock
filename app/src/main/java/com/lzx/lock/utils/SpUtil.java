@@ -39,25 +39,25 @@ public class SpUtil {
     public void putString(String key, String value) {
         Editor editor = mPref.edit();
         editor.putString(key, value);
-        editor.commit();
+        editor.apply();
     }
 
     public void putLong(String key, long value) {
         Editor editor = mPref.edit();
         editor.putLong(key, value);
-        editor.commit();
+        editor.apply();
     }
 
     public void putInt(String key, int value) {
         Editor editor = mPref.edit();
         editor.putInt(key, value);
-        editor.commit();
+        editor.apply();
     }
 
     public void putBoolean(String key, boolean value) {
         Editor editor = mPref.edit();
         editor.putBoolean(key, value);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean getBoolean(String key) {
@@ -100,13 +100,13 @@ public class SpUtil {
     public void remove(String key) {
         Editor editor = mPref.edit();
         editor.remove(key);
-        editor.commit();
+        editor.apply();
     }
 
     public void clear() {
         Editor editor = mPref.edit();
         editor.clear();
-        editor.commit();
+        editor.apply();
     }
 
 
