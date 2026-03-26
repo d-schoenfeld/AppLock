@@ -141,6 +141,7 @@ public class GestureCreateActivity extends BaseActivity implements View.OnClickL
         mEtPin.setText("");
         mEtPinConfirm.setText("");
         mPinTip.setText(getString(R.string.pin_enter_hint));
+        mLockTip.setText(getString(R.string.pin_set_header));
         mPinSection.setVisibility(View.VISIBLE);
         mLockPatternView.setVisibility(View.GONE);
 

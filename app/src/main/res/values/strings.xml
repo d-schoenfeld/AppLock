@@ -55,6 +55,7 @@
     <string name="lock_method_selection_title">Sperrmethode wählen</string>
     <string name="lock_method_pin">Passwort/PIN</string>
     <string name="lock_method_pattern">Muster</string>
+    <string name="pin_set_header">Passwort festlegen</string>
     <string name="pin_enter_hint">Passwort/PIN eingeben (mind. 4 Zeichen)</string>
     <string name="pin_confirm_hint">Passwort/PIN bestätigen</string>
     <string name="pin_next">Weiter</string>
