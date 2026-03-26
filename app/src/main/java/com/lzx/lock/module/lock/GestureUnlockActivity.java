@@ -233,7 +233,9 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
      */
     private void handleUnlockSuccess() {
         if (AppConstants.LOCK_FROM_LOCK_MAIN_ACITVITY.equals(actionFrom)) {
-            startActivity(new Intent(GestureUnlockActivity.this, MainActivity.class));
+            Intent mainIntent = new Intent(GestureUnlockActivity.this, MainActivity.class);
+            mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(mainIntent);
             finish();
         } else {
             long unlockTime = System.currentTimeMillis();
@@ -265,7 +267,9 @@ public class GestureUnlockActivity extends BaseActivity implements View.OnClickL
         } else if (actionFrom.equals(AppConstants.LOCK_FROM_LOCK_MAIN_ACITVITY)) {
             finish();
         } else {
-            startActivity(new Intent(this, MainActivity.class));
+            Intent mainIntent = new Intent(this, MainActivity.class);
+            mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(mainIntent);
         }
     }
 
