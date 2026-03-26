@@ -38,6 +38,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Camera2Manager {
 
     private static final String TAG = "Camera2Manager";
+    /** Wartezeit in Millisekunden damit Belichtung, Weißabgleich und Fokus konvergieren. */
+    private static final long CAMERA_WARMUP_DELAY_MS = 800;
 
     private final Context mContext;
     private Handler mHandler;
@@ -123,7 +125,36 @@ public class Camera2Manager {
                                     @Override
                                     public void onConfigured(CameraCaptureSession session) {
                                         mCameraSession = session;
-                                        takeSinglePhoto();
+                                        try {
+                                            // Starte Vorschau-Loop damit der Sensor Belichtung,
+                                            // Weißabgleich und Fokus einstellen kann
+                                            CaptureRequest.Builder warmupBuilder =
+                                                    mCameraDevice.createCaptureRequest(
+                                                            CameraDevice.TEMPLATE_PREVIEW);
+                                            warmupBuilder.addTarget(mDummySurface);
+                                            warmupBuilder.set(CaptureRequest.CONTROL_MODE,
+                                                    CaptureRequest.CONTROL_MODE_AUTO);
+                                            warmupBuilder.set(CaptureRequest.CONTROL_AE_MODE,
+                                                    CaptureRequest.CONTROL_AE_MODE_ON);
+                                            warmupBuilder.set(CaptureRequest.CONTROL_AWB_MODE,
+                                                    CaptureRequest.CONTROL_AWB_MODE_AUTO);
+                                            warmupBuilder.set(CaptureRequest.CONTROL_AF_MODE,
+                                                    CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+                                            session.setRepeatingRequest(
+                                                    warmupBuilder.build(), null, mHandler);
+                                            // Warte bis Belichtung und Weißabgleich konvergiert sind
+                                            mHandler.postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    if (mCameraSession != null) {
+                                                        takeSinglePhoto();
+                                                    }
+                                                }
+                                            }, CAMERA_WARMUP_DELAY_MS);
+                                        } catch (CameraAccessException e) {
+                                            Log.e(TAG, "Fehler beim Starten der Vorschau", e);
+                                            cleanup();
+                                        }
                                     }
 
                                     @Override
@@ -163,6 +194,9 @@ public class Camera2Manager {
     @SuppressLint("NewApi")
     private void takeSinglePhoto() {
         try {
+            // Beende den Vorschau-Loop bevor das Standbild aufgenommen wird
+            mCameraSession.stopRepeating();
+
             CaptureRequest.Builder captureBuilder =
                     mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
             captureBuilder.addTarget(mImageReader.getSurface());
