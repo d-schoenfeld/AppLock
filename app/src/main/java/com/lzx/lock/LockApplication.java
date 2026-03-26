@@ -1,6 +1,6 @@
 package com.lzx.lock;
 
-import com.lzx.lock.module.lock.GestureUnlockActivity;
+import com.lzx.lock.module.lock.UnlockActivity;
 import com.lzx.lock.base.BaseActivity;
 import com.lzx.lock.utils.SpUtil;
 
@@ -51,7 +51,7 @@ public class LockApplication extends LitePalApplication {
     }
 
     private boolean clearAllWhiteList(BaseActivity activity) {
-        return activity instanceof GestureUnlockActivity;
+        return activity instanceof UnlockActivity;
     }
 
 

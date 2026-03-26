@@ -54,7 +54,7 @@
             android:exported="false"
             android:label="Entsperren"/>
         <activity
-            android:name=".module.lock.GestureUnlockActivity"
+            android:name=".module.lock.UnlockActivity"
             android:excludeFromRecents="true"
             android:exported="false"
             android:label=""

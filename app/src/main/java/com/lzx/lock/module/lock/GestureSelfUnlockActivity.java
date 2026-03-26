@@ -162,7 +162,7 @@ public class GestureSelfUnlockActivity extends BaseActivity implements View.OnCl
         } else if (AppConstants.LOCK_FROM_UNLOCK.equals(actionFrom)) {
             mManager.setIsUnLockThisApp(pkgName, true);
             mManager.unlockCommApplication(pkgName);
-            sendBroadcast(new Intent(UnlockView.FINISH_UNLOCK_THIS_APP));
+            sendBroadcast(new Intent(UnlockActivity.FINISH_UNLOCK_THIS_APP));
             finish();
         } else {
             // LOCK_FROM_LOCK_MAIN_ACITVITY oder anderer Wert: zur Hauptansicht navigieren

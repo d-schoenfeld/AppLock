@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.lzx.lock.R;
 import com.lzx.lock.base.AppConstants;
 import com.lzx.lock.db.CommLockInfoManager;
-import com.lzx.lock.module.lock.GestureUnlockActivity;
+import com.lzx.lock.module.lock.UnlockActivity;
 import com.lzx.lock.receiver.ServiceRestartReceiver;
 import com.lzx.lock.utils.SpUtil;
 
@@ -385,8 +385,8 @@ public class LockService extends Service {
      * ausblenden können (Android 12+).
      */
     private void passwordLock(String packageName) {
-        if (!GestureUnlockActivity.isShowing) {
-            Intent intent = new Intent(LockService.this, GestureUnlockActivity.class);
+        if (!UnlockActivity.isShowing) {
+            Intent intent = new Intent(LockService.this, UnlockActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
             intent.putExtra(AppConstants.LOCK_PACKAGE_NAME, packageName);
             intent.putExtra(AppConstants.LOCK_FROM, AppConstants.LOCK_FROM_FINISH);
