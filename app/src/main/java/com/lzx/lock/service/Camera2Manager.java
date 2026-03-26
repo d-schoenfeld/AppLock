@@ -39,7 +39,7 @@ public class Camera2Manager {
 
     private static final String TAG = "Camera2Manager";
     /** Wartezeit in Millisekunden damit Belichtung, Weißabgleich und Fokus konvergieren. */
-    private static final long CAMERA_WARMUP_DELAY_MS = 800;
+    private static final long CAMERA_WARMUP_DELAY_MS = 2000;
 
     private final Context mContext;
     private Handler mHandler;
@@ -200,6 +200,9 @@ public class Camera2Manager {
             CaptureRequest.Builder captureBuilder =
                     mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
             captureBuilder.addTarget(mImageReader.getSurface());
+            captureBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+            captureBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+            captureBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_AUTO);
             captureBuilder.set(CaptureRequest.CONTROL_AF_MODE,
                     CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 270);
@@ -293,7 +296,12 @@ public class Camera2Manager {
                 FileOutputStream fos = new FileOutputStream(file);
                 try {
                     ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
-                    byte[] bytes = new byte[buffer.remaining()];
+                    int bufferSize = buffer.remaining();
+                    Log.d(TAG, "Buffer-Größe: " + bufferSize + " Bytes");
+                    if (bufferSize == 0) {
+                        Log.e(TAG, "Buffer ist leer – keine Bilddaten!");
+                    }
+                    byte[] bytes = new byte[bufferSize];
                     buffer.get(bytes);
                     fos.write(bytes);
                     Log.d(TAG, "Eindringlingsfoto gespeichert: " + file.getAbsolutePath());
