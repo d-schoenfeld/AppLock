@@ -1,12 +1,16 @@
 package com.lzx.lock.module.setting;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -38,6 +42,7 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
     public static final String ON_ITEM_CLICK_ACTION = "on_item_click_action";
     private SelectLockTimeDialog dialog;
     private static final int REQUEST_CHANGE_PWD = 3;
+    private static final int PERMISSION_REQUEST_CAMERA = 100;
     private RelativeLayout mTopLayout;
 
     @Override
@@ -138,10 +143,34 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
                     SpUtil.getInstance().putBoolean(AppConstants.LOCK_AUTO_RECORD_PIC, false);
                     mLockTakePicSwitch.setText("Aus");
                 } else {
-                    SpUtil.getInstance().putBoolean(AppConstants.LOCK_AUTO_RECORD_PIC, true);
-                    mLockTakePicSwitch.setText("Ein");
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        enableTakePicOption();
+                    } else {
+                        ActivityCompat.requestPermissions(this,
+                                new String[]{Manifest.permission.CAMERA},
+                                PERMISSION_REQUEST_CAMERA);
+                    }
                 }
                 break;
+        }
+    }
+
+    private void enableTakePicOption() {
+        SpUtil.getInstance().putBoolean(AppConstants.LOCK_AUTO_RECORD_PIC, true);
+        mLockTakePicSwitch.setText("Ein");
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_CAMERA) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                enableTakePicOption();
+            } else {
+                mLockTakePicSwitch.setText("Aus");
+                ToastUtil.showToast("Kamera-Berechtigung erforderlich – Option nicht aktiviert. Berechtigung in den App-Einstellungen erteilen.");
+            }
         }
     }
 
