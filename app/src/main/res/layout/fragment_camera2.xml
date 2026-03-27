@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:text="Foto aufnehmen" />
+            android:text="@string/btn_take_photo" />
     </RelativeLayout>
 
 </LinearLayout>

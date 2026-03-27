@@ -4,6 +4,6 @@
     <item
         android:id="@+id/menu_switch"
         android:orderInCategory="1"
-        android:title="PIN-Sperre"
+        android:title="@string/menu_pin_lock"
         app:showAsAction="always"/>
 </menu>

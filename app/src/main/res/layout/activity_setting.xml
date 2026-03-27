@@ -30,7 +30,7 @@
             android:layout_height="50dp"
             android:layout_toRightOf="@+id/btn_back"
             android:gravity="center"
-            android:text="Einstellungen"
+            android:text="@string/settings_title"
             android:textColor="#2c2c2c"
             android:textSize="14sp"/>
     </RelativeLayout>
@@ -53,7 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="25dp"
             android:gravity="center_vertical"
-            android:text="AppLock"
+            android:text="@string/app_name"
             android:textColor="#2c2c2c"
             android:textSize="14sp"/>
 
@@ -93,7 +93,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="Sperrzeitpunkt"
+            android:text="@string/lock_when_title"
             android:textColor="#2c2c2c"
             android:textSize="14sp"/>
 
@@ -127,7 +127,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="Nach Bildschirmsperre sofort sperren"
+            android:text="@string/lock_screen_option"
             android:textColor="#2c2c2c"
             android:textSize="14sp"/>
 
@@ -139,7 +139,7 @@
             android:layout_centerVertical="true"
             android:drawablePadding="15dp"
             android:drawableRight="@drawable/arrow_more"
-            android:text="Ein"/>
+            android:text="@string/switch_on"/>
 
         <View
             android:layout_width="match_parent"
@@ -160,7 +160,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="Bei Fehleingabe automatisch fotografieren"
+            android:text="@string/lock_take_pic_option"
             android:textColor="#2c2c2c"
             android:textSize="14sp"/>
 
@@ -172,7 +172,7 @@
             android:layout_centerVertical="true"
             android:drawablePadding="15dp"
             android:drawableRight="@drawable/arrow_more"
-            android:text="Ein"/>
+            android:text="@string/switch_on"/>
 
         <View
             android:layout_width="match_parent"
@@ -206,7 +206,7 @@
             android:layout_centerVertical="true"
             android:drawablePadding="15dp"
             android:drawableRight="@drawable/arrow_more"
-            android:text="1"/>
+            android:text="@string/number_1"/>
 
         <View
             android:layout_width="match_parent"
@@ -225,7 +225,7 @@
         android:gravity="center_vertical"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:text="Sperrmethode ändern"
+        android:text="@string/btn_change_lock_method"
         android:textColor="#2c2c2c"
         android:textSize="14sp"/>
 

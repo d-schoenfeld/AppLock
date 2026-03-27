@@ -25,7 +25,7 @@
             android:layout_height="50dp"
             android:layout_toRightOf="@+id/btn_back"
             android:gravity="center"
-            android:text="AppLock"
+            android:text="@string/app_name"
             android:textColor="@color/white"
             android:textSize="14sp"/>
 
@@ -43,7 +43,7 @@
             android:layout_below="@+id/lock_icon"
             android:layout_marginTop="10dp"
             android:gravity="center"
-            android:text="Willkommen bei AppLock"
+            android:text="@string/welcome_applock"
             android:textColor="@color/white"
             android:textSize="14sp"/>
     </RelativeLayout>
@@ -172,7 +172,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center"
-                android:text="Zurücksetzen"
+                android:text="@string/btn_reset"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:textColor="@color/tr_black50"
