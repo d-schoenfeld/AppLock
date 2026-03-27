@@ -1,30 +1,30 @@
 <resources>
     <string name="app_name">AppLock</string>
 
-    <string name="lock_first_btn" formatted="false">Sperren (%s)</string>
+    <string name="lock_first_btn" formatted="false">Lock (%s)</string>
 
-    <!--Entsperrmuster-Widget-->
-    <string name="lockscreen_access_pattern_cell_added">Punkt hinzugefügt</string>
-    <string name="lockscreen_access_pattern_start">Muster zeichnen</string>
-    <string name="lockscreen_access_pattern_detected">Passwort gespeichert</string>
-    <string name="lockscreen_access_pattern_cleared">Passwort gelöscht</string>
+    <!--Pattern unlock widget-->
+    <string name="lockscreen_access_pattern_cell_added">Point added</string>
+    <string name="lockscreen_access_pattern_start">Draw pattern</string>
+    <string name="lockscreen_access_pattern_detected">Password saved</string>
+    <string name="lockscreen_access_pattern_cleared">Password deleted</string>
 
-    <string name="lock_recording_intro_header">Entsperrmuster festlegen</string>
-    <string name="lock_settings_help_how_to_record">Wie zeichne ich ein Muster?</string>
-    <string name="lock_recording_incorrect_too_short">Mindestens 4 Punkte verbinden.</string>
-    <string name="lock_pattern_entered_header">Muster aufzeichnen</string>
-    <string name="lock_need_to_confirm">Muster zur Bestätigung erneut zeichnen</string>
-    <string name="lock_need_to_unlock_wrong">Muster stimmt nicht überein. Erneut versuchen.</string>
-    <string name="password_gestrue_tips">Muster zum Entsperren zeichnen</string>
-    <string name="password_error_count">Muster stimmt nicht überein. Erneut versuchen.</string>
-    <string name="lock_draw_unlock_pattern">Entsperrmuster zeichnen</string>
-    <string name="lock_enter_pin_code">PIN eingeben</string>
+    <string name="lock_recording_intro_header">Set unlock pattern</string>
+    <string name="lock_settings_help_how_to_record">How do I draw a pattern?</string>
+    <string name="lock_recording_incorrect_too_short">Connect at least 4 dots.</string>
+    <string name="lock_pattern_entered_header">Record pattern</string>
+    <string name="lock_need_to_confirm">Draw pattern again to confirm</string>
+    <string name="lock_need_to_unlock_wrong">Pattern does not match. Try again.</string>
+    <string name="password_gestrue_tips">Draw pattern to unlock</string>
+    <string name="password_error_count">Pattern does not match. Try again.</string>
+    <string name="lock_draw_unlock_pattern">Draw unlock pattern</string>
+    <string name="lock_enter_pin_code">Enter PIN</string>
     <string name="lock_pattern_confirmed_header"></string>
 
-    <!--PIN-Entsperrung-->
-    <string name="num_create_text_01">4-stellige PIN eingeben</string>
-    <string name="num_create_text_02">Zur Bestätigung erneut eingeben</string>
-    <string name="num_create_text_03">PINs stimmen nicht überein. Erneut versuchen.</string>
+    <!--PIN unlock-->
+    <string name="num_create_text_01">Enter 4-digit PIN</string>
+    <string name="num_create_text_02">Enter again to confirm</string>
+    <string name="num_create_text_03">PINs do not match. Try again.</string>
     <string name="number_1">1</string>
     <string name="number_2">2</string>
     <string name="number_3">3</string>
@@ -35,65 +35,65 @@
     <string name="number_8">8</string>
     <string name="number_9">9</string>
     <string name="number_0">0</string>
-    <string name="password_short">Bitte mindestens 4 Zeichen eingeben.</string>
+    <string name="password_short">Please enter at least 4 characters.</string>
 
     <string-array name="lock_time_array">
-        <item>15 Sekunden</item>
-        <item>30 Sekunden</item>
-        <item>1 Minute</item>
-        <item>3 Minuten</item>
-        <item>5 Minuten</item>
-        <item>10 Minuten</item>
-        <item>30 Minuten</item>
-        <item>Sofort</item>
+        <item>15 seconds</item>
+        <item>30 seconds</item>
+        <item>1 minute</item>
+        <item>3 minutes</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>30 minutes</item>
+        <item>Immediately</item>
     </string-array>
 
-    <string name="dialog_tip">Dein System ist Android 5.0 oder höher. Die Berechtigung „App-Nutzungsdaten abrufen" wird benötigt.
+    <string name="dialog_tip">Your system is Android 5.0 or higher. The \'Usage access\' permission is required.
     </string>
 
-    <!-- Einrichtungsassistent für Berechtigungen -->
-    <string name="perm_step_indicator">Schritt %1$d von %2$d</string>
-    <string name="perm_required">Erforderlich</string>
+    <!-- Permission setup wizard -->
+    <string name="perm_step_indicator">Step %1$d of %2$d</string>
+    <string name="perm_required">Required</string>
     <string name="perm_optional">Optional</string>
-    <string name="perm_grant_button">Berechtigung erteilen</string>
-    <string name="perm_skip_button">Überspringen</string>
-    <string name="perm_required_hint">Diese Berechtigung wird benötigt, um die App zu starten.</string>
+    <string name="perm_grant_button">Grant permission</string>
+    <string name="perm_skip_button">Skip</string>
+    <string name="perm_required_hint">This permission is required to start the app.</string>
 
-    <string name="perm_usage_stats_title">App-Nutzungsdaten</string>
-    <string name="perm_usage_stats_desc">AppLock muss erkennen, welche App gerade geöffnet ist, um den Sperrbildschirm rechtzeitig einzublenden. Dafür ist der Zugriff auf App-Nutzungsdaten erforderlich. Ohne diese Berechtigung kann keine App gesperrt werden.</string>
+    <string name="perm_usage_stats_title">App usage data</string>
+    <string name="perm_usage_stats_desc">AppLock needs to detect which app is currently open in order to show the lock screen at the right time. Access to app usage data is required for this. Without this permission, no app can be locked.</string>
 
-    <string name="perm_overlay_title">Über anderen Apps einblenden</string>
-    <string name="perm_overlay_desc">Der Sperrbildschirm wird über der zu sperrenden App angezeigt. Dafür wird die Berechtigung „Über anderen Apps einblenden" benötigt. Ohne diese Berechtigung kann kein Sperrbildschirm erscheinen.</string>
+    <string name="perm_overlay_title">Display over other apps</string>
+    <string name="perm_overlay_desc">The lock screen is displayed on top of the app to be locked. The \'Display over other apps\' permission is required for this. Without this permission, no lock screen can appear.</string>
 
-    <string name="perm_exact_alarm_title">Genaue Alarme</string>
-    <string name="perm_exact_alarm_desc">Für einen zuverlässigen automatischen Neustart des Sperr-Dienstes werden genaue Alarme verwendet. Ohne diese Berechtigung kann der Dienst nach einem Neustart mit kurzer Verzögerung starten – die Sperrfunktion bleibt aber grundsätzlich erhalten.</string>
+    <string name="perm_exact_alarm_title">Exact alarms</string>
+    <string name="perm_exact_alarm_desc">Exact alarms are used for a reliable automatic restart of the lock service. Without this permission, the service may start with a short delay after a reboot – but the lock function is basically retained.</string>
 
-    <string name="perm_camera_title">Kamera</string>
-    <string name="perm_camera_desc">Bei mehrfach falsch eingegebenem Passwort kann AppLock optional ein Foto des Eindringlings aufnehmen. Diese Funktion kann auch später in den Einstellungen aktiviert oder deaktiviert werden.</string>
+    <string name="perm_camera_title">Camera</string>
+    <string name="perm_camera_desc">If a password is entered incorrectly multiple times, AppLock can optionally take a photo of the intruder. This feature can also be activated or deactivated later in the settings.</string>
 
-    <!-- Sperrmethode Auswahl -->
-    <string name="lock_method_selection_title">Sperrmethode wählen</string>
-    <string name="lock_method_pin">Passwort/PIN</string>
-    <string name="lock_method_pattern">Muster</string>
-    <string name="pin_set_header">Passwort festlegen</string>
-    <string name="pin_enter_hint">Passwort/PIN eingeben (mind. 4 Zeichen)</string>
-    <string name="pin_confirm_hint">Passwort/PIN bestätigen</string>
-    <string name="pin_next">Weiter</string>
-    <string name="pin_confirm">Bestätigen</string>
-    <string name="pin_mismatch">Passwörter stimmen nicht überein. Erneut versuchen.</string>
-    <string name="pin_too_short">Mindestens 4 Zeichen eingeben.</string>
-    <string name="pin_enter_to_unlock">Passwort/PIN zum Entsperren eingeben</string>
-    <string name="pin_wrong">Falsches Passwort. Erneut versuchen.</string>
-    <string name="btn_unlock">Entsperren</string>
+    <!-- Lock method selection -->
+    <string name="lock_method_selection_title">Choose lock method</string>
+    <string name="lock_method_pin">Password/PIN</string>
+    <string name="lock_method_pattern">Pattern</string>
+    <string name="pin_set_header">Set password</string>
+    <string name="pin_enter_hint">Enter password/PIN (min. 4 characters)</string>
+    <string name="pin_confirm_hint">Confirm password/PIN</string>
+    <string name="pin_next">Next</string>
+    <string name="pin_confirm">Confirm</string>
+    <string name="pin_mismatch">Passwords do not match. Try again.</string>
+    <string name="pin_too_short">Enter at least 4 characters.</string>
+    <string name="pin_enter_to_unlock">Enter password/PIN to unlock</string>
+    <string name="pin_wrong">Wrong password. Try again.</string>
+    <string name="btn_unlock">Unlock</string>
 
-    <!-- Foto bei Fehleingabe: Anzahl der Fehlversuche -->
-    <string name="take_pic_attempt_title">Foto nach Fehlversuchen</string>
-    <string name="take_pic_attempt_dialog_title">Foto auslösen nach</string>
+    <!-- Photo on failed attempt: number of attempts -->
+    <string name="take_pic_attempt_title">Photo after failed attempts</string>
+    <string name="take_pic_attempt_dialog_title">Take photo after</string>
     <string-array name="take_pic_attempt_labels">
-        <item>jedem Fehlversuch</item>
-        <item>2 Fehlversuchen</item>
-        <item>3 Fehlversuchen</item>
-        <item>5 Fehlversuchen</item>
+        <item>every failed attempt</item>
+        <item>2 failed attempts</item>
+        <item>3 failed attempts</item>
+        <item>5 failed attempts</item>
     </string-array>
     <integer-array name="take_pic_attempt_values">
         <item>1</item>
@@ -102,8 +102,43 @@
         <item>5</item>
     </integer-array>
 
-    <!-- Vordergrunddienst-Benachrichtigung -->
-    <string name="lock_service_notification_channel">AppLock Dienst</string>
-    <string name="lock_service_notification_title">AppLock aktiv</string>
-    <string name="lock_service_notification_text">Apps werden überwacht und gesperrt.</string>
+    <!-- Foreground service notification -->
+    <string name="lock_service_notification_channel">AppLock Service</string>
+    <string name="lock_service_notification_title">AppLock active</string>
+    <string name="lock_service_notification_text">Apps are being monitored and locked.</string>
+
+    <!-- Settings screen -->
+    <string name="settings_title">Settings</string>
+    <string name="lock_when_title">Lock time</string>
+    <string name="lock_screen_option">Lock immediately after screen off</string>
+    <string name="lock_take_pic_option">Automatically photograph on failed attempt</string>
+    <string name="btn_change_lock_method">Change lock method</string>
+    <string name="switch_on">On</string>
+    <string name="switch_off">Off</string>
+    <string name="lock_time_immediate">Immediately</string>
+    <string name="lock_enabled_tip">Activated – locked apps require a password</string>
+    <string name="lock_disabled_tip">Deactivated – locked apps do not require a password</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="camera_permission_required">Camera permission required – option not activated. Grant permission in app settings.</string>
+    <string name="password_reset_success">Password successfully reset</string>
+
+    <!-- App list tabs -->
+    <string name="tab_system_apps">System Apps</string>
+    <string name="tab_user_apps">User Apps</string>
+    <string name="tab_apps">Apps</string>
+
+    <!-- Setup / unlock screens -->
+    <string name="welcome_applock">Welcome to AppLock</string>
+    <string name="btn_reset">Reset</string>
+    <string name="confirm_identity">Confirm identity</string>
+
+    <!-- Camera -->
+    <string name="btn_take_photo">Take photo</string>
+
+    <!-- Search -->
+    <string name="search_title">Search</string>
+    <string name="search_hint">Search apps</string>
+
+    <!-- Menu -->
+    <string name="menu_pin_lock">PIN lock</string>
 </resources>

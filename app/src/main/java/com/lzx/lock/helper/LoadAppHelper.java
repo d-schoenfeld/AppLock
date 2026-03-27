@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.text.TextUtils;
 
+import com.lzx.lock.R;
 import com.lzx.lock.base.AppConstants;
 import com.lzx.lock.bean.CommLockInfo;
 
@@ -80,7 +81,7 @@ public class LoadAppHelper {
                     info.setLocked(isRecommend);
                     info.setAppName(appName);
                     info.setSysApp(isSysApp);
-                    info.setTopTitle(isSysApp ? "System-Apps" : "Benutzer-Apps");
+                    info.setTopTitle(activity.getString(isSysApp ? R.string.tab_system_apps : R.string.tab_user_apps));
                     info.setSetUnLock(false);
                     info.setAppInfo(appInfo);
                     list.add(info);

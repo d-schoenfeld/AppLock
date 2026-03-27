@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 
+import com.lzx.lock.R;
 import com.lzx.lock.base.AppConstants;
 import com.lzx.lock.bean.CommLockInfo;
 import com.lzx.lock.db.DbManager;
@@ -112,10 +113,10 @@ public class LockMainPresenter implements LockMainContract.Presenter {
                     info.setAppInfo(appInfo); //ApplicationInfo der Liste zuweisen
                     if ((appInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) { //prüfen ob System-App ApplicationInfo#isSystemApp()
                         info.setSysApp(true);
-                        info.setTopTitle("System-Apps");
+                        info.setTopTitle(mContext.getString(R.string.tab_system_apps));
                     } else {
                         info.setSysApp(false);
-                        info.setTopTitle("Benutzer-Apps");
+                        info.setTopTitle(mContext.getString(R.string.tab_user_apps));
                     }
                 }
                 //Gesamtzahl der gesperrten Apps ermitteln
@@ -150,10 +151,10 @@ public class LockMainPresenter implements LockMainContract.Presenter {
                     info.setAppInfo(appInfo); //ApplicationInfo der Liste zuweisen
                     if ((appInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) { //prüfen ob System-App ApplicationInfo#isSystemApp()
                         info.setSysApp(true);
-                        info.setTopTitle("System-Apps");
+                        info.setTopTitle(mContext.getString(R.string.tab_system_apps));
                     } else {
                         info.setSysApp(false);
-                        info.setTopTitle("Benutzer-Apps");
+                        info.setTopTitle(mContext.getString(R.string.tab_user_apps));
                     }
                 }
             } catch (PackageManager.NameNotFoundException e) {

@@ -80,17 +80,17 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
         mLockSwitch.setChecked(isLockOpen);
 
         boolean isLockAutoScreen = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_SCREEN, false);
-        mLockScreenSwitch.setText(isLockAutoScreen ? "Ein" : "Aus");
+        mLockScreenSwitch.setText(isLockAutoScreen ? getString(R.string.switch_on) : getString(R.string.switch_off));
 
         boolean isTakePic = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_RECORD_PIC,false);
-        mLockTakePicSwitch.setText(isTakePic ? "Ein" : "Aus");
+        mLockTakePicSwitch.setText(isTakePic ? getString(R.string.switch_on) : getString(R.string.switch_off));
         if (isTakePic) {
             mLockTakePicAttempts.setVisibility(View.VISIBLE);
         }
         int attempt = (int) SpUtil.getInstance().getInt(AppConstants.LOCK_AUTO_RECORD_PIC_ATTEMPT, 1);
         mLockTakePicAttemptValue.setText(String.valueOf(attempt));
 
-        mLockTime.setText(SpUtil.getInstance().getString(AppConstants.LOCK_APART_TITLE,"Sofort"));
+        mLockTime.setText(SpUtil.getInstance().getString(AppConstants.LOCK_APART_TITLE, getString(R.string.lock_time_immediate)));
     }
 
     @Override
@@ -107,14 +107,14 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
                 SpUtil.getInstance().putBoolean(AppConstants.LOCK_STATE, b);
                 Intent intent = new Intent(LockSettingActivity.this, LockService.class);
                 if (b) {
-                    mLockTip.setText("Aktiviert – gesperrte Apps erfordern ein Passwort");
+                    mLockTip.setText(getString(R.string.lock_enabled_tip));
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         startForegroundService(intent);
                     } else {
                         startService(intent);
                     }
                 } else {
-                    mLockTip.setText("Deaktiviert – gesperrte Apps erfordern kein Passwort");
+                    mLockTip.setText(getString(R.string.lock_disabled_tip));
                     stopService(intent);
                 }
             }
@@ -139,18 +139,18 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
                 if (isLockAutoScreen) {
                     SpUtil.getInstance().putBoolean(AppConstants.LOCK_AUTO_SCREEN, false);
                     LockService.sLockAutoScreen = false; //Statische Variable aktualisieren
-                    mLockScreenSwitch.setText("Aus");
+                    mLockScreenSwitch.setText(getString(R.string.switch_off));
                 } else {
                     SpUtil.getInstance().putBoolean(AppConstants.LOCK_AUTO_SCREEN, true);
                     LockService.sLockAutoScreen = true; //Statische Variable aktualisieren
-                    mLockScreenSwitch.setText("Ein");
+                    mLockScreenSwitch.setText(getString(R.string.switch_on));
                 }
                 break;
             case R.id.lock_take_pic:
                 boolean isTakePic = SpUtil.getInstance().getBoolean(AppConstants.LOCK_AUTO_RECORD_PIC,false);
                 if (isTakePic) {
                     SpUtil.getInstance().putBoolean(AppConstants.LOCK_AUTO_RECORD_PIC, false);
-                    mLockTakePicSwitch.setText("Aus");
+                    mLockTakePicSwitch.setText(getString(R.string.switch_off));
                     mLockTakePicAttempts.setVisibility(View.GONE);
                 } else {
                     if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
@@ -171,7 +171,7 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
 
     private void enableTakePicOption() {
         SpUtil.getInstance().putBoolean(AppConstants.LOCK_AUTO_RECORD_PIC, true);
-        mLockTakePicSwitch.setText("Ein");
+        mLockTakePicSwitch.setText(getString(R.string.switch_on));
         mLockTakePicAttempts.setVisibility(View.VISIBLE);
     }
 
@@ -197,7 +197,7 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
                         dialog.dismiss();
                     }
                 })
-                .setNegativeButton("Abbrechen", null)
+                .setNegativeButton(R.string.btn_cancel, null)
                 .show();
     }
 
@@ -208,8 +208,8 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 enableTakePicOption();
             } else {
-                mLockTakePicSwitch.setText("Aus");
-                ToastUtil.showToast("Kamera-Berechtigung erforderlich – Option nicht aktiviert. Berechtigung in den App-Einstellungen erteilen.");
+                mLockTakePicSwitch.setText(getString(R.string.switch_off));
+                ToastUtil.showToast(getString(R.string.camera_permission_required));
             }
         }
     }
@@ -220,7 +220,7 @@ public class LockSettingActivity extends BaseActivity implements View.OnClickLis
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_CHANGE_PWD:
-                    ToastUtil.showToast("Passwort erfolgreich zurückgesetzt");
+                    ToastUtil.showToast(getString(R.string.password_reset_success));
                     break;
             }
         }

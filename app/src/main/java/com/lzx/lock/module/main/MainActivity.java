@@ -90,8 +90,8 @@ public class MainActivity extends BaseActivity implements LockMainContract.View,
             }
         }
         titles = new ArrayList<>();
-        titles.add("System-Apps" + " (" + sysNum + ")");
-        titles.add("Benutzer-Apps" + " (" + userNum + ")");
+        titles.add(getString(R.string.tab_system_apps) + " (" + sysNum + ")");
+        titles.add(getString(R.string.tab_user_apps) + " (" + userNum + ")");
         SysAppFragment sysAppFragment = SysAppFragment.newInstance(list);
         UserAppFragment userAppFragment = UserAppFragment.newInstance(list);
         fragmentList = new ArrayList<>();
