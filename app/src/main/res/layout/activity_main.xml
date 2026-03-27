@@ -29,7 +29,7 @@
             android:layout_height="50dp"
             android:layout_toRightOf="@+id/btn_back"
             android:gravity="center"
-            android:text="App-Sperre"
+            android:text="AppLock"
             android:textColor="#2c2c2c"
             android:textSize="14sp"/>
 
