@@ -6,7 +6,7 @@ package com.lzx.lock.base;
 
 public class AppConstants {
 
-    public static final String LOCK_STATE = "app_lock_state"; //App-Sperre-Schalter (Status: true=ein, false=aus)
+    public static final String LOCK_STATE = "app_lock_state"; //AppLock-Schalter (Status: true=ein, false=aus)
     public static final String LOCK_FAVITER_NUM = "lock_faviter_num"; //Anzahl empfohlener zu sperrenden Apps
     public static final String LOCK_SYS_APP_NUM = "lock_sys_app_num"; //Anzahl System-Apps
     public static final String LOCK_USER_APP_NUM = "lock_user_app_num"; //Anzahl Nicht-System-Apps
@@ -14,7 +14,7 @@ public class AppConstants {
     public static final String LOCK_IS_INIT_DB = "lock_is_init_db"; //ob Datenbanktabelle initialisiert
     public static final String APP_PACKAGE_NAME = "com.lzx.lock"; //Paketname
     public static final String LOCK_IS_HIDE_LINE = "lock_is_hide_line"; //ob Muster verborgen
-    public static final String LOCK_PWD = "lock_pwd";//App-Sperre-Passwort
+    public static final String LOCK_PWD = "lock_pwd";//AppLock-Passwort
     public static final String LOCK_IS_FIRST_LOCK = "is_lock"; //ob bereits gesperrt wurde
     public static final String LOCK_AUTO_SCREEN = "lock_auto_screen"; //ob nach Bildschirmabschaltung erneut sperren
     public static final String LOCK_AUTO_SCREEN_TIME = "lock_auto_screen_time"; //ob nach Bildschirmabschaltung nach einer Zeitspanne erneut gesperrt werden soll

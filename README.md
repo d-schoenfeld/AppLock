@@ -1,4 +1,4 @@
-# AppLock – App-Sperre
+# AppLock
 
 Schütze deine Privatsphäre mit einer Mustersperre oder PIN für einzelne Apps.
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">App-Sperre</string>
+    <string name="app_name">AppLock</string>
 
     <string name="lock_first_btn" formatted="false">Sperren (%s)</string>
 
@@ -60,7 +60,7 @@
     <string name="perm_required_hint">Diese Berechtigung wird benötigt, um die App zu starten.</string>
 
     <string name="perm_usage_stats_title">App-Nutzungsdaten</string>
-    <string name="perm_usage_stats_desc">App-Sperre muss erkennen, welche App gerade geöffnet ist, um den Sperrbildschirm rechtzeitig einzublenden. Dafür ist der Zugriff auf App-Nutzungsdaten erforderlich. Ohne diese Berechtigung kann keine App gesperrt werden.</string>
+    <string name="perm_usage_stats_desc">AppLock muss erkennen, welche App gerade geöffnet ist, um den Sperrbildschirm rechtzeitig einzublenden. Dafür ist der Zugriff auf App-Nutzungsdaten erforderlich. Ohne diese Berechtigung kann keine App gesperrt werden.</string>
 
     <string name="perm_overlay_title">Über anderen Apps einblenden</string>
     <string name="perm_overlay_desc">Der Sperrbildschirm wird über der zu sperrenden App angezeigt. Dafür wird die Berechtigung „Über anderen Apps einblenden" benötigt. Ohne diese Berechtigung kann kein Sperrbildschirm erscheinen.</string>
@@ -69,7 +69,7 @@
     <string name="perm_exact_alarm_desc">Für einen zuverlässigen automatischen Neustart des Sperr-Dienstes werden genaue Alarme verwendet. Ohne diese Berechtigung kann der Dienst nach einem Neustart mit kurzer Verzögerung starten – die Sperrfunktion bleibt aber grundsätzlich erhalten.</string>
 
     <string name="perm_camera_title">Kamera</string>
-    <string name="perm_camera_desc">Bei mehrfach falsch eingegebenem Passwort kann App-Sperre optional ein Foto des Eindringlings aufnehmen. Diese Funktion kann auch später in den Einstellungen aktiviert oder deaktiviert werden.</string>
+    <string name="perm_camera_desc">Bei mehrfach falsch eingegebenem Passwort kann AppLock optional ein Foto des Eindringlings aufnehmen. Diese Funktion kann auch später in den Einstellungen aktiviert oder deaktiviert werden.</string>
 
     <!-- Sperrmethode Auswahl -->
     <string name="lock_method_selection_title">Sperrmethode wählen</string>
@@ -103,7 +103,7 @@
     </integer-array>
 
     <!-- Vordergrunddienst-Benachrichtigung -->
-    <string name="lock_service_notification_channel">App-Sperre Dienst</string>
-    <string name="lock_service_notification_title">App-Sperre aktiv</string>
+    <string name="lock_service_notification_channel">AppLock Dienst</string>
+    <string name="lock_service_notification_title">AppLock aktiv</string>
     <string name="lock_service_notification_text">Apps werden überwacht und gesperrt.</string>
 </resources>
