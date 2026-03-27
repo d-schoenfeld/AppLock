@@ -1,0 +1,143 @@
+<resources>
+    <string name="app_name">AppLock</string>
+
+    <string name="lock_first_btn" formatted="false">Verrouiller (%s)</string>
+
+    <!--Widget de schéma de déverrouillage-->
+    <string name="lockscreen_access_pattern_cell_added">Point ajouté</string>
+    <string name="lockscreen_access_pattern_start">Dessiner le schéma</string>
+    <string name="lockscreen_access_pattern_detected">Mot de passe enregistré</string>
+    <string name="lockscreen_access_pattern_cleared">Mot de passe supprimé</string>
+
+    <string name="lock_recording_intro_header">Définir le schéma de déverrouillage</string>
+    <string name="lock_settings_help_how_to_record">Comment dessiner un schéma ?</string>
+    <string name="lock_recording_incorrect_too_short">Reliez au moins 4 points.</string>
+    <string name="lock_pattern_entered_header">Enregistrer le schéma</string>
+    <string name="lock_need_to_confirm">Dessinez à nouveau le schéma pour confirmer</string>
+    <string name="lock_need_to_unlock_wrong">Le schéma ne correspond pas. Réessayez.</string>
+    <string name="password_gestrue_tips">Dessinez le schéma pour déverrouiller</string>
+    <string name="password_error_count">Le schéma ne correspond pas. Réessayez.</string>
+    <string name="lock_draw_unlock_pattern">Dessiner le schéma de déverrouillage</string>
+    <string name="lock_enter_pin_code">Entrer le code PIN</string>
+    <string name="lock_pattern_confirmed_header"></string>
+
+    <!--Déverrouillage par PIN-->
+    <string name="num_create_text_01">Entrez un code PIN à 4 chiffres</string>
+    <string name="num_create_text_02">Entrez-le à nouveau pour confirmer</string>
+    <string name="num_create_text_03">Les codes PIN ne correspondent pas. Réessayez.</string>
+    <string name="number_1">1</string>
+    <string name="number_2">2</string>
+    <string name="number_3">3</string>
+    <string name="number_4">4</string>
+    <string name="number_5">5</string>
+    <string name="number_6">6</string>
+    <string name="number_7">7</string>
+    <string name="number_8">8</string>
+    <string name="number_9">9</string>
+    <string name="number_0">0</string>
+    <string name="password_short">Entrez au moins 4 caractères.</string>
+
+    <string-array name="lock_time_array">
+        <item>15 secondes</item>
+        <item>30 secondes</item>
+        <item>1 minute</item>
+        <item>3 minutes</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>30 minutes</item>
+        <item>Immédiatement</item>
+    </string-array>
+
+    <string name="dialog_tip">Votre système est Android 5.0 ou supérieur. L\'autorisation \'Accès aux données d\'utilisation\' est requise.</string>
+
+    <!-- Assistant de configuration des autorisations -->
+    <string name="perm_step_indicator">Étape %1$d sur %2$d</string>
+    <string name="perm_required">Requis</string>
+    <string name="perm_optional">Facultatif</string>
+    <string name="perm_grant_button">Accorder l\'autorisation</string>
+    <string name="perm_skip_button">Ignorer</string>
+    <string name="perm_required_hint">Cette autorisation est nécessaire pour démarrer l\'application.</string>
+
+    <string name="perm_usage_stats_title">Données d\'utilisation des apps</string>
+    <string name="perm_usage_stats_desc">AppLock doit détecter quelle application est ouverte afin d\'afficher l\'écran de verrouillage au bon moment. L\'accès aux données d\'utilisation des apps est requis. Sans cette autorisation, aucune app ne peut être verrouillée.</string>
+
+    <string name="perm_overlay_title">S\'afficher par-dessus d\'autres apps</string>
+    <string name="perm_overlay_desc">L\'écran de verrouillage s\'affiche par-dessus l\'app verrouillée. L\'autorisation \'S\'afficher par-dessus d\'autres apps\' est requise. Sans cette autorisation, aucun écran de verrouillage ne peut apparaître.</string>
+
+    <string name="perm_exact_alarm_title">Alarmes exactes</string>
+    <string name="perm_exact_alarm_desc">Les alarmes exactes sont utilisées pour un redémarrage automatique fiable du service de verrouillage. Sans cette autorisation, le service peut démarrer avec un léger délai après un redémarrage, mais la fonction de verrouillage est conservée.</string>
+
+    <string name="perm_camera_title">Appareil photo</string>
+    <string name="perm_camera_desc">Si un mot de passe est saisi incorrectement plusieurs fois, AppLock peut prendre une photo de l\'intrus. Cette fonctionnalité peut être activée ou désactivée ultérieurement dans les paramètres.</string>
+
+    <!-- Sélection de la méthode de verrouillage -->
+    <string name="lock_method_selection_title">Choisir la méthode de verrouillage</string>
+    <string name="lock_method_pin">Mot de passe/PIN</string>
+    <string name="lock_method_pattern">Schéma</string>
+    <string name="pin_set_header">Définir le mot de passe</string>
+    <string name="pin_enter_hint">Entrez le mot de passe/PIN (min. 4 caractères)</string>
+    <string name="pin_confirm_hint">Confirmez le mot de passe/PIN</string>
+    <string name="pin_next">Suivant</string>
+    <string name="pin_confirm">Confirmer</string>
+    <string name="pin_mismatch">Les mots de passe ne correspondent pas. Réessayez.</string>
+    <string name="pin_too_short">Entrez au moins 4 caractères.</string>
+    <string name="pin_enter_to_unlock">Entrez le mot de passe/PIN pour déverrouiller</string>
+    <string name="pin_wrong">Mot de passe incorrect. Réessayez.</string>
+    <string name="btn_unlock">Déverrouiller</string>
+
+    <!-- Photo en cas d\'échec : nombre de tentatives -->
+    <string name="take_pic_attempt_title">Photo après tentatives échouées</string>
+    <string name="take_pic_attempt_dialog_title">Prendre une photo après</string>
+    <string-array name="take_pic_attempt_labels">
+        <item>chaque tentative échouée</item>
+        <item>2 tentatives échouées</item>
+        <item>3 tentatives échouées</item>
+        <item>5 tentatives échouées</item>
+    </string-array>
+    <integer-array name="take_pic_attempt_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+    </integer-array>
+
+    <!-- Notification du service en premier plan -->
+    <string name="lock_service_notification_channel">Service AppLock</string>
+    <string name="lock_service_notification_title">AppLock actif</string>
+    <string name="lock_service_notification_text">Les apps sont surveillées et verrouillées.</string>
+
+    <!-- Écran des paramètres -->
+    <string name="settings_title">Paramètres</string>
+    <string name="lock_when_title">Moment du verrouillage</string>
+    <string name="lock_screen_option">Verrouiller immédiatement après extinction de l\'écran</string>
+    <string name="lock_take_pic_option">Photographier automatiquement en cas d\'échec</string>
+    <string name="btn_change_lock_method">Modifier la méthode de verrouillage</string>
+    <string name="switch_on">Activé</string>
+    <string name="switch_off">Désactivé</string>
+    <string name="lock_time_immediate">Immédiatement</string>
+    <string name="lock_enabled_tip">Activé – les apps verrouillées nécessitent un mot de passe</string>
+    <string name="lock_disabled_tip">Désactivé – les apps verrouillées ne nécessitent pas de mot de passe</string>
+    <string name="btn_cancel">Annuler</string>
+    <string name="camera_permission_required">Autorisation caméra requise – option non activée. Accordez l\'autorisation dans les paramètres de l\'application.</string>
+    <string name="password_reset_success">Mot de passe réinitialisé avec succès</string>
+
+    <!-- Onglets de la liste des apps -->
+    <string name="tab_system_apps">Apps système</string>
+    <string name="tab_user_apps">Apps utilisateur</string>
+    <string name="tab_apps">Apps</string>
+
+    <!-- Écrans de configuration / déverrouillage -->
+    <string name="welcome_applock">Bienvenue dans AppLock</string>
+    <string name="btn_reset">Réinitialiser</string>
+    <string name="confirm_identity">Confirmer l\'identité</string>
+
+    <!-- Appareil photo -->
+    <string name="btn_take_photo">Prendre une photo</string>
+
+    <!-- Recherche -->
+    <string name="search_title">Rechercher</string>
+    <string name="search_hint">Rechercher des apps</string>
+
+    <!-- Menu -->
+    <string name="menu_pin_lock">Verrouillage PIN</string>
+</resources>
