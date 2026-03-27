@@ -1,0 +1,143 @@
+<resources>
+    <string name="app_name">AppLock</string>
+
+    <string name="lock_first_btn" formatted="false">Bloquear (%s)</string>
+
+    <!--Widget de patrón de desbloqueo-->
+    <string name="lockscreen_access_pattern_cell_added">Punto añadido</string>
+    <string name="lockscreen_access_pattern_start">Dibujar patrón</string>
+    <string name="lockscreen_access_pattern_detected">Contraseña guardada</string>
+    <string name="lockscreen_access_pattern_cleared">Contraseña eliminada</string>
+
+    <string name="lock_recording_intro_header">Establecer patrón de desbloqueo</string>
+    <string name="lock_settings_help_how_to_record">¿Cómo dibujo un patrón?</string>
+    <string name="lock_recording_incorrect_too_short">Conecta al menos 4 puntos.</string>
+    <string name="lock_pattern_entered_header">Registrar patrón</string>
+    <string name="lock_need_to_confirm">Dibuja el patrón de nuevo para confirmar</string>
+    <string name="lock_need_to_unlock_wrong">El patrón no coincide. Inténtalo de nuevo.</string>
+    <string name="password_gestrue_tips">Dibuja el patrón para desbloquear</string>
+    <string name="password_error_count">El patrón no coincide. Inténtalo de nuevo.</string>
+    <string name="lock_draw_unlock_pattern">Dibujar patrón de desbloqueo</string>
+    <string name="lock_enter_pin_code">Introducir PIN</string>
+    <string name="lock_pattern_confirmed_header"></string>
+
+    <!--Desbloqueo por PIN-->
+    <string name="num_create_text_01">Introduce un PIN de 4 dígitos</string>
+    <string name="num_create_text_02">Vuelve a introducirlo para confirmar</string>
+    <string name="num_create_text_03">Los PINs no coinciden. Inténtalo de nuevo.</string>
+    <string name="number_1">1</string>
+    <string name="number_2">2</string>
+    <string name="number_3">3</string>
+    <string name="number_4">4</string>
+    <string name="number_5">5</string>
+    <string name="number_6">6</string>
+    <string name="number_7">7</string>
+    <string name="number_8">8</string>
+    <string name="number_9">9</string>
+    <string name="number_0">0</string>
+    <string name="password_short">Introduce al menos 4 caracteres.</string>
+
+    <string-array name="lock_time_array">
+        <item>15 segundos</item>
+        <item>30 segundos</item>
+        <item>1 minuto</item>
+        <item>3 minutos</item>
+        <item>5 minutos</item>
+        <item>10 minutos</item>
+        <item>30 minutos</item>
+        <item>Inmediatamente</item>
+    </string-array>
+
+    <string name="dialog_tip">Tu sistema es Android 5.0 o superior. Se necesita el permiso de \'acceso a datos de uso\'.</string>
+
+    <!-- Asistente de configuración de permisos -->
+    <string name="perm_step_indicator">Paso %1$d de %2$d</string>
+    <string name="perm_required">Requerido</string>
+    <string name="perm_optional">Opcional</string>
+    <string name="perm_grant_button">Conceder permiso</string>
+    <string name="perm_skip_button">Omitir</string>
+    <string name="perm_required_hint">Este permiso es necesario para iniciar la aplicación.</string>
+
+    <string name="perm_usage_stats_title">Datos de uso de apps</string>
+    <string name="perm_usage_stats_desc">AppLock necesita detectar qué aplicación está abierta para mostrar la pantalla de bloqueo en el momento adecuado. Para ello se requiere acceso a los datos de uso de apps. Sin este permiso, no se puede bloquear ninguna app.</string>
+
+    <string name="perm_overlay_title">Mostrar sobre otras apps</string>
+    <string name="perm_overlay_desc">La pantalla de bloqueo se muestra encima de la app bloqueada. Para ello se necesita el permiso \'Mostrar sobre otras apps\'. Sin este permiso, no puede aparecer ninguna pantalla de bloqueo.</string>
+
+    <string name="perm_exact_alarm_title">Alarmas exactas</string>
+    <string name="perm_exact_alarm_desc">Las alarmas exactas se usan para un reinicio automático fiable del servicio de bloqueo. Sin este permiso, el servicio puede tardar un poco en iniciarse tras un reinicio, pero la función de bloqueo se mantiene.</string>
+
+    <string name="perm_camera_title">Cámara</string>
+    <string name="perm_camera_desc">Si se introduce una contraseña incorrecta varias veces, AppLock puede tomar una foto del intruso de forma opcional. Esta función también puede activarse o desactivarse más adelante en los ajustes.</string>
+
+    <!-- Selección de método de bloqueo -->
+    <string name="lock_method_selection_title">Elegir método de bloqueo</string>
+    <string name="lock_method_pin">Contraseña/PIN</string>
+    <string name="lock_method_pattern">Patrón</string>
+    <string name="pin_set_header">Establecer contraseña</string>
+    <string name="pin_enter_hint">Introduce contraseña/PIN (mín. 4 caracteres)</string>
+    <string name="pin_confirm_hint">Confirma la contraseña/PIN</string>
+    <string name="pin_next">Siguiente</string>
+    <string name="pin_confirm">Confirmar</string>
+    <string name="pin_mismatch">Las contraseñas no coinciden. Inténtalo de nuevo.</string>
+    <string name="pin_too_short">Introduce al menos 4 caracteres.</string>
+    <string name="pin_enter_to_unlock">Introduce la contraseña/PIN para desbloquear</string>
+    <string name="pin_wrong">Contraseña incorrecta. Inténtalo de nuevo.</string>
+    <string name="btn_unlock">Desbloquear</string>
+
+    <!-- Foto en intento fallido: número de intentos -->
+    <string name="take_pic_attempt_title">Foto tras intentos fallidos</string>
+    <string name="take_pic_attempt_dialog_title">Tomar foto después de</string>
+    <string-array name="take_pic_attempt_labels">
+        <item>cada intento fallido</item>
+        <item>2 intentos fallidos</item>
+        <item>3 intentos fallidos</item>
+        <item>5 intentos fallidos</item>
+    </string-array>
+    <integer-array name="take_pic_attempt_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+    </integer-array>
+
+    <!-- Notificación del servicio en primer plano -->
+    <string name="lock_service_notification_channel">Servicio AppLock</string>
+    <string name="lock_service_notification_title">AppLock activo</string>
+    <string name="lock_service_notification_text">Las apps están siendo monitorizadas y bloqueadas.</string>
+
+    <!-- Pantalla de ajustes -->
+    <string name="settings_title">Ajustes</string>
+    <string name="lock_when_title">Momento de bloqueo</string>
+    <string name="lock_screen_option">Bloquear inmediatamente al apagar la pantalla</string>
+    <string name="lock_take_pic_option">Fotografiar automáticamente en intento fallido</string>
+    <string name="btn_change_lock_method">Cambiar método de bloqueo</string>
+    <string name="switch_on">Activado</string>
+    <string name="switch_off">Desactivado</string>
+    <string name="lock_time_immediate">Inmediatamente</string>
+    <string name="lock_enabled_tip">Activado – las apps bloqueadas requieren contraseña</string>
+    <string name="lock_disabled_tip">Desactivado – las apps bloqueadas no requieren contraseña</string>
+    <string name="btn_cancel">Cancelar</string>
+    <string name="camera_permission_required">Permiso de cámara requerido – opción no activada. Concede el permiso en los ajustes de la app.</string>
+    <string name="password_reset_success">Contraseña restablecida correctamente</string>
+
+    <!-- Pestañas de lista de apps -->
+    <string name="tab_system_apps">Apps del sistema</string>
+    <string name="tab_user_apps">Apps de usuario</string>
+    <string name="tab_apps">Apps</string>
+
+    <!-- Pantallas de configuración / desbloqueo -->
+    <string name="welcome_applock">Bienvenido a AppLock</string>
+    <string name="btn_reset">Restablecer</string>
+    <string name="confirm_identity">Confirmar identidad</string>
+
+    <!-- Cámara -->
+    <string name="btn_take_photo">Tomar foto</string>
+
+    <!-- Búsqueda -->
+    <string name="search_title">Buscar</string>
+    <string name="search_hint">Buscar apps</string>
+
+    <!-- Menú -->
+    <string name="menu_pin_lock">Bloqueo PIN</string>
+</resources>

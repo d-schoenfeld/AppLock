@@ -1,0 +1,143 @@
+<resources>
+    <string name="app_name">AppLock</string>
+
+    <string name="lock_first_btn" formatted="false">锁定 (%s)</string>
+
+    <!--图案解锁控件-->
+    <string name="lockscreen_access_pattern_cell_added">已添加节点</string>
+    <string name="lockscreen_access_pattern_start">绘制图案</string>
+    <string name="lockscreen_access_pattern_detected">密码已保存</string>
+    <string name="lockscreen_access_pattern_cleared">密码已删除</string>
+
+    <string name="lock_recording_intro_header">设置解锁图案</string>
+    <string name="lock_settings_help_how_to_record">如何绘制图案？</string>
+    <string name="lock_recording_incorrect_too_short">请至少连接 4 个节点。</string>
+    <string name="lock_pattern_entered_header">记录图案</string>
+    <string name="lock_need_to_confirm">再次绘制图案以确认</string>
+    <string name="lock_need_to_unlock_wrong">图案不匹配，请重试。</string>
+    <string name="password_gestrue_tips">绘制图案以解锁</string>
+    <string name="password_error_count">图案不匹配，请重试。</string>
+    <string name="lock_draw_unlock_pattern">绘制解锁图案</string>
+    <string name="lock_enter_pin_code">输入 PIN 码</string>
+    <string name="lock_pattern_confirmed_header"></string>
+
+    <!--PIN 解锁-->
+    <string name="num_create_text_01">输入 4 位 PIN 码</string>
+    <string name="num_create_text_02">再次输入以确认</string>
+    <string name="num_create_text_03">PIN 码不匹配，请重试。</string>
+    <string name="number_1">1</string>
+    <string name="number_2">2</string>
+    <string name="number_3">3</string>
+    <string name="number_4">4</string>
+    <string name="number_5">5</string>
+    <string name="number_6">6</string>
+    <string name="number_7">7</string>
+    <string name="number_8">8</string>
+    <string name="number_9">9</string>
+    <string name="number_0">0</string>
+    <string name="password_short">请至少输入 4 个字符。</string>
+
+    <string-array name="lock_time_array">
+        <item>15 秒</item>
+        <item>30 秒</item>
+        <item>1 分钟</item>
+        <item>3 分钟</item>
+        <item>5 分钟</item>
+        <item>10 分钟</item>
+        <item>30 分钟</item>
+        <item>立即</item>
+    </string-array>
+
+    <string name="dialog_tip">您的系统为 Android 5.0 或更高版本，需要"使用情况访问"权限。</string>
+
+    <!-- 权限设置向导 -->
+    <string name="perm_step_indicator">第 %1$d 步，共 %2$d 步</string>
+    <string name="perm_required">必需</string>
+    <string name="perm_optional">可选</string>
+    <string name="perm_grant_button">授予权限</string>
+    <string name="perm_skip_button">跳过</string>
+    <string name="perm_required_hint">启动应用需要此权限。</string>
+
+    <string name="perm_usage_stats_title">应用使用数据</string>
+    <string name="perm_usage_stats_desc">AppLock 需要检测当前打开的应用，以便在适当时机显示锁定屏幕。为此需要访问应用使用数据。没有此权限，将无法锁定任何应用。</string>
+
+    <string name="perm_overlay_title">显示在其他应用上层</string>
+    <string name="perm_overlay_desc">锁定屏幕将显示在被锁定应用的上方。为此需要"显示在其他应用上层"权限。没有此权限，将无法显示锁定屏幕。</string>
+
+    <string name="perm_exact_alarm_title">精确闹钟</string>
+    <string name="perm_exact_alarm_desc">精确闹钟用于可靠地自动重启锁定服务。没有此权限，服务在重启后可能会延迟启动，但锁定功能基本保持不变。</string>
+
+    <string name="perm_camera_title">相机</string>
+    <string name="perm_camera_desc">如果密码多次输入错误，AppLock 可以选择性地为入侵者拍照。此功能也可在设置中随时启用或禁用。</string>
+
+    <!-- 锁定方式选择 -->
+    <string name="lock_method_selection_title">选择锁定方式</string>
+    <string name="lock_method_pin">密码/PIN</string>
+    <string name="lock_method_pattern">图案</string>
+    <string name="pin_set_header">设置密码</string>
+    <string name="pin_enter_hint">输入密码/PIN（至少 4 个字符）</string>
+    <string name="pin_confirm_hint">确认密码/PIN</string>
+    <string name="pin_next">下一步</string>
+    <string name="pin_confirm">确认</string>
+    <string name="pin_mismatch">密码不匹配，请重试。</string>
+    <string name="pin_too_short">请至少输入 4 个字符。</string>
+    <string name="pin_enter_to_unlock">输入密码/PIN 以解锁</string>
+    <string name="pin_wrong">密码错误，请重试。</string>
+    <string name="btn_unlock">解锁</string>
+
+    <!-- 失败尝试后拍照：尝试次数 -->
+    <string name="take_pic_attempt_title">失败尝试后拍照</string>
+    <string name="take_pic_attempt_dialog_title">在以下次数失败后拍照</string>
+    <string-array name="take_pic_attempt_labels">
+        <item>每次失败后</item>
+        <item>2 次失败后</item>
+        <item>3 次失败后</item>
+        <item>5 次失败后</item>
+    </string-array>
+    <integer-array name="take_pic_attempt_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+    </integer-array>
+
+    <!-- 前台服务通知 -->
+    <string name="lock_service_notification_channel">AppLock 服务</string>
+    <string name="lock_service_notification_title">AppLock 已激活</string>
+    <string name="lock_service_notification_text">正在监控和锁定应用。</string>
+
+    <!-- 设置页面 -->
+    <string name="settings_title">设置</string>
+    <string name="lock_when_title">锁定时间</string>
+    <string name="lock_screen_option">关屏后立即锁定</string>
+    <string name="lock_take_pic_option">失败尝试时自动拍照</string>
+    <string name="btn_change_lock_method">更改锁定方式</string>
+    <string name="switch_on">开启</string>
+    <string name="switch_off">关闭</string>
+    <string name="lock_time_immediate">立即</string>
+    <string name="lock_enabled_tip">已启用 – 锁定的应用需要密码</string>
+    <string name="lock_disabled_tip">已禁用 – 锁定的应用不需要密码</string>
+    <string name="btn_cancel">取消</string>
+    <string name="camera_permission_required">需要相机权限 – 选项未激活。请在应用设置中授予权限。</string>
+    <string name="password_reset_success">密码已成功重置</string>
+
+    <!-- 应用列表标签页 -->
+    <string name="tab_system_apps">系统应用</string>
+    <string name="tab_user_apps">用户应用</string>
+    <string name="tab_apps">应用</string>
+
+    <!-- 设置/解锁屏幕 -->
+    <string name="welcome_applock">欢迎使用 AppLock</string>
+    <string name="btn_reset">重置</string>
+    <string name="confirm_identity">确认身份</string>
+
+    <!-- 相机 -->
+    <string name="btn_take_photo">拍照</string>
+
+    <!-- 搜索 -->
+    <string name="search_title">搜索</string>
+    <string name="search_hint">搜索应用</string>
+
+    <!-- 菜单 -->
+    <string name="menu_pin_lock">PIN 锁定</string>
+</resources>
