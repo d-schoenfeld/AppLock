@@ -1,7 +1,6 @@
 package com.lzx.lock.module.splash;
 
 import android.Manifest;
-import android.app.AlarmManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -28,7 +27,10 @@ import com.lzx.lock.utils.ToastUtil;
  *  - Genaue Alarme (optional, ab Android 12): Zuverlässiger Dienst-Neustart
  *  - Kamera (optional): Automatisches Foto bei falschem Passwort
  *
- * Bereits erteilte Berechtigungen werden automatisch übersprungen.
+ * Bereits erteilte Berechtigungen werden automatisch übersprungen, mit Ausnahme der
+ * Alarm-Berechtigung: Diese wird stets angezeigt, da sie auf Android 12 (API 31–32) für
+ * Apps mit targetSdkVersion ≤ 32 automatisch gewährt wird und daher nicht zuverlässig
+ * als „bereits erteilt" erkennbar ist.
  * Ohne die erforderlichen Berechtigungen wird der App-Start abgebrochen.
  */
 public class PermissionSetupActivity extends BaseActivity {
@@ -127,11 +129,12 @@ public class PermissionSetupActivity extends BaseActivity {
                 return Build.VERSION.SDK_INT < Build.VERSION_CODES.M
                         || Settings.canDrawOverlays(this);
             case STEP_EXACT_ALARM:
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-                    return am != null && am.canScheduleExactAlarms();
-                }
-                return true;
+                // Always show the alarm step on supported Android versions (API 31+).
+                // On Android 12 (API 31–32), the permission is auto-granted for apps
+                // targeting API ≤ 32, so canScheduleExactAlarms() returns true even
+                // without explicit user interaction.  Returning false here ensures the
+                // step is always presented so the user is aware of this permission.
+                return false;
             case STEP_CAMERA:
                 return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                         == PackageManager.PERMISSION_GRANTED;
@@ -215,9 +218,14 @@ public class PermissionSetupActivity extends BaseActivity {
     private void requestCurrentPermission() {
         switch (mCurrentStep) {
             case STEP_USAGE_STATS:
-                startActivityForResult(
-                        new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS),
-                        RC_USAGE_STATS);
+                // On Android 10+ (API 29+), a package URI can be supplied to go
+                // directly to AppLock's usage-access settings page instead of
+                // showing the list of all apps.
+                Intent usageIntent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    usageIntent.setData(Uri.parse("package:" + getPackageName()));
+                }
+                startActivityForResult(usageIntent, RC_USAGE_STATS);
                 break;
             case STEP_OVERLAY:
                 startActivityForResult(
