@@ -1,0 +1,144 @@
+<resources>
+    <string name="app_name">AppLock</string>
+
+    <string name="lock_first_btn" formatted="false">लॉक करें (%s)</string>
+
+    <!--अनलॉक पैटर्न विजेट-->
+    <string name="lockscreen_access_pattern_cell_added">बिंदु जोड़ा गया</string>
+    <string name="lockscreen_access_pattern_start">पैटर्न बनाएं</string>
+    <string name="lockscreen_access_pattern_detected">पासवर्ड सहेजा गया</string>
+    <string name="lockscreen_access_pattern_cleared">पासवर्ड हटाया गया</string>
+
+    <string name="lock_recording_intro_header">अनलॉक पैटर्न सेट करें</string>
+    <string name="lock_settings_help_how_to_record">पैटर्न कैसे बनाएं?</string>
+    <string name="lock_recording_incorrect_too_short">कम से कम 4 बिंदु जोड़ें।</string>
+    <string name="lock_pattern_entered_header">पैटर्न रिकॉर्ड करें</string>
+    <string name="lock_need_to_confirm">पुष्टि के लिए पैटर्न फिर से बनाएं</string>
+    <string name="lock_need_to_unlock_wrong">पैटर्न मेल नहीं खाता। फिर से कोशिश करें।</string>
+    <string name="password_gestrue_tips">अनलॉक करने के लिए पैटर्न बनाएं</string>
+    <string name="password_error_count">पैटर्न मेल नहीं खाता। फिर से कोशिश करें।</string>
+    <string name="lock_draw_unlock_pattern">अनलॉक पैटर्न बनाएं</string>
+    <string name="lock_enter_pin_code">PIN दर्ज करें</string>
+    <string name="lock_pattern_confirmed_header"></string>
+
+    <!--PIN अनलॉक-->
+    <string name="num_create_text_01">4 अंकों का PIN दर्ज करें</string>
+    <string name="num_create_text_02">पुष्टि के लिए फिर से दर्ज करें</string>
+    <string name="num_create_text_03">PIN मेल नहीं खाते। फिर से कोशिश करें।</string>
+    <string name="number_1">1</string>
+    <string name="number_2">2</string>
+    <string name="number_3">3</string>
+    <string name="number_4">4</string>
+    <string name="number_5">5</string>
+    <string name="number_6">6</string>
+    <string name="number_7">7</string>
+    <string name="number_8">8</string>
+    <string name="number_9">9</string>
+    <string name="number_0">0</string>
+    <string name="password_short">कृपया कम से कम 4 अक्षर दर्ज करें।</string>
+
+    <string-array name="lock_time_array">
+        <item>15 सेकंड</item>
+        <item>30 सेकंड</item>
+        <item>1 मिनट</item>
+        <item>3 मिनट</item>
+        <item>5 मिनट</item>
+        <item>10 मिनट</item>
+        <item>30 मिनट</item>
+        <item>तुरंत</item>
+    </string-array>
+
+    <string name="dialog_tip">आपका सिस्टम Android 5.0 या उच्चतर है। \'ऐप उपयोग डेटा\' अनुमति आवश्यक है।
+    </string>
+
+    <!-- अनुमति सेटअप विज़ार्ड -->
+    <string name="perm_step_indicator">चरण %1$d / %2$d</string>
+    <string name="perm_required">आवश्यक</string>
+    <string name="perm_optional">वैकल्पिक</string>
+    <string name="perm_grant_button">अनुमति दें</string>
+    <string name="perm_skip_button">छोड़ें</string>
+    <string name="perm_required_hint">ऐप शुरू करने के लिए यह अनुमति आवश्यक है।</string>
+
+    <string name="perm_usage_stats_title">ऐप उपयोग डेटा</string>
+    <string name="perm_usage_stats_desc">AppLock को यह पता लगाना होता है कि कौन सा ऐप खुला है ताकि सही समय पर लॉक स्क्रीन दिखाई जा सके। इसके लिए ऐप उपयोग डेटा तक पहुंच आवश्यक है। इस अनुमति के बिना, कोई भी ऐप लॉक नहीं किया जा सकता।</string>
+
+    <string name="perm_overlay_title">अन्य ऐप्स के ऊपर दिखाएं</string>
+    <string name="perm_overlay_desc">लॉक स्क्रीन को लॉक किए जाने वाले ऐप के ऊपर दिखाया जाता है। इसके लिए \'अन्य ऐप्स के ऊपर दिखाएं\' अनुमति आवश्यक है। इस अनुमति के बिना, कोई लॉक स्क्रीन नहीं दिख सकती।</string>
+
+    <string name="perm_exact_alarm_title">सटीक अलार्म</string>
+    <string name="perm_exact_alarm_desc">लॉक सेवा की विश्वसनीय स्वचालित पुनरारंभ के लिए सटीक अलार्म का उपयोग किया जाता है। इस अनुमति के बिना, रिबूट के बाद सेवा थोड़ी देरी से शुरू हो सकती है – लेकिन लॉक फ़ंक्शन मूल रूप से बना रहता है।</string>
+
+    <string name="perm_camera_title">कैमरा</string>
+    <string name="perm_camera_desc">यदि पासवर्ड कई बार गलत दर्ज किया जाता है, तो AppLock वैकल्पिक रूप से घुसपैठिए की फ़ोटो ले सकता है। यह सुविधा बाद में सेटिंग्स में भी चालू या बंद की जा सकती है।</string>
+
+    <!-- लॉक विधि चुनाव -->
+    <string name="lock_method_selection_title">लॉक विधि चुनें</string>
+    <string name="lock_method_pin">पासवर्ड/PIN</string>
+    <string name="lock_method_pattern">पैटर्न</string>
+    <string name="pin_set_header">पासवर्ड सेट करें</string>
+    <string name="pin_enter_hint">पासवर्ड/PIN दर्ज करें (न्यूनतम 4 अक्षर)</string>
+    <string name="pin_confirm_hint">पासवर्ड/PIN की पुष्टि करें</string>
+    <string name="pin_next">अगला</string>
+    <string name="pin_confirm">पुष्टि करें</string>
+    <string name="pin_mismatch">पासवर्ड मेल नहीं खाते। फिर से कोशिश करें।</string>
+    <string name="pin_too_short">कम से कम 4 अक्षर दर्ज करें।</string>
+    <string name="pin_enter_to_unlock">अनलॉक करने के लिए पासवर्ड/PIN दर्ज करें</string>
+    <string name="pin_wrong">गलत पासवर्ड। फिर से कोशिश करें।</string>
+    <string name="btn_unlock">अनलॉक करें</string>
+
+    <!-- विफल प्रयास पर फ़ोटो: प्रयासों की संख्या -->
+    <string name="take_pic_attempt_title">विफल प्रयासों के बाद फ़ोटो</string>
+    <string name="take_pic_attempt_dialog_title">इसके बाद फ़ोटो लें</string>
+    <string-array name="take_pic_attempt_labels">
+        <item>हर विफल प्रयास</item>
+        <item>2 विफल प्रयास</item>
+        <item>3 विफल प्रयास</item>
+        <item>5 विफल प्रयास</item>
+    </string-array>
+    <integer-array name="take_pic_attempt_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+    </integer-array>
+
+    <!-- फोरग्राउंड सेवा सूचना -->
+    <string name="lock_service_notification_channel">AppLock सेवा</string>
+    <string name="lock_service_notification_title">AppLock सक्रिय</string>
+    <string name="lock_service_notification_text">ऐप्स की निगरानी की जा रही है और लॉक किया जा रहा है।</string>
+
+    <!-- सेटिंग्स स्क्रीन -->
+    <string name="settings_title">सेटिंग्स</string>
+    <string name="lock_when_title">लॉक समय</string>
+    <string name="lock_screen_option">स्क्रीन बंद होने पर तुरंत लॉक करें</string>
+    <string name="lock_take_pic_option">विफल प्रयास पर स्वतः फ़ोटो लें</string>
+    <string name="btn_change_lock_method">लॉक विधि बदलें</string>
+    <string name="switch_on">चालू</string>
+    <string name="switch_off">बंद</string>
+    <string name="lock_time_immediate">तुरंत</string>
+    <string name="lock_enabled_tip">सक्रिय – लॉक किए गए ऐप्स के लिए पासवर्ड आवश्यक है</string>
+    <string name="lock_disabled_tip">निष्क्रिय – लॉक किए गए ऐप्स के लिए पासवर्ड आवश्यक नहीं है</string>
+    <string name="btn_cancel">रद्द करें</string>
+    <string name="camera_permission_required">कैमरा अनुमति आवश्यक है – विकल्प सक्रिय नहीं है। ऐप सेटिंग्स में अनुमति दें।</string>
+    <string name="password_reset_success">पासवर्ड सफलतापूर्वक रीसेट किया गया</string>
+
+    <!-- ऐप सूची टैब -->
+    <string name="tab_system_apps">सिस्टम ऐप्स</string>
+    <string name="tab_user_apps">उपयोगकर्ता ऐप्स</string>
+    <string name="tab_apps">ऐप्स</string>
+
+    <!-- सेटअप / अनलॉक स्क्रीन -->
+    <string name="welcome_applock">AppLock में आपका स्वागत है</string>
+    <string name="btn_reset">रीसेट करें</string>
+    <string name="confirm_identity">पहचान की पुष्टि करें</string>
+
+    <!-- कैमरा -->
+    <string name="btn_take_photo">फ़ोटो लें</string>
+
+    <!-- खोज -->
+    <string name="search_title">खोज</string>
+    <string name="search_hint">ऐप्स खोजें</string>
+
+    <!-- मेनू -->
+    <string name="menu_pin_lock">PIN लॉक</string>
+</resources>
