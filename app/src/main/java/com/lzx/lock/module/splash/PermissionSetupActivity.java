@@ -228,12 +228,14 @@ public class PermissionSetupActivity extends BaseActivity {
                 startActivityForResult(usageIntent, RC_USAGE_STATS);
                 break;
             case STEP_OVERLAY:
-                // A package URI can be supplied to go directly to AppLock's
-                // "Display over other apps" settings page instead of showing
-                // the list of all apps.  This is supported since Android 6
-                // (API 23), which is the same version that introduced both
-                // Settings.canDrawOverlays() and ACTION_MANAGE_OVERLAY_PERMISSION,
-                // so no additional version guard is needed here.
+                // A package URI is passed with the intent so that, on Android 6–10
+                // (API 23–29), the system opens AppLock's individual "Display over
+                // other apps" settings page directly instead of showing the list of
+                // all apps.  On Android 11+ (API 30+) this URI is ignored by the
+                // system and the general overlay-permissions list is always shown
+                // regardless (see https://developer.android.com/about/versions/11/
+                // privacy/permissions#manage_overlay).  No version guard is needed
+                // since ACTION_MANAGE_OVERLAY_PERMISSION was introduced in API 23.
                 Intent overlayIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
                 overlayIntent.setData(Uri.parse("package:" + getPackageName()));
                 startActivityForResult(overlayIntent, RC_OVERLAY);
